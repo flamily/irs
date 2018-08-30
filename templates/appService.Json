@@ -6,13 +6,15 @@
         "type": "string",
         "metadata": {
           "description": "Size of the app service"
-        }
+        },
+        "defaultValue": "B1"
       },
       "serverFarmCapacity": {
         "type": "int",
         "metadata": {
           "description": "Describes plan's instance count"
-        }
+        },
+        "defaultValue": 1
       },
       "webAppName": {
         "type": "string",
@@ -24,7 +26,7 @@
     },
     "variables": {
       "prefix": "avalon",
-      "serverFarmName": "[concat(variables('prefix'),'-',parameters('webAppName'),-asp',)]",
+      "serverFarmName": "[concat(variables('prefix'),'-',parameters('webAppName'),'-asp')]",
       "siteName": "[concat(variables('serverFarmName'),'-app')]",
       "configWebName": "[concat(variables('siteName'),'/web')]"
     },
@@ -48,13 +50,47 @@
         }
       },
       {
+        "type": "Microsoft.Web/sites",
+        "kind": "app",
+        "name": "[variables('siteName')]",
+        "apiVersion": "2015-08-01",
+        "location": "Southeast Asia",
+        "tags": {},
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/serverfarms', variables('serverFarmName'))]"
+        ],
+        "scale": null,
+        "properties": {
+            "name": "[variables('siteName')]",
+            "enabledHostNames": [
+            "[concat(variables('siteName'),'.azurewebsites.net')]",
+            "[concat(variables('siteName'),'.scm.azurewebsites.net')]"
+            ],
+            "hostNameSslStates": [
+            {
+                "name": "[concat(variables('siteName'),'.azurewebsites.net')]",
+                "sslState": 0,
+                "thumbprint": null,
+                "ipBasedSslState": 0
+            },
+            {
+                "name": "[concat(variables('siteName'),'.scm.azurewebsites.net')]",
+                "sslState": 0,
+                "thumbprint": null,
+                "ipBasedSslState": 0
+            }
+            ],
+            "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverFarmName'))]"
+        }
+    },
+      {
         "type": "Microsoft.Web/sites/config",
         "name": "[variables('configWebName')]",
         "apiVersion": "2015-08-01",
         "location": "Southeast Asia",
         "tags": {},
         "dependsOn": [
-          "[resourceId('Microsoft.Web/sites', variables('serverFarmName'))]"
+          "[resourceId('Microsoft.Web/sites', variables('siteName'))]"
         ],
         "scale": null,
         "properties": {
@@ -70,9 +106,9 @@
             "index.php",
             "hostingstart.html"
           ],
-          "netFrameworkVersion": "v4.0",
-          "phpVersion": "5.6",
-          "pythonVersion": "",
+          "netFrameworkVersion": "",
+          "phpVersion": "",
+          "pythonVersion": "2.7",
           "nodeVersion": "",
           "linuxFxVersion": "",
           "requestTracingEnabled": false,
