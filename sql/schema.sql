@@ -3,4 +3,4 @@ create table sentiments (
 	    feeling varchar(250)
 );
 
-insert into sentiments (feeling) values ('hungry'), ('bored');
+insert into no_sentiments (feeling) values ('hungry'), ('bored');
