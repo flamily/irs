@@ -1,7 +1,13 @@
+/*
+ * Purpose: Define persistent data model for the IRS relational database.
+ *
+ * Author: Andrew Pope
+ * Date: 2018-09-14
+ */
 -- Schema Enums
-CREATE TYPE event_e AS ENUM ('ready', 'seated', 'paid', 'maintaining');
-CREATE TYPE permission_e AS ENUM ('robot', 'wait_staff', 'management');
-CREATE TYPE shape_e AS ENUM ('rectangle', 'ellipse');
+CREATE TYPE event_e 			AS ENUM ('ready', 'seated', 'paid', 'maintaining');
+CREATE TYPE permission_e 	AS ENUM ('robot', 'wait_staff', 'management');
+CREATE TYPE shape_e 			AS ENUM ('rectangle', 'ellipse');
 
 -- Schema Tables
 CREATE TABLE staff (
@@ -40,10 +46,11 @@ CREATE TABLE reservation (
 CREATE TABLE customer_event (
 	event_id					integer				NOT NULL,
 	reservation_id		integer				NOT NULL,
-	staff_id					integer				NOT NULL REFERENCES staff (staff_id),
+	staff_id					integer				NOT NULL,
 	-- Key definitions
 	FOREIGN KEY	(event_id) 					REFERENCES event (event_id),
 	FOREIGN KEY	(reservation_id) 		REFERENCES reservation (reservation_id),
+	FOREIGN KEY (staff_id)					REFERENCES staff (staff_id),
 	PRIMARY KEY (event_id, reservation_id)
 );
 
