@@ -28,7 +28,28 @@ CREATE TABLE dining_table (
 	width							integer				NOT NULL CHECK(width > 0),
 	height						integer				NOT NULL CHECK(height > 0),
 	shape							shape_e				NOT NULL
-); -- TODO fancy checks with an event being created in same transaction
+);
+
+-- Will raise an exception if a new dining table record does not have an associated event
+CREATE OR REPLACE FUNCTION check_event_exists()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF NOT EXISTS (SELECT 1 FROM event WHERE event.dining_table_id = NEW.dining_table_id) THEN
+		RAISE EXCEPTION 'a dining table needs at least one associated event';
+	END IF;
+	RETURN NULL;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- The following trigger checks whether an event for a dining table after it was created
+CREATE CONSTRAINT TRIGGER dining_table_has_event
+	AFTER INSERT ON dining_table
+	DEFERRABLE INITIALLY DEFERRED
+	FOR EACH ROW
+	EXECUTE PROCEDURE check_event_exists();
+
 
 CREATE TABLE event (
 	event_id					serial				PRIMARY KEY,
@@ -42,6 +63,9 @@ CREATE TABLE reservation (
 	group_size				numeric				NOT NULL CHECK(group_size > 0),
 	reservation_dt		timestamptz		NOT NULL DEFAULT now()
 ); -- TODO fancy checks with a customer_event being created in same transaction
+
+
+
 
 CREATE TABLE customer_event (
 	event_id					integer				NOT NULL,
