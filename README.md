@@ -13,26 +13,15 @@ Instructions for local machine database development. The following assumes that 
 4. You have created a database called `irs`.
 
 ### Creation
-<<<<<<< HEAD
 After creating a new database called irs, run this command from terminal to generate schema:
 ```
 sudo -u postgres psql irs < db/schema.sql
-=======
-After creating a new database called irs, run this command to generate schema:
-```
-$ sudo -u postgres psql irs < db/schema.sql
->>>>>>> feb193ae91ceafaa44696b74346cbbc1f60f22b3
 ```
 This structure will be loaded into the default `public` schema.
 
 ### Nuking
 To start from scratch, make sure you are in the psql cmd prompt and run:
 ```
-<<<<<<< HEAD
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
-=======
-# DROP SCHEMA public CASCADE;
-# CREATE SCHEMA public;
->>>>>>> feb193ae91ceafaa44696b74346cbbc1f60f22b3
 ```
