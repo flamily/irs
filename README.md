@@ -17,7 +17,11 @@ After creating a new database called irs, run this command from terminal to gene
 ```
 sudo -u postgres psql irs < db/schema.sql
 ```
-This structure will be loaded into the default `public` schema.
+This structure will be loaded into the default `public` schema. Developers may also want to load some test records to their database. They can do so with the `test.sql` script:
+
+```
+sudo -u postgres psql irs < db/test.sql
+```
 
 ### Nuking
 To start from scratch, make sure you are in the psql cmd prompt and run:

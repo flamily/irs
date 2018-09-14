@@ -4,7 +4,8 @@
  * Author: Andrew Pope
  * Date: 2018-09-14
  */
--- Schema Enums
+
+/* Definition of system specific enums */
 CREATE TYPE event_e 			AS ENUM ('ready', 'seated', 'paid', 'maintaining');
 CREATE TYPE permission_e 	AS ENUM ('robot', 'wait_staff', 'management');
 CREATE TYPE shape_e 			AS ENUM ('rectangle', 'ellipse');
@@ -30,6 +31,7 @@ CREATE TABLE dining_table (
 	shape							shape_e				NOT NULL
 );
 
+-- TODO must add docs about what this expects to be called by
 -- Will raise an exception if a new dining table record does not have an associated event
 CREATE OR REPLACE FUNCTION check_event_exists()
 RETURNS TRIGGER AS
@@ -64,7 +66,25 @@ CREATE TABLE reservation (
 	reservation_dt		timestamptz		NOT NULL DEFAULT now()
 ); -- TODO fancy checks with a customer_event being created in same transaction
 
+-- TODO must add docs about what this expects to be called by
+CREATE OR REPLACE FUNCTION check_customer_event_exists()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF NOT EXISTS (SELECT 1 FROM customer_event WHERE customer_event.reservation_id = NEW.reservation_id) THEN
+		RAISE EXCEPTION 'a reservation needs at least one associated customer event';
+	END IF;
+	RETURN NULL;
+END;
+$$
+LANGUAGE plpgsql;
 
+-- The following trigger checks whether an event for a dining table after it was created
+CREATE CONSTRAINT TRIGGER reservation_has_customer_event
+	AFTER INSERT ON reservation
+	DEFERRABLE INITIALLY DEFERRED
+	FOR EACH ROW
+	EXECUTE PROCEDURE check_customer_event_exists();
 
 
 CREATE TABLE customer_event (
