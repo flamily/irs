@@ -87,30 +87,6 @@ CREATE TABLE satisfaction (
 	PRIMARY KEY (event_id, reservation_id)
 );
 
-/*** Definition of trigger constraints. ***/
-
-/* Constraint Trigger: Dining table has event
- * Purpose: This trigger will check that at a dining table has at least one associated event
- *					prior to the end of the transaction. This is to enforce a begining state upon
- *					the dining table.
- */
-CREATE CONSTRAINT TRIGGER dining_table_has_event
-	AFTER INSERT ON dining_table
-	DEFERRABLE INITIALLY DEFERRED
-	FOR EACH ROW
-	EXECUTE PROCEDURE check_event_exists();
-
-/* Constraint Trigger: Reservation has customer event
- * Purpose: This trigger will check that at a reservation has at least one associated
- *					customer event prior to the end of the transaction. This is to enforce a
- *					begining state upon the reservation.
- */
-CREATE CONSTRAINT TRIGGER reservation_has_customer_event
-	AFTER INSERT ON reservation
-	DEFERRABLE INITIALLY DEFERRED
-	FOR EACH ROW
-	EXECUTE PROCEDURE check_customer_event_exists();
-
 /*** Definition of trigger functions. ***/
 
 /* Function: Check event exists
@@ -146,3 +122,27 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+/*** Definition of trigger constraints. ***/
+
+/* Constraint Trigger: Dining table has event
+ * Purpose: This trigger will check that at a dining table has at least one associated event
+ *					prior to the end of the transaction. This is to enforce a begining state upon
+ *					the dining table.
+ */
+CREATE CONSTRAINT TRIGGER dining_table_has_event
+	AFTER INSERT ON dining_table
+	DEFERRABLE INITIALLY DEFERRED
+	FOR EACH ROW
+	EXECUTE PROCEDURE check_event_exists();
+
+/* Constraint Trigger: Reservation has customer event
+ * Purpose: This trigger will check that at a reservation has at least one associated
+ *					customer event prior to the end of the transaction. This is to enforce a
+ *					begining state upon the reservation.
+ */
+CREATE CONSTRAINT TRIGGER reservation_has_customer_event
+	AFTER INSERT ON reservation
+	DEFERRABLE INITIALLY DEFERRED
+	FOR EACH ROW
+	EXECUTE PROCEDURE check_customer_event_exists();
