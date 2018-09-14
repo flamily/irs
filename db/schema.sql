@@ -6,9 +6,9 @@
  */
 
 /* Definition of system specific enums */
-CREATE TYPE event_e				AS ENUM ('ready', 'seated', 'paid', 'maintaining');
-CREATE TYPE permission_e	AS ENUM ('robot', 'wait_staff', 'management');
-CREATE TYPE shape_e				AS ENUM ('rectangle', 'ellipse');
+CREATE TYPE event_e       AS ENUM ('ready', 'seated', 'paid', 'maintaining');
+CREATE TYPE permission_e  AS ENUM ('robot', 'wait_staff', 'management');
+CREATE TYPE shape_e       AS ENUM ('rectangle', 'ellipse');
 
 
 /*** Definition of relational entities in the system ***/
@@ -28,7 +28,7 @@ CREATE TABLE staff (
 
 /* Entity: Dining Table
  * Purpose: Stores information pertinent to a resturant dining table. This includes
- *					the capacity of the dining table and geometric information for UI rendering.
+ *          the capacity of the dining table and geometric information for UI rendering.
  */
 CREATE TABLE dining_table (
 	dining_table_id		serial				PRIMARY KEY,
