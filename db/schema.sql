@@ -69,10 +69,10 @@ CREATE TABLE customer_event (
 	reservation_id     integer       NOT NULL,
 	staff_id           integer       NOT NULL,
 	-- Key definitions
-	FOREIGN KEY	(event_id)           REFERENCES event (event_id),
-	FOREIGN KEY	(reservation_id)     REFERENCES reservation (reservation_id),
-	FOREIGN KEY (staff_id)           REFERENCES staff (staff_id),
-	PRIMARY KEY (event_id, reservation_id)
+	FOREIGN KEY  (event_id)          REFERENCES event (event_id),
+	FOREIGN KEY  (reservation_id)    REFERENCES reservation (reservation_id),
+	FOREIGN KEY  (staff_id)          REFERENCES staff (staff_id),
+	PRIMARY KEY  (event_id, reservation_id)
 );
 
 /* Entity: Satisfaction
@@ -83,8 +83,8 @@ CREATE TABLE satisfaction (
 	reservation_id     integer       NOT NULL,
 	score              numeric       NOT NULL CHECK (score >= 0 AND score <= 100),
 	-- Key definitions
-	FOREIGN KEY	(event_id, reservation_id) REFERENCES customer_event (event_id, reservation_id),
-	PRIMARY KEY (event_id, reservation_id)
+	FOREIGN KEY  (event_id, reservation_id)  REFERENCES customer_event (event_id, reservation_id),
+	PRIMARY KEY  (event_id, reservation_id)
 );
 
 /*** Definition of trigger functions. ***/
