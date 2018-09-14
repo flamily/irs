@@ -6,9 +6,9 @@
  */
 
 /* Definition of system specific enums */
-CREATE TYPE event_e 			AS ENUM ('ready', 'seated', 'paid', 'maintaining');
-CREATE TYPE permission_e 	AS ENUM ('robot', 'wait_staff', 'management');
-CREATE TYPE shape_e 			AS ENUM ('rectangle', 'ellipse');
+CREATE TYPE event_e				AS ENUM ('ready', 'seated', 'paid', 'maintaining');
+CREATE TYPE permission_e	AS ENUM ('robot', 'wait_staff', 'management');
+CREATE TYPE shape_e				AS ENUM ('rectangle', 'ellipse');
 
 
 /*** Definition of relational entities in the system ***/
