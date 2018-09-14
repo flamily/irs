@@ -1,5 +1,5 @@
 /*
- * Purpose: Define persistent data model for the IRS relational database.
+ * Purpose: Definition of persistent data model for the IRS relational database.
  *
  * Author: Andrew Pope
  * Date: 2018-09-14
@@ -17,13 +17,13 @@ CREATE TYPE shape_e       AS ENUM ('rectangle', 'ellipse');
  * Purpose: Stores information pertinent to resturant staff. Also used in system authentication.
  */
 CREATE TABLE staff (
-	staff_id					serial				PRIMARY KEY,
-	username					text 					NOT NULL UNIQUE,
-	password					text					NOT NULL,	-- Should not be stored in plaintext. Stored as a hash.
-	first_name 				text 					NOT NULL,
-	last_name 				text 					NOT NULL,
-	start_dt					timestamptz		NOT NULL DEFAULT now(),
-	permission				permission_e 	NOT NULL
+	staff_id           serial        PRIMARY KEY,
+	username           text          NOT NULL UNIQUE,
+	password           text          NOT NULL,	-- Should not be stored in plaintext. Stored as a hash.
+	first_name         text          NOT NULL,
+	last_name          text          NOT NULL,
+	start_dt           timestamptz   NOT NULL DEFAULT now(),
+	permission         permission_e  NOT NULL
 );
 
 /* Entity: Dining Table
