@@ -10,7 +10,12 @@ CREATE TYPE event_e 			AS ENUM ('ready', 'seated', 'paid', 'maintaining');
 CREATE TYPE permission_e 	AS ENUM ('robot', 'wait_staff', 'management');
 CREATE TYPE shape_e 			AS ENUM ('rectangle', 'ellipse');
 
--- Schema Tables
+
+/*** Definition of relational entities in the system ***/
+
+/* Entity: Staff
+ * Purpose: Stores information pertinent to resturant staff. Also used in system authentication.
+ */
 CREATE TABLE staff (
 	staff_id					serial				PRIMARY KEY,
 	username					text 					NOT NULL UNIQUE,
@@ -21,6 +26,10 @@ CREATE TABLE staff (
 	permission				permission_e 	NOT NULL
 );
 
+/* Entity: Dining Table
+ * Purpose: Stores information pertinent to a resturant dining table. This includes
+ *					the capacity of the dining table and geometric information for UI rendering.
+ */
 CREATE TABLE dining_table (
 	dining_table_id		serial				PRIMARY KEY,
 	capacity					numeric				NOT NULL CHECK(capacity > 0),
@@ -31,8 +40,84 @@ CREATE TABLE dining_table (
 	shape							shape_e				NOT NULL
 );
 
--- TODO must add docs about what this expects to be called by
--- Will raise an exception if a new dining table record does not have an associated event
+/* Entity: Event
+ * Purpose: Used to maintain a history of what happened at a dining table over time.
+ *					Also used to infer a dining table's state / availability.
+ */
+CREATE TABLE event (
+	event_id					serial				PRIMARY KEY,
+	description				event_e				NOT NULL,
+	event_dt					timestamptz		NOT NULL DEFAULT now(),
+	dining_table_id		integer				NOT NULL REFERENCES dining_table (dining_table_id)
+);
+
+/* Entity: Reservation
+ * Purpose: A reservation represents knowledge of a dining, or previously dined, customer.
+ */
+CREATE TABLE reservation (
+	reservation_id		serial				PRIMARY KEY,
+	group_size				numeric				NOT NULL CHECK(group_size > 0),
+	reservation_dt		timestamptz		NOT NULL DEFAULT now()
+);
+
+/* Entity: Customer Event
+ * Purpose: Bridges the relationship between an event that can occur at a dining table,
+ *					and a customer reservation.
+ */
+CREATE TABLE customer_event (
+	event_id					integer				NOT NULL,
+	reservation_id		integer				NOT NULL,
+	staff_id					integer				NOT NULL,
+	-- Key definitions
+	FOREIGN KEY	(event_id) 					REFERENCES event (event_id),
+	FOREIGN KEY	(reservation_id) 		REFERENCES reservation (reservation_id),
+	FOREIGN KEY (staff_id)					REFERENCES staff (staff_id),
+	PRIMARY KEY (event_id, reservation_id)
+);
+
+/* Entity: Satisfaction
+ * Purpose: Stores the customer's satisfaction during a specific event.
+ */
+CREATE TABLE satisfaction (
+	event_id					integer				NOT NULL,
+	reservation_id		integer				NOT NULL,
+	score							numeric				NOT NULL CHECK (score >= 0 AND score <= 100),
+	-- Key definitions
+	FOREIGN KEY	(event_id, reservation_id) REFERENCES customer_event (event_id, reservation_id),
+	PRIMARY KEY (event_id, reservation_id)
+);
+
+/*** Definition of trigger constraints. ***/
+
+/* Constraint Trigger: Dining table has event
+ * Purpose: This trigger will check that at a dining table has at least one associated event
+ *					prior to the end of the transaction. This is to enforce a begining state upon
+ *					the dining table.
+ */
+CREATE CONSTRAINT TRIGGER dining_table_has_event
+	AFTER INSERT ON dining_table
+	DEFERRABLE INITIALLY DEFERRED
+	FOR EACH ROW
+	EXECUTE PROCEDURE check_event_exists();
+
+/* Constraint Trigger: Reservation has customer event
+ * Purpose: This trigger will check that at a reservation has at least one associated
+ *					customer event prior to the end of the transaction. This is to enforce a
+ *					begining state upon the reservation.
+ */
+CREATE CONSTRAINT TRIGGER reservation_has_customer_event
+	AFTER INSERT ON reservation
+	DEFERRABLE INITIALLY DEFERRED
+	FOR EACH ROW
+	EXECUTE PROCEDURE check_customer_event_exists();
+
+/*** Definition of trigger functions. ***/
+
+/* Function: Check event exists
+ * Purpose: Called by the 'Dining table has event' trigger, this function checks
+ *					if a newly created dining table has an associated event.
+ * Returns: NULL if the event exists. Otherwise, an exception will be raised.
+ */
 CREATE OR REPLACE FUNCTION check_event_exists()
 RETURNS TRIGGER AS
 $$
@@ -45,28 +130,11 @@ END;
 $$
 LANGUAGE plpgsql;
 
--- The following trigger checks whether an event for a dining table after it was created
-CREATE CONSTRAINT TRIGGER dining_table_has_event
-	AFTER INSERT ON dining_table
-	DEFERRABLE INITIALLY DEFERRED
-	FOR EACH ROW
-	EXECUTE PROCEDURE check_event_exists();
-
-
-CREATE TABLE event (
-	event_id					serial				PRIMARY KEY,
-	description				event_e				NOT NULL,
-	event_dt					timestamptz		NOT NULL DEFAULT now(),
-	dining_table_id		integer				NOT NULL REFERENCES dining_table (dining_table_id)
-);
-
-CREATE TABLE reservation (
-	reservation_id		serial				PRIMARY KEY,
-	group_size				numeric				NOT NULL CHECK(group_size > 0),
-	reservation_dt		timestamptz		NOT NULL DEFAULT now()
-); -- TODO fancy checks with a customer_event being created in same transaction
-
--- TODO must add docs about what this expects to be called by
+/* Function: Check customer event exists
+ * Purpose: Called by the 'Reservation has customer event' trigger, this function checks
+ *					if a newly created reservation has an associated customer event.
+ * Returns: NULL if the customer event exists. Otherwise, an exception will be raised.
+ */
 CREATE OR REPLACE FUNCTION check_customer_event_exists()
 RETURNS TRIGGER AS
 $$
@@ -78,31 +146,3 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-
--- The following trigger checks whether an event for a dining table after it was created
-CREATE CONSTRAINT TRIGGER reservation_has_customer_event
-	AFTER INSERT ON reservation
-	DEFERRABLE INITIALLY DEFERRED
-	FOR EACH ROW
-	EXECUTE PROCEDURE check_customer_event_exists();
-
-
-CREATE TABLE customer_event (
-	event_id					integer				NOT NULL,
-	reservation_id		integer				NOT NULL,
-	staff_id					integer				NOT NULL,
-	-- Key definitions
-	FOREIGN KEY	(event_id) 					REFERENCES event (event_id),
-	FOREIGN KEY	(reservation_id) 		REFERENCES reservation (reservation_id),
-	FOREIGN KEY (staff_id)					REFERENCES staff (staff_id),
-	PRIMARY KEY (event_id, reservation_id)
-);
-
-CREATE TABLE satisfaction (
-	event_id					integer				NOT NULL,
-	reservation_id		integer				NOT NULL,
-	score							numeric				NOT NULL CHECK (score >= 0 AND score <= 100),
-	-- Key definitions
-	FOREIGN KEY	(event_id, reservation_id) REFERENCES customer_event (event_id, reservation_id),
-	PRIMARY KEY (event_id, reservation_id)
-);
