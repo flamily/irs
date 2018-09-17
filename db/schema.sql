@@ -6,7 +6,7 @@
  */
 
 /* Definition of system specific enums */
-CREATE TYPE event_e       AS ENUM ('ready', 'seated', 'paid', 'maintaining');
+CREATE TYPE event_e       AS ENUM ('ready', 'seated', 'attended', 'paid', 'maintaining');
 CREATE TYPE permission_e  AS ENUM ('robot', 'wait_staff', 'management');
 CREATE TYPE shape_e       AS ENUM ('rectangle', 'ellipse');
 
@@ -123,6 +123,23 @@ END;
 $$
 LANGUAGE plpgsql;
 
+/* Function: Validates that a customer event is of the right type.
+ * Purpose: Called by the 'Customer event is valid' trigger, this function checks
+ *          if a newly created customer event is valid as defined by the buisness rules.
+ * Returns: NULL if the customer event is valid. Otherwise, an exception will be raised.
+ */
+CREATE OR REPLACE FUNCTION validate_customer_event()
+RETURNS TRIGGER AS
+$$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM event WHERE event.event_id = NEW.event_id AND description IN ('seated', 'attended', 'paid')) THEN
+    RAISE EXCEPTION 'a customer event can only be of types: seated, attended or paid';
+  END IF;
+  RETURN NULL;
+END;
+$$
+LANGUAGE plpgsql;
+
 /*** Definition of trigger constraints. ***/
 
 /* Constraint Trigger: Dining table has event
@@ -146,3 +163,15 @@ CREATE CONSTRAINT TRIGGER reservation_has_customer_event
   DEFERRABLE INITIALLY DEFERRED
   FOR EACH ROW
   EXECUTE PROCEDURE check_customer_event_exists();
+
+  /* Constraint Trigger: Customer event is valid
+   * Purpose: This trigger will check that at a newly created customer event
+   *          correctly references a subset of event types (as defined by the
+   *          buisness rules) in the events table.
+   *          Valid events include seated, attended, and paid.
+   */
+CREATE CONSTRAINT TRIGGER customer_event_is_valid
+  AFTER INSERT ON customer_event
+  DEFERRABLE
+  FOR EACH ROW
+  EXECUTE PROCEDURE validate_customer_event();
