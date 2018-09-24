@@ -34,20 +34,19 @@ VALUES (
   'management'
 );
 
--- Create a dining table and specify the first event for it
+-- Create a restaurant table and specify the first event for it
 BEGIN;
 WITH temp(id) as (
-  INSERT INTO dining_table (capacity, x_pos, y_pos, width, height, shape)
+  INSERT INTO restaurant_table (capacity, x_pos, y_pos, width, height, shape)
   VALUES (3, 4, 5, 6, 7, 'rectangle')
-  RETURNING dining_table_id
+  RETURNING restaurant_table_id
 )
 
-INSERT INTO event (description, dining_table_id)
-VALUES ('ready', (SELECT id from temp));
-
+INSERT INTO event (description, restaurant_table_id, staff_id)
+VALUES ('ready', (SELECT id from temp), 1);
 END;
 
--- Create a reservation at the dining table and seat the customers
+-- Create a reservation at the restaurant table and seat the customers
 BEGIN;
 WITH res(id) as (
   INSERT INTO reservation (group_size)
@@ -57,16 +56,14 @@ WITH res(id) as (
 
 -- Create a seated event and link to reservation
 , ev(id) as (
-  INSERT INTO event (description, dining_table_id)
-  VALUES ('seated', (SELECT dining_table_id from dining_table LIMIT 1))
+  INSERT INTO event (description, restaurant_table_id, staff_id)
+  VALUES ('seated', (SELECT restaurant_table_id from restaurant_table LIMIT 1), 1)
   RETURNING event_id
 )
 
-INSERT INTO customer_event (event_id, reservation_id, staff_id)
+INSERT INTO customer_event (event_id, reservation_id)
 VALUES (
   (SELECT id from ev),
-  (SELECT id from res),
-  (SELECT staff_id from staff WHERE staff.username='ckramer')
+  (SELECT id from res)
 );
-
 END;

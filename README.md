@@ -24,8 +24,7 @@ sudo -u postgres psql irs < db/test.sql
 ```
 
 ### Nuking
-To start from scratch, make sure you are in the psql cmd prompt and run:
+To start from scratch, run:
 ```
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
+echo "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" | sudo -u postgres psql irs
 ```
