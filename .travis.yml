@@ -11,7 +11,7 @@ before_script:
   - psql --single-transaction -v "ON_ERROR_STOP=1" -f db/test.sql -U postgres
 script:
   - coverage run -m pytest
-  - coverage report --omit '/usr/*' -m --skip-covered --fail-under=100
+  - coverage report --omit '/usr/*,/home/*' -m --skip-covered --fail-under=100
 notifications:
   slack:
     secure: YBb8/uqXg4DpIxzsKQfTD8oiFDHf09tM76ymqkPfp02ITUwgY4C0h1xIM1PQgXlOdC+gVOudkrbbwjJQH58fxjM1KNADIHKJ2Q7wg5mjhtPwDxiLeYi2c1U7xPwN8+sMoxM4Nke3r1ZuB/6dsGv16LGawlHLWN0pGL7ZrnBm3aoegKkIUg/WZD6VlsmbtEgIrwbQVS/6TeM+xs3KBx5U45P+d8VAMy++uKmAny/GnJ02vVwffGHCf/GaGKgfFTNadBIvuBUnTpwTsUuwlmr7QVKIVWJUTxMTjA0ZcnjU2zydBzLIOJIhF0xA/GbmLJLJ4UvTFuzO4lpgW8SjWMTIIqMIRpV7r4Ry3NK4oP6RRGkQh7+mVUqie9NXtvZjFCO8XwicitPA8feLCnyZPIYY3w9NmARe4EnPKOwXjGDMg31/FcpeKiJRQcZ9lhsTpCqau6WwnpKec4RPbEuNmIMAc7z0+TgZKbwFe+nxXgwZHhy3Ofq+NYkHjLXx3kSWPQR51Yl5pU9iwvepyrtDsxm59CtxX7wpxo217SD/ArU8rEsID3WtZPbncUh3o6yNnCoUo89nP3Rlx6pOldyLk4LOiQXzkCbPDfznVM9umf3qSywy1iY2qgCnTMjXQgwh3KzJEPHbKJsRIeYiy3rL2Ztc36exKRQJUkGxnMTdI7cYt20=
