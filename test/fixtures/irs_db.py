@@ -11,15 +11,18 @@ import os
 # after tests:
 # nuke that database
 
-def connection_string():
+def connection_string(): #pragma: no cover
     if os.environ.get("TRAVIS", False):
         return "user='postgres' host='localhost'"
     return "user='postgres' host='localhost' password='mysecretpassword'"
 
+def wrap_exception():
+    try:
+        return psycopg2.connect(connection_string())
+    except: #pragma: no cover
+        print("unable to connect to the database")
+
 @pytest.fixture()
 def db_connection():
-    try:
-        conn = psycopg2.connect(connection_string())
-        yield conn
-    except:
-        print("unable to connect to the database")
+    conn = wrap_exception()
+    yield conn
