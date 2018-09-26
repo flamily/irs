@@ -2,9 +2,15 @@ import pytest
 from irs.test.fixtures import db_connection
 
 class TestSchema():
-    def test_things(self, db_connection):
+    def test_staff_present(self, db_connection):
+        expected = {
+            "jclank": True,
+            'ckramer': True,
+            'gcostanza': True,
+        }
         with db_connection.cursor() as curs:
-            curs.execute("SELECT * FROM staff")
+            curs.execute("SELECT username FROM staff")
             for staff in curs:
                 print(staff)
-        assert False
+                assert expected.pop(staff[0])
+        assert len(expected) == 0
