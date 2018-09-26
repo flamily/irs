@@ -12,7 +12,7 @@ import os
 # nuke that database
 
 def connection_string():
-    if os.environ.has_key("TRAVIS"):
+    if os.environ.get("TRAVIS", False):
         return "user='postgres' host='localhost'"
     return "user='postgres' host='localhost' password='mysecretpassword'"
 
