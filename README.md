@@ -2,6 +2,31 @@
 
 [![Build Status](https://travis-ci.com/flamily/irs.svg?token=VUn8qmicz1VXeQANksbc&branch=master)](https://travis-ci.com/flamily/irs)
 
+## Automated Testing & Quality
+
+There are a few testing processes which run on Travis CI for each commit. The idea is to maintain the quality of the system using automated processes. It's not supposed to make your life a misery, so raise an issue if it is getting in the way.
+
+The Spice Must Flow!
+
+With that in mind, these are the processes, what they are looking for and the intended goals:
+
+### pytest
+
+Running `pytest` in the root directory will run all the unit tests.
+
+### Coverage
+
+`Coverage` is a tool to enforce test coverage. Running `coverage run -m pytest` in the root will run all the tests, but also track which lines of code are executed. Subsequently running `coverage report` prints an overview of the test coverage. Travis CI uses additional flags to fail the build when any of the files have a coverage below 100%.
+
+### pylint
+
+`pylint` automagically tells everyone when your code is garbage- it even prints a helpful score!
+
+However, there are some checks which are disabled:
+
+* `C0111` Missing docstring: Not _everything_ needs a comment
+*
+
 
 ## Database
 
