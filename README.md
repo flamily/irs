@@ -23,6 +23,12 @@ This structure will be loaded into the default `public` schema. Developers may a
 sudo -u postgres psql irs < db/test.sql
 ```
 
+### Pre-commit Checks
+Before doing your commits, git add your changed files and run `pre-commit` to do some syntax and code quality
+checks. When it can, pre-commit will correct those files for you.
+
+*Note: You will need to re-add any files that pre-commit fixes up for you.*
+
 ### Nuking
 To start from scratch, run:
 ```
