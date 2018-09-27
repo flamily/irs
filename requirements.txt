@@ -17,6 +17,7 @@ mccabe==0.6.1
 more-itertools==4.3.0
 pathlib2==2.3.2
 pluggy==0.7.1
+pre-commit==1.7.0
 py==1.6.0
 pyaml==17.12.1
 pylint==1.9.3
@@ -30,4 +31,3 @@ singledispatch==3.4.0.3
 six==1.11.0
 Werkzeug==0.14.1
 wrapt==1.10.11
-pre-commit==1.0.0
