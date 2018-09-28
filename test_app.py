@@ -12,14 +12,14 @@ def test_answer():
 
 def test_database():
     pool = None
-    if os.environ.get("TRAVIS", True):
+    if 'TRAVIS' in os.environ:
         pool = DatabaseConnectionPool("travis_ci_test", "postgres")
     else:
         # TODO: This information for a developers local database
         # would be read from some file.
         pool = DatabaseConnectionPool("irs", "postgres", "postgres")
 
-    with DatabaseConnectionPool("irs", "postgres", "postgres") as pool:
+    with pool:
         with pool.get_connection() as conn:
             with conn.get_cursor() as cur:
                 cur.execute("select username from staff")
