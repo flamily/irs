@@ -1,4 +1,5 @@
-from db.connection import DatabaseConnectionPool, DatabaseConnection, DatabaseCursor
+import os
+from db.connection import DatabaseConnectionPool
 
 
 def inc(x):
@@ -10,6 +11,13 @@ def test_answer():
 
 
 def test_database():
+    pool = None
+    if os.environ.get("TRAVIS", True):
+        pool = DatabaseConnectionPool("travis_ci_test", "postgres")
+    else:
+        # TODO: This information for a developers local database
+        # would be read from some file.
+        pool = DatabaseConnectionPool("irs", "postgres", "postgres")
 
     with DatabaseConnectionPool("irs", "postgres", "postgres") as pool:
         with pool.get_connection() as conn:

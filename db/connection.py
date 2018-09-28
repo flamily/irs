@@ -10,7 +10,7 @@ from psycopg2.pool import ThreadedConnectionPool
 class DatabaseConnectionPool:
     """Create a threaded connection pool for a PostgreSQL database."""
 
-    def __init__(self, database, user, password, host="127.0.0.1", port=5432, minconn=1, maxconn=20):
+    def __init__(self, database, user, password="", host="127.0.0.1", port=5432, minconn=1, maxconn=20):
         """Establish connection with the database and create the pool."""
         self.minconn = minconn
         self.maxconn = maxconn
