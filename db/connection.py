@@ -4,7 +4,6 @@ A collection of classes used to access the database in a controlled manner.
 Author: Andrew Pope
 Date: 28/09/2018
 """
-import psycopg2
 from psycopg2.pool import ThreadedConnectionPool
 
 
