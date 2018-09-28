@@ -1,5 +1,6 @@
 from db.connection import DatabaseConnectionPool, DatabaseConnection, DatabaseCursor
 
+
 def inc(x):
     return x + 1
 

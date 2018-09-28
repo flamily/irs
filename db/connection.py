@@ -4,15 +4,12 @@ A collection of classes used to access the database in a controlled manner.
 Author: Andrew Pope
 Date: 28/09/2018
 """
+import psycopg2
 from psycopg2.pool import ThreadedConnectionPool
 
 
 class DatabaseConnectionPool:
-    """
-    TODO: Should be a singleton (one pool only).
-
-    Inherits from psycopg2? Takes database information as input.
-    """
+    """Create a threaded connection pool for a PostgreSQL database."""
 
     def __init__(self, database, user, password, host="127.0.0.1", port=5432, minconn=1, maxconn=20):
         """Establish connection with the database and create the pool."""
@@ -59,11 +56,7 @@ class DatabaseConnectionPool:
 
 
 class DatabaseConnection:
-    """
-    TODO: Can have many instances of DatabaseConnection.
-
-    When used up, connection must be returned to pool.
-    """
+    """Establish a connection to a PostgreSQL database."""
 
     def __init__(self, pool):
         """Pull a connection from the pool and store."""
@@ -93,11 +86,7 @@ class DatabaseConnection:
 
 
 class DatabaseCursor:
-    """
-    TODO: Can have many instances of DatabaseConnection.
-
-    When used up, connection must be returned to pool.
-    """
+    """Create a cursor for database queries."""
 
     def __init__(self, connection):
         """Create a cursor from the connection."""
@@ -108,7 +97,8 @@ class DatabaseCursor:
         """Return a psycopg2 cursor for use."""
         # REVIEW: We could restrict the functions available to the cursor
         # by returning this wrapper class with limited functionality (like in
-        # the class diagarm). However, why not just allow access to all psycopg2?
+        # the class diagarm). However, why not just allow access to
+        # all psycopg2?
         self.__cursor = self.__connection.cursor()
         return self.__cursor
 
