@@ -7,7 +7,7 @@ configparser==3.5.0
 enum34==1.1.6
 Flask==1.0.2
 funcsigs==1.0.2
-futures==3.2.0
+futures==3.1.0
 isort==4.3.4
 itsdangerous==0.24
 Jinja2==2.10
@@ -17,6 +17,7 @@ mccabe==0.6.1
 more-itertools==4.3.0
 pathlib2==2.3.2
 pluggy==0.7.1
+pre-commit==1.7.0
 py==1.6.0
 pyaml==17.12.1
 pylint==1.9.3
