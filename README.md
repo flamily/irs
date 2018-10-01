@@ -28,3 +28,22 @@ To start from scratch, run:
 ```
 echo "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" | sudo -u postgres psql irs
 ```
+
+
+## Code Quality
+
+### Pre-commit Checks
+Before doing your commits, git add your changed files and run `pre-commit` to do some syntax and code quality
+checks. When it can, pre-commit will correct those files for you.
+
+To use, simply run:
+```
+git add . || git add [specific files]
+pre-commit
+git add [files which pre-commit fixed up]
+git commit -m "happy days"
+git push
+```
+
+*Note: You will need to re-add any files that pre-commit fixes up for you. If there weren't any and it 
+passed everything then you may commit what your original staged files*
