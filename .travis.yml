@@ -5,6 +5,7 @@ cache:
   - pip
 install:
     - 'pip install pipenv'
+    - 'pipenv lock --pre --clear'
     - 'pipenv install'
 services:
   - postgres
