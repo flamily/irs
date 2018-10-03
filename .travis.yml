@@ -9,6 +9,7 @@ install:
 services:
   - postgres
 before_script:
+  - pipenv shell
   - psql -v "ON_ERROR_STOP=1" -c 'create database travis_ci_test;' -U postgres
   - psql --single-transaction -v "ON_ERROR_STOP=1" -f db/schema.sql -U postgres
   - psql --single-transaction -v "ON_ERROR_STOP=1" -f db/test.sql -U postgres
