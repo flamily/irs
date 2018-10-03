@@ -49,9 +49,9 @@ def database():
     # to run parallel tests:
     # - increase max number of connections
     # - change to ThreadedConnectionPool
-    pool = psycopg2.pool.SimpleConnectionPool(1, 1, full_connection)
-    yield pool
-    pool.closeall()
+    db_pool = pool.SimpleConnectionPool(1, 1, full_connection)
+    yield db_pool
+    db_pool.closeall()
 
     # cleanup
     # have to make a new connection to the 'postgres' (default) database
