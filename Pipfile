@@ -1,0 +1,48 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[dev-packages]
+
+
+
+[packages]
+
+astroid = "*"
+atomicwrites = "*"
+attrs = "*"
+click = "*"
+coverage = "*"
+"flake8" = "*"
+flask = "*"
+isort = "*"
+itsdangerous = "*"
+"jinja2" = "*"
+lazy-object-proxy = "*"
+markupsafe = "*"
+mccabe = "*"
+more-itertools = "*"
+pluggy = "*"
+"psycopg2" = "*"
+py = "*"
+pycodestyle = "*"
+pyflakes = "*"
+pylint = "*"
+pytest = "*"
+pytest-cov = "*"
+six = "*"
+werkzeug = "*"
+wrapt = "*"
+funcsigs = "*"
+configparser = "*"
+"pathlib2" = "*"
+"enum34" = "*"
+scandir = "*"
+
+
+[requires]
+
+python_version = "3.6"
