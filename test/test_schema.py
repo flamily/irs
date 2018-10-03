@@ -1,7 +1,26 @@
-def test_staff_present(db_connection):
+def test_staff_empty(db_connection):
+    with db_connection.cursor() as curs:
+        curs.execute("SELECT username FROM staff")
+        for staff in curs:
+            print(staff)
+            assert False
+
+
+def test_insert_staff(db_connection):
+    with db_connection.cursor() as curs:
+        curs.execute(
+            "INSERT INTO staff "
+            "(username, password, first_name, last_name, permission) "
+            "values (%s, %s, %s, %s, %s)",
+            (
+                'gcostanza',
+                'password',
+                'george',
+                'Costanza',
+                'management'
+            )
+        )
     expected = {
-        "jclank": True,
-        'ckramer': True,
         'gcostanza': True,
     }
     with db_connection.cursor() as curs:
