@@ -3,6 +3,7 @@ import uuid
 
 import pytest
 import psycopg2
+from psycopg2 import pool
 
 
 # Start of test:
@@ -44,8 +45,13 @@ def database():
             cur.execute(schema.read())
     conn.close()
 
-    # yield the connection string
-    yield full_connection
+    # create a pool 🏊‍♂️
+    # to run parallel tests:
+    # - increase max number of connections
+    # - change to ThreadedConnectionPool
+    pool = psycopg2.pool.SimpleConnectionPool(1, 1, full_connection)
+    yield pool
+    pool.closeall()
 
     # cleanup
     # have to make a new connection to the 'postgres' (default) database
@@ -60,8 +66,7 @@ def database():
 @pytest.fixture()
 def db_connection(database):
     # pylint:disable=redefined-outer-name
-    # todo: connection pooling
-    conn = psycopg2.connect(database)
+    conn = database.getconn()
     yield conn
     conn.rollback()
-    conn.close()
+    database.putconn(conn)
