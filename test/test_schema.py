@@ -1,9 +1,7 @@
 def test_staff_empty(db_connection):
     with db_connection.cursor() as curs:
         curs.execute("SELECT username FROM staff")
-        for staff in curs:
-            print(staff)
-            assert False
+        assert curs.rowcount is 0
 
 
 def test_insert_staff(db_connection):

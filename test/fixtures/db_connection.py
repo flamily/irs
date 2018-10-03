@@ -14,13 +14,12 @@ import uuid
 # nuke that database
 
 
-def schema_string():
+def schema_string(): # pragma: no cover
     with open("db/schema.sql", 'r') as schema:
         for line in schema.readline():
             if line.startswith('-') or line.startswith('\n') or len(line) < 1:
                 continue
             yield line
-        # return schema.read()
 
 
 def connection_string():  # pragma: no cover
