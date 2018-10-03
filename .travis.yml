@@ -5,8 +5,7 @@ cache:
   - pip
 install:
     - 'pip install pipenv'
-    - 'pipenv lock --pre --clear'
-    - 'pipenv install'
+    - 'pipenv install --ignore-pipfile'
 services:
   - postgres
 before_script:
