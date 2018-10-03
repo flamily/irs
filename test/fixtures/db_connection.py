@@ -1,8 +1,9 @@
 import os
+import uuid
 
 import pytest
 import psycopg2
-import uuid
+
 
 # Start of test:
 # connect to box
@@ -12,14 +13,6 @@ import uuid
 
 # after tests:
 # nuke that database
-
-
-def schema_string(): # pragma: no cover
-    with open("db/schema.sql", 'r') as schema:
-        for line in schema.readline():
-            if line.startswith('-') or line.startswith('\n') or len(line) < 1:
-                continue
-            yield line
 
 
 def connection_string():  # pragma: no cover
@@ -66,6 +59,7 @@ def database():
 
 @pytest.fixture()
 def db_connection(database):
+    # pylint:disable=redefined-outer-name
     # todo: connection pooling
     conn = psycopg2.connect(database)
     yield conn
