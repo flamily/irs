@@ -1,8 +1,11 @@
 language: python
 python:
-  - '2.7'
+  - '3.6'
 cache:
   - pip
+install:
+  - 'pip install pipenv'
+  - 'pipenv install --ignore-pipfile'
 services:
   - postgres
 before_script:
