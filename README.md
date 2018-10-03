@@ -19,7 +19,7 @@ user@foo: ~/irs $ pipenv install --ignore-pipfile
 You are now ready to tango! The easiest way to see if it worked is to drop into a virtualenv and run the test suite:
 ```
 user@foo: ~/irs $ pipenv shell
-(irs-0Z00RQNN) user@foo: ~/irs $ pytest
+(irs-0Z00RQNN) user@foo: ~/irs $ pytest -p no:warnings
 ... testing ...
 (irs-0Z00RQNN) user@foo: ~/irs $ exit
 user@foo: ~/irs $
