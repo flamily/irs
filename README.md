@@ -13,7 +13,7 @@ $ pip install pipenv
 Then, to install the specific dependencies for this project, navigate to the project directory and run:
 ```
 user@foo: ~ $ cd irs
-user@foo: ~/irs $ pipenv install --ignore-pipfile
+user@foo: ~/irs $ pipenv install
 ... pipenv does it's thing ...
 ```
 You are now ready to tango! The easiest way to see if it worked is to drop into a virtualenv and run the test suite:
