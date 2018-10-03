@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cffeec3adfeb6e159bbe2f0f416fdf29d5ae9be00b4217e54c9280a4716845e9"
+            "sha256": "0050eabe313ea2a3cf49f9dea7282fd90b09f27ca19a923917cf571f23b3b47e"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -61,7 +61,6 @@
             "hashes": [
                 "sha256:5308b47021bc2340965c371f0f058cc6971a04502638d4244225c49d80db273a"
             ],
-            "markers": "python_version < '3.2'",
             "version": "==3.5.0"
         },
         "coverage": {
@@ -115,7 +114,6 @@
                 "sha256:8ad8c4783bf61ded74527bffb48ed9b54166685e4230386a9ed9b1279e2df5b1",
                 "sha256:2d81cbbe0e73112bdfe6ef8576f2238f2ba27dd0d55752a776c41d38b7da2850"
             ],
-            "markers": "python_version < '3.4'",
             "version": "==1.1.6"
         },
         "flake8": {
@@ -137,7 +135,6 @@
                 "sha256:330cc27ccbf7f1e992e69fef78261dc7c6569012cf397db8d3de0234e6c937ca",
                 "sha256:a7bb0f2cf3a3fd1ab2732cb49eba4252c2af4240442415b4abce3b87022a8f50"
             ],
-            "markers": "python_version < '3.0'",
             "version": "==1.0.2"
         },
         "futures": {
@@ -228,7 +225,6 @@
                 "sha256:d1aa2a11ba7b8f7b21ab852b1fb5afb277e1bb99d5dfc663380b5015c0d80c5a",
                 "sha256:8eb170f8d0d61825e09a95b38be068299ddeda82f35e96c3301a8a5e7604cb83"
             ],
-            "markers": "python_version < '3.6'",
             "version": "==2.3.2"
         },
         "pluggy": {
@@ -329,7 +325,6 @@
                 "sha256:a5e232a0bf188362fa00123cc0bb842d363a292de7126126df5527b6a369586a",
                 "sha256:44975e209c4827fc18a3486f257154d34ec6eaec0f90fef0cca1caa482db7064"
             ],
-            "markers": "python_version < '3.5'",
             "version": "==1.9.0"
         },
         "six": {
