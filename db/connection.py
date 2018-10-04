@@ -24,7 +24,7 @@ class DatabaseConnectionPool:
             # management
             raise Exception(
                 "A connection can only be obtained within a context manager."
-            )
+            )  # pragma: no cover
 
         return DatabaseConnection(self.__pool)
 
@@ -35,7 +35,7 @@ class DatabaseConnectionPool:
             self.minconn,
             self.maxconn,
             self.connection_str
-        )  # REVIEW: Do we care about allowing this object ot be threaded?
+        )
 
         return self
 
@@ -61,7 +61,7 @@ class DatabaseConnection:
             # management
             raise Exception(
                 "A cursor can only be obtained within a context manager."
-            )
+            )  # pragma: no cover
 
         return DatabaseCursor(self.__connection)
 
@@ -70,7 +70,7 @@ class DatabaseConnection:
         if self.__connection is None:
             raise Exception(
                 "A connection must occur within a context manager."
-            )
+            )  # pragma: no cover
 
         self.__connection.rollback()
 
