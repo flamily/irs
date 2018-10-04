@@ -2,58 +2,43 @@
 
 [![Build Status](https://travis-ci.com/flamily/irs.svg?token=VUn8qmicz1VXeQANksbc&branch=master)](https://travis-ci.com/flamily/irs)
 
-## Setup development environment
-### Installing python dependencies with `pipenv`
+## Development environment
 
-Pipenv, serves to simplify the management of dependencies in Python-based projects. It brings together Pip, Pipfile and Virtualenv to provide a straightforward and powerful approach to package management. To get started, install `pipenv` using your pip manager for python3:
+Please make sure:
+1. You're running a linux based machine.
+2. Installed postgresql and during this process, the default postgres user has been created.
+3. The postgresql localhost server is running.
+
+### Automated Setup
+
+_Note: the automated setup will create a db for you as postgres user and also load the schema, install requirements pipenv and requirems as well as the pre-commit hooks_
+
+To run the automated setup, please ensure that you are at the root irs folder:
 ```
-$ pip install pipenv
+cd irs
 ```
-Then, to install the specific dependencies for this project, navigate to the project directory and run:
+then run the script:
 ```
-user@foo: ~ $ cd irs
-user@foo: ~/irs $ pipenv install --ignore-pipfile
-... pipenv does it's thing ...
+./setup.sh
 ```
-You are now ready to tango! The easiest way to see if it worked is to drop into a virtualenv and run the test suite:
-```
-user@foo: ~/irs $ pipenv shell
-(irs-0Z00RQNN) user@foo: ~/irs $ pytest
-... testing ...
-(irs-0Z00RQNN) user@foo: ~/irs $ exit
-user@foo: ~/irs $
-```
-For you to be able to run any of the applications, everything must occur within a `pipenv shell`, or,  commands must be prefaced with `pipenv run`:
+Viola! You're good to go.
+
+### Manual Setup
+
+For manual setup:
+
+1. Create the [irs database](docs/database.md#database) and load the [schema](docs/database#loadtheschema).
+2. Install [pipenv](docs/python_dependencies#pipenv) to manage depencies.
+3. Intall [pre-commit](docs/pre_commit) to run code checks on commit.
+
+## Using Pipenv
+
+Pipenv, serves to simplify the management of dependencies in Python-based projects. It brings together Pip, Pipfile and Virtualenv to provide a straightforward and powerful approach to package management.
+
+For you to be able to run any of the applications, everything must occur within a `pipenv shell`, or commands must be prefaced with `pipenv run`:
 ```
 $ pipenv run python some_app.py
 ```
-
-### Database
-
-Instructions for local machine database development. The following assumes that you:
-
-1. Are running on a linux based machine.
-2. Installed postgresql and during this process, the default postgres user has been created.
-3. The postgresql localhost server is running.
-4. You have created a database called `irs`.
-
-#### Creation
-After creating a new database called irs, run this command from terminal to generate schema:
-```
-$ sudo -u postgres psql irs < db/schema.sql
-```
-This structure will be loaded into the default `public` schema. Developers may also want to load some test records to their database. They can do so with the `test.sql` script:
-
-```
-$ sudo -u postgres psql irs < db/test.sql
-```
-
-#### Nuking
-To start from scratch, run:
-```
-$ echo "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" | sudo -u postgres psql irs
-```
-
 
 ## Automated Testing & Quality
 
@@ -62,21 +47,10 @@ There are a few testing processes which run on Travis CI for each commit. The id
 With that in mind, these are the processes, what they are looking for and the intended goals:
 
 ### Pre-commit Checks
-Before doing your commits, git add your changed files and run `pre-commit` to do some syntax and code quality
-checks. When it can, pre-commit will correct those files for you.
+#### 1. Pre-commit hooks
+The pre-commit checks will run when you make a commit. This includes flake8, pylint and other code style checks. When it can, pre-commit will correct those files for you. To find out more about the specific pre-commit checks, head over to [pre-commit](docs/pre_commit.md).
 
-To use, simply run:
-```
-$ git add {files you want to commit}
-$ pre-commit
-... some stuff happens ...
-$ git add {files that were modified by pre-commit}
-$ git commit -m "happy days"
-$ git push
-```
-
-*Note: You will need to re-add any files that pre-commit fixes up for you. If there weren't any and it
-passed everything then you may commit what your original staged files*
+*Note: You will need to re-add any files that pre-commit fixes up for you. If there weren't any and it passed everything then you may commit what your original staged files*
 
 ### pytest
 
@@ -85,14 +59,3 @@ Running `pytest` in the root directory will run all the unit tests. Pytest is ve
 ### Coverage
 
 `Coverage` is a tool to enforce test coverage. Running `coverage run -m pytest` in the root will run all the tests, but also track which lines of code are executed. Subsequently running `coverage report` prints an overview of the test coverage. Travis CI uses additional flags to fail the build when any of the files have a coverage below 100%. The goal is to exercise all of the code, have no dead bits and know for sure that all of it works.
-
-### pylint
-
-`pylint` automagically tells everyone when your code is garbage- it even prints a helpful score! Automatic checks against best practices will keep the code clean and neat. However, there are some checks which are disabled:
-
-* `C0111` Missing docstring: Not _everything_ needs a comment
-
-Running the following will find all python files and run the linter over them:
-```
-find . -iname "*.py" | xargs pylint
-```
