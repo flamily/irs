@@ -11,7 +11,8 @@ def insert_staff(db_cursor, username, permission):
     db_cursor.execute(
         "INSERT INTO staff "
         "(username, password, first_name, last_name, permission) "
-        "values (%s, %s, %s, %s, %s)",
+        "VALUES (%s, %s, %s, %s, %s) "
+        "RETURNING staff_id",
         (
             username,
             'password',
@@ -27,7 +28,8 @@ def insert_restaurant_table(db_cursor, cap, width, height, shape):
     db_cursor.execute(
         "INSERT INTO restaurant_table "
         "(capacity, x_pos, y_pos, width, height, shape) "
-        "values (%s, %s, %s, %s, %s, %s)",
+        "VALUES (%s, %s, %s, %s, %s, %s) "
+        "RETURNING restaurant_table_id",
         (
             cap,
             0,
