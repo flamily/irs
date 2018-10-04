@@ -32,7 +32,16 @@ def test_valid(db_connection):
     assert len(expected) is 0
 
 
-def test_non_existant_table(db_connection):
+def test_invalid_permission(db_connection):
+    """Attempt to bestow an invalid permission."""
     with db_connection.cursor() as curs:
-        with pytest.raises(psycopg2.ProgrammingError):
-            curs.execute("SELECT username FROM wew_lad")
+        with pytest.raises(psycopg2.DataError):
+            insert_staff_record(curs, 'newman', 'soup-nazi')
+
+
+def test_duplicate_user(db_connection):
+    """Attempt to create two staff records with same username."""
+    with db_connection.cursor() as curs:
+        insert_staff_record(curs, 'kramer', 'management')
+        with pytest.raises(psycopg2.IntegrityError):
+            insert_staff_record(curs, 'kramer', 'wait_staff')
