@@ -10,21 +10,16 @@ from psycopg2.pool import ThreadedConnectionPool
 class DatabaseConnectionPool:
     """Create a threaded connection pool for a PostgreSQL database."""
 
-    def __init__(self, database, user, password="", host="127.0.0.1", port=5432, minconn=1, maxconn=20):
+    def __init__(self, connection_str, minconn=1, maxconn=20):
         """Establish connection with the database and create the pool."""
         self.minconn = minconn
         self.maxconn = maxconn
-        self.database = database
-        self.user = user
-        self.password = password
-        self.host = host
-        self.port = port
+        self.connection_str = connection_str
         self.__pool = None
 
     def get_connection(self):
         """Get a connection from the pool."""
         if self.__pool is None:
-            # TODO: Do we want custom irs exceptions?
             # Make sure callers use the `with` pattern for automatic context
             # management
             raise Exception(
@@ -37,21 +32,18 @@ class DatabaseConnectionPool:
         """Return a database connection pool object."""
         # Establish a connection pool to the database
         self.__pool = ThreadedConnectionPool(
-            minconn=self.minconn,
-            maxconn=self.maxconn,
-            database=self.database,
-            user=self.user,
-            password=self.password,
-            host=self.host,
-            port=self.port,
+            self.minconn,
+            self.maxconn,
+            self.connection_str
         )  # REVIEW: Do we care about allowing this object ot be threaded?
 
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         """Close the connection pool."""
-        if (self.__pool):
+        if self.__pool:
             self.__pool.closeall()
+            self.__pool = None
 
 
 class DatabaseConnection:
@@ -73,6 +65,15 @@ class DatabaseConnection:
 
         return DatabaseCursor(self.__connection)
 
+    def rollback(self):
+        """Rollback any commits that may have happend in the transaction."""
+        if self.__connection is None:
+            raise Exception(
+                "A connection must occur within a context manager."
+            )
+
+        self.__connection.rollback()
+
     def __enter__(self):
         """Return a connection from the pool."""
         self.__connection = self.__pool.getconn()
@@ -80,8 +81,9 @@ class DatabaseConnection:
 
     def __exit__(self, exc_type, exc_value, traceback):
         """Return a connection to the pool."""
-        if (self.__connection):
+        if self.__connection:
             self.__pool.putconn(self.__connection)
+            self.__connection = None
 
 
 class DatabaseCursor:
@@ -94,14 +96,11 @@ class DatabaseCursor:
 
     def __enter__(self):
         """Return a psycopg2 cursor for use."""
-        # REVIEW: We could restrict the functions available to the cursor
-        # by returning this wrapper class with limited functionality (like in
-        # the class diagarm). However, why not just allow access to
-        # all psycopg2?
         self.__cursor = self.__connection.cursor()
         return self.__cursor
 
     def __exit__(self, exc_type, exc_value, traceback):
         """Close the cursor."""
-        if (self.__cursor):
+        if self.__cursor:
             self.__cursor.close()
+            self.__cursor = None

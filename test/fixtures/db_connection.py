@@ -1,16 +1,15 @@
-'''
-Purpose Create a database for running unit tests
-Author Robin Wohlers-Reichel
-Date 2018-10-04
-'''
+"""
+Create a database for running unit tests.
 
+Author: Robin Wohlers-Reichel
+Date: 2018-10-04
+"""
 import os
 import uuid
 
 import pytest
 import psycopg2
-from psycopg2 import pool
-
+from irs.db.connection import DatabaseConnectionPool
 
 # Start of test:
 # connect to box
@@ -54,10 +53,9 @@ def database():
     # create a pool 🏊‍♂️
     # to run parallel tests:
     # - increase max number of connections
-    # - change to ThreadedConnectionPool
-    db_pool = pool.SimpleConnectionPool(1, 1, full_connection)
-    yield db_pool
-    db_pool.closeall()
+    db_pool = DatabaseConnectionPool(full_connection, 1, 1)
+    with db_pool:
+        yield db_pool
 
     # cleanup
     # have to make a new connection to the 'postgres' (default) database
@@ -70,9 +68,9 @@ def database():
 
 
 @pytest.fixture()
-def db_connection(database):
+def db_cursor(database):
     # pylint:disable=redefined-outer-name
-    conn = database.getconn()
-    yield conn
-    conn.rollback()
-    database.putconn(conn)
+    with database.get_connection() as conn:
+        with conn.get_cursor() as curr:
+            yield curr
+        conn.rollback()
