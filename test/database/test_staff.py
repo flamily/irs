@@ -1,5 +1,5 @@
 """
-These tests check the simple and advanced constraints of the staff relation.
+These tests check the constraints of the staff relation.
 
 Author: Andrew Pope
 Date: 04/10/2018
@@ -12,7 +12,7 @@ from irs.test.database.util import insert_staff
 def test_empty_table(db_connection):
     """Check that the staff table has no records."""
     with db_connection.cursor() as curs:
-        curs.execute("SELECT username FROM staff")
+        curs.execute("SELECT * FROM staff")
         assert curs.rowcount is 0
 
 

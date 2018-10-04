@@ -39,3 +39,17 @@ def insert_restaurant_table(db_cursor, cap, width, height, shape):
             shape
         )
     )
+
+
+def insert_menu_item(db_cursor, name):
+    """Insert a menu item."""
+    db_cursor.execute(
+        "INSERT INTO menu_item "
+        "(name, description) "
+        "VALUES (%s, %s) "
+        "RETURNING menu_item_id",
+        (
+            name,
+            'A really hot and spicy dish.'
+        )
+    )
