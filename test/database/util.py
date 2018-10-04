@@ -59,3 +59,20 @@ def insert_menu_item(db_cursor, name):
     )
 
     return db_cursor.fetchone()[0]
+
+
+def insert_event(db_cursor, description, restaurant_table_id, staff_id):
+    """Insert a menu item."""
+    db_cursor.execute(
+        "INSERT INTO event "
+        "(description, restaurant_table_id, staff_id) "
+        "VALUES (%s, %s, %s) "
+        "RETURNING event_id",
+        (
+            description,
+            restaurant_table_id,
+            staff_id
+        )
+    )
+
+    return db_cursor.fetchone()[0]

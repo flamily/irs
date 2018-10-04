@@ -48,3 +48,6 @@ def test_invalid_shape(db_connection):
     with db_connection.cursor() as curs:
         with pytest.raises(psycopg2.DataError):
             insert_restaurant_table(curs, 2, 5, 1, 'not-a-shape')
+
+# TODO:
+# - Check that a created table has an associated event (will require a transaction)
