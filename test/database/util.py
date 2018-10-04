@@ -22,6 +22,8 @@ def insert_staff(db_cursor, username, permission):
         )
     )
 
+    return db_cursor.fetchone()[0]
+
 
 def insert_restaurant_table(db_cursor, cap, width, height, shape):
     """Insert a restaurant table to the database."""
@@ -40,6 +42,8 @@ def insert_restaurant_table(db_cursor, cap, width, height, shape):
         )
     )
 
+    return db_cursor.fetchone()[0]
+
 
 def insert_menu_item(db_cursor, name):
     """Insert a menu item."""
@@ -53,3 +57,5 @@ def insert_menu_item(db_cursor, name):
             'A really hot and spicy dish.'
         )
     )
+
+    return db_cursor.fetchone()[0]

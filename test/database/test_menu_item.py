@@ -9,26 +9,18 @@ import psycopg2
 from irs.test.database.util import insert_menu_item
 
 
-def test_empty_table(db_connection):
-    """Check that the menu item table has no records."""
-    with db_connection.cursor() as curs:
-        curs.execute("SELECT * FROM menu_item")
-        assert curs.rowcount is 0
-
-
 def test_valid(db_connection):
     """Enter a valid menu item."""
     name = 'spicy linguine'
     with db_connection.cursor() as curs:
-        insert_menu_item(curs, name)
-        id = curs.fetchone()[0]
+        mi_id = insert_menu_item(curs, name)
 
     with db_connection.cursor() as curs:
         curs.execute(
             "SELECT name FROM menu_item WHERE menu_item_id = %s AND name = %s",
-            (id, name)
+            (mi_id, name)
         )
-        assert curs.fetchone()
+        assert curs.rowcount is 1
 
 
 def test_duplicate_item(db_connection):

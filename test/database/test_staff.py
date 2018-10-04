@@ -9,25 +9,17 @@ import psycopg2
 from irs.test.database.util import insert_staff
 
 
-def test_empty_table(db_connection):
-    """Check that the staff table has no records."""
-    with db_connection.cursor() as curs:
-        curs.execute("SELECT * FROM staff")
-        assert curs.rowcount is 0
-
-
 def test_valid(db_connection):
     """Enter a valid staff record."""
     with db_connection.cursor() as curs:
-        insert_staff(curs, 'gcostanza', 'management')
-        id = curs.fetchone()[0]
+        s_id = insert_staff(curs, 'gcostanza', 'management')
 
     with db_connection.cursor() as curs:
         curs.execute(
             "SELECT username FROM staff WHERE staff_id = %s AND username = %s",
-            (id, "gcostanza")
+            (s_id, "gcostanza")
         )
-        assert curs.fetchone()
+        assert curs.rowcount is 1
 
 
 def test_invalid_permission(db_connection):

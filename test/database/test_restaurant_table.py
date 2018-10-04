@@ -9,25 +9,17 @@ import psycopg2
 from irs.test.database.util import insert_restaurant_table
 
 
-def test_empty_table(db_connection):
-    """Check that the table has no records."""
-    with db_connection.cursor() as curs:
-        curs.execute("SELECT * FROM restaurant_table")
-        assert curs.rowcount is 0
-
-
 def test_valid(db_connection):
     """Enter a valid record."""
     with db_connection.cursor() as curs:
-        insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
-        id = curs.fetchone()[0]
+        rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
 
     with db_connection.cursor() as curs:
         curs.execute(
             "SELECT * FROM restaurant_table WHERE restaurant_table_id = %s",
-            (id,)
+            (rt_id,)
         )
-        assert curs.fetchone()
+        assert curs.rowcount is 1
 
 
 def test_invalid_capacity(db_connection):
