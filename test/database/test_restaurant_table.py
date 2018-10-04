@@ -6,9 +6,7 @@ Date: 04/10/2018
 """
 import pytest
 import psycopg2
-from irs.test.database.util import (
-    insert_staff, insert_restaurant_table
-)
+from irs.test.database.util import insert_restaurant_table
 
 
 def test_empty_table(db_connection):
@@ -22,12 +20,14 @@ def test_valid(db_connection):
     """Enter a valid record."""
     with db_connection.cursor() as curs:
         insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+        id = curs.fetchone()[0]
 
     with db_connection.cursor() as curs:
         curs.execute(
-            "SELECT count(*) FROM restaurant_table"
+            "SELECT * FROM restaurant_table WHERE restaurant_table_id = %s",
+            (id,)
         )
-        assert curs.fetchone()[0] is 1
+        assert curs.fetchone()
 
 
 def test_invalid_capacity(db_connection):

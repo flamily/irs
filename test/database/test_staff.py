@@ -20,16 +20,14 @@ def test_valid(db_connection):
     """Enter a valid staff record."""
     with db_connection.cursor() as curs:
         insert_staff(curs, 'gcostanza', 'management')
+        id = curs.fetchone()[0]
 
-    expected = {
-        'gcostanza': True,
-    }
     with db_connection.cursor() as curs:
-        curs.execute("SELECT username FROM staff")
-        for staff in curs:
-            print(staff)
-            assert expected.pop(staff[0])
-    assert len(expected) is 0
+        curs.execute(
+            "SELECT username FROM staff WHERE staff_id = %s AND username = %s",
+            (id, "gcostanza")
+        )
+        assert curs.fetchone()
 
 
 def test_invalid_permission(db_connection):
