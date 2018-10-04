@@ -1,3 +1,9 @@
+'''
+Purpose Create a database for running unit tests
+Author Robin Wohlers-Reichel
+Date 2018-10-04
+'''
+
 import os
 import uuid
 

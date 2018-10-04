@@ -1,7 +1,17 @@
+import pytest
+import psycopg2
+
+
 def test_staff_empty(db_connection):
     with db_connection.cursor() as curs:
         curs.execute("SELECT username FROM staff")
         assert curs.rowcount is 0
+
+
+def test_non_existant_table(db_connection):
+    with db_connection.cursor() as curs:
+        with pytest.raises(psycopg2.ProgrammingError):
+            curs.execute("SELECT username FROM wew_lad")
 
 
 def test_insert_staff(db_connection):
