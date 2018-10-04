@@ -21,6 +21,8 @@ then run the script:
 ```
 ./setup.sh
 ```
+It might prompt you for a password as it runs some commands as a sudo user. Just type in your password.
+
 Viola! You're good to go.
 
 ### Manual Setup
