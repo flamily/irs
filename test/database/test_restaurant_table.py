@@ -16,18 +16,17 @@ def test_empty_table(db_connection):
         assert curs.rowcount is 0
 
 
-def test_valid(database_snapshot):
+def test_valid(db_connection):
     """Enter a valid record."""
-    with database_snapshot.getconn() as conn:
-        with conn.cursor() as curs:
-            rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+    with db_connection.cursor() as curs:
+        rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
 
-        with conn.cursor() as curs:
-            curs.execute(
-                "SELECT * FROM restaurant_table WHERE restaurant_table_id=%s",
-                (rt_id,)
-            )
-            assert curs.rowcount is 1
+    with db_connection.cursor() as curs:
+        curs.execute(
+            "SELECT * FROM restaurant_table WHERE restaurant_table_id=%s",
+            (rt_id,)
+        )
+        assert curs.rowcount is 1
 
 
 def test_no_event(database_snapshot):
