@@ -87,6 +87,7 @@ def test_valid_changes(db_connection):
 
 def assert_invalid_change(db_connection, start_e, end_e, rt_id, s_id, msg):
     """Assert that a change between a start and end event is invalid."""
+    # pylint: disable=R0913
     print('invalid event change: {} -> {}'.format(start_e, end_e))
     with db_connection.cursor() as curs:
         e_id = insert_event(curs, start_e, rt_id, s_id)

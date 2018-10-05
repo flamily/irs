@@ -42,10 +42,10 @@ def test_invalid_types(db_connection):
     invalid = ['ready', 'maintaining']
     msg = 'a customer event can only be of types: seated, attended or paid'
     with db_connection.cursor() as curs:
-        for type in invalid:
+        for inv in invalid:
             s_id = insert_staff(curs, 'gcostanza', 'management')
             rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
-            e_id = insert_event(curs, type, rt_id, s_id)
+            e_id = insert_event(curs, inv, rt_id, s_id)
             r_id = insert_reservation(curs, 1)
 
             with pytest.raises(psycopg2.InternalError) as excinfo:

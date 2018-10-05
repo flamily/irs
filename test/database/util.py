@@ -14,11 +14,7 @@ def insert_staff(db_cursor, username, permission):
         "VALUES (%s, %s, %s, %s, %s) "
         "RETURNING staff_id",
         (
-            username,
-            'password',
-            'John',
-            'Doe',
-            permission
+            username, 'password', 'John', 'Doe', permission
         )
     )
 
@@ -33,12 +29,7 @@ def insert_restaurant_table(db_cursor, cap, width, height, shape):
         "VALUES (%s, %s, %s, %s, %s, %s) "
         "RETURNING restaurant_table_id",
         (
-            cap,
-            0,
-            1,
-            width,
-            height,
-            shape
+            cap, 0, 1, width, height, shape
         )
     )
 
@@ -53,8 +44,7 @@ def insert_menu_item(db_cursor, name):
         "VALUES (%s, %s) "
         "RETURNING menu_item_id",
         (
-            name,
-            'A really hot and spicy dish.'
+            name, 'A really hot and spicy dish.'
         )
     )
 
@@ -69,9 +59,7 @@ def insert_event(db_cursor, description, restaurant_table_id, staff_id):
         "VALUES (%s, %s, %s) "
         "RETURNING event_id",
         (
-            description,
-            restaurant_table_id,
-            staff_id
+            description, restaurant_table_id, staff_id
         )
     )
 
@@ -100,8 +88,7 @@ def insert_customer_event(db_cursor, e_id, r_id):
         "(event_id, reservation_id) "
         "VALUES (%s, %s) ",
         (
-            e_id,
-            r_id
+            e_id, r_id
         )
     )
 
@@ -113,8 +100,33 @@ def insert_satisfaction(db_cursor, e_id, r_id, score):
         "(event_id, reservation_id, score) "
         "VALUES (%s, %s, %s) ",
         (
-            e_id,
+            e_id, r_id, score
+        )
+    )
+
+
+def insert_customer_order(db_cursor, r_id):
+    """Insert a customer order."""
+    db_cursor.execute(
+        "INSERT INTO customer_order "
+        "(reservation_id) "
+        "VALUES (%s) "
+        "RETURNING customer_order_id",
+        (
             r_id,
-            score
+        )
+    )
+
+    return db_cursor.fetchone()[0]
+
+
+def insert_order_item(db_cursor, co_id, mi_id, quantity):
+    """Insert a customer order."""
+    db_cursor.execute(
+        "INSERT INTO order_item "
+        "(customer_order_id, menu_item_id, quantity) "
+        "VALUES (%s, %s, %s)",
+        (
+            co_id, mi_id, quantity
         )
     )
