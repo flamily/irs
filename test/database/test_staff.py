@@ -9,6 +9,13 @@ import psycopg2
 from irs.test.database.util import insert_staff
 
 
+def test_empty_table(db_connection):
+    """Check that the staff table has no records."""
+    with db_connection.cursor() as curs:
+        curs.execute("SELECT * FROM staff")
+        assert curs.rowcount is 0
+
+
 def test_valid(db_connection):
     """Enter a valid staff record."""
     with db_connection.cursor() as curs:

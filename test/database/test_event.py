@@ -11,19 +11,28 @@ from irs.test.database.util import (
 )
 
 
-def test_valid(db_connection):
-    """Enter a valid event record."""
+def test_empty_table(db_connection):
+    """Check that the event table has no records."""
     with db_connection.cursor() as curs:
-        s_id = insert_staff(curs, 'gcostanza', 'management')
-        rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
-        e_id = insert_event(curs, 'ready', rt_id, s_id)
+        curs.execute("SELECT * FROM event")
+        assert curs.rowcount is 0
 
-    with db_connection.cursor() as curs:
-        curs.execute(
-            "SELECT * FROM event WHERE event_id = %s",
-            (e_id,)
-        )
-        assert curs.rowcount is 1
+
+def test_valid(database_snapshot):
+    """Enter a valid event record."""
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            s_id = insert_staff(curs, 'gcostanza', 'management')
+            rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+            e_id = insert_event(curs, 'ready', rt_id, s_id)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            curs.execute(
+                "SELECT * FROM event WHERE event_id = %s",
+                (e_id,)
+            )
+            assert curs.rowcount is 1
 
 # TODO:
 # - Tests that check invalid event type
