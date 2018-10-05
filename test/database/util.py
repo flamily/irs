@@ -52,7 +52,7 @@ def insert_menu_item(db_cursor, name):
 
 
 def insert_event(db_cursor, description, restaurant_table_id, staff_id):
-    """Insert a menu item."""
+    """Insert an event."""
     db_cursor.execute(
         "INSERT INTO event "
         "(description, restaurant_table_id, staff_id) "

@@ -30,7 +30,7 @@ def test_valid(db_connection):
 
 
 def test_no_customer_event(database_snapshot):
-    """Assert a commited reservation will fail without a customer event."""
+    """Assert a committed reservation will fail without a customer event."""
     error_msg = 'a reservation needs at least one associated customer event'
 
     with database_snapshot.getconn() as conn:

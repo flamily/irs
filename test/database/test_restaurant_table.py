@@ -30,7 +30,7 @@ def test_valid(db_connection):
 
 
 def test_no_event(database_snapshot):
-    """Assert that a commited resturant table will error without an event."""
+    """Assert that a committed restaurant table will error without an event."""
     expected_error = 'a restaurant table needs at least one associated event'
 
     with database_snapshot.getconn() as conn:
