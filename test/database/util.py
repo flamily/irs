@@ -76,3 +76,45 @@ def insert_event(db_cursor, description, restaurant_table_id, staff_id):
     )
 
     return db_cursor.fetchone()[0]
+
+
+def insert_reservation(db_cursor, group_size):
+    """Insert a reservation."""
+    db_cursor.execute(
+        "INSERT INTO reservation "
+        "(group_size) "
+        "VALUES (%s) "
+        "RETURNING reservation_id",
+        (
+            group_size,
+        )
+    )
+
+    return db_cursor.fetchone()[0]
+
+
+def insert_customer_event(db_cursor, e_id, r_id):
+    """Insert a customer_event."""
+    db_cursor.execute(
+        "INSERT INTO customer_event "
+        "(event_id, reservation_id) "
+        "VALUES (%s, %s) ",
+        (
+            e_id,
+            r_id
+        )
+    )
+
+
+def insert_satisfaction(db_cursor, e_id, r_id, score):
+    """Insert a satisfaction."""
+    db_cursor.execute(
+        "INSERT INTO satisfaction "
+        "(event_id, reservation_id, score) "
+        "VALUES (%s, %s, %s) ",
+        (
+            e_id,
+            r_id,
+            score
+        )
+    )
