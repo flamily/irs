@@ -1,9 +1,9 @@
-'''
-Purpose Create a database for running unit tests
-Author Robin Wohlers-Reichel
-Date 2018-10-04
-'''
+"""
+Create databases for running unit tests.
 
+Author: Robin Wohlers-Reichel, Andrew Pope
+Date: 2018-10-04
+"""
 import os
 import uuid
 
@@ -28,8 +28,7 @@ def connection_string():  # pragma: no cover
     return "user='postgres' host='localhost'"
 
 
-@pytest.fixture(scope="session")
-def database():
+def __database_setup():
     identifier = uuid.uuid4().hex
     db_name = "irs_{}".format(identifier)
     schema_name = "irs_schema_{}".format(identifier)
@@ -67,6 +66,22 @@ def database():
     with conn.cursor() as cur:
         cur.execute('DROP DATABASE {};'.format(db_name))
     conn.close()
+
+
+@pytest.fixture()
+def database_snapshot():
+    """
+    Yield a temporary 'snapshot' database.
+
+    To only be used in scenarios where we need to test transactions.
+    """
+    yield from __database_setup()
+
+
+@pytest.fixture(scope="session")
+def database():
+    """Yield a database that is persistent for the entire session."""
+    yield from __database_setup()
 
 
 @pytest.fixture()

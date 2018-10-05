@@ -159,7 +159,7 @@ LANGUAGE plpgsql;
 /* Function: Validates that a customer event is of the right type.
  * Purpose: Called by the 'Customer event is valid' trigger, this function checks
  *          if a newly created customer event is valid as defined by the buisness rules.
- * Returns: NULL if the customer event is valid. Otherwise, an exception will be raised.
+ * Returns: NEW if the customer event is valid. Otherwise, an exception will be raised.
  */
 CREATE OR REPLACE FUNCTION validate_customer_event()
 RETURNS TRIGGER AS
@@ -168,7 +168,7 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM event WHERE event.event_id = NEW.event_id AND description IN ('seated', 'attending', 'paid')) THEN
     RAISE EXCEPTION 'a customer event can only be of types: seated, attended or paid';
   END IF;
-  RETURN NULL;
+  RETURN NEW;
 END;
 $$
 LANGUAGE plpgsql;
@@ -176,7 +176,7 @@ LANGUAGE plpgsql;
 /* Function: Validates the state change on a resturant table.
  * Purpose: Called by the 'State change is valid' trigger, this function checks
  *          if a newly created event is valid as defined by the buisness rules.
- * Returns: NULL if the new event is valid. Otherwise, an exception will be raised.
+ * Returns: NEW if the new event is valid. Otherwise, an exception will be raised.
  */
 CREATE OR REPLACE FUNCTION validate_state_change()
 RETURNS TRIGGER AS
@@ -252,9 +252,8 @@ CREATE CONSTRAINT TRIGGER reservation_has_customer_event
  *          buisness rules) in the events table.
  *          Valid events include seated, attended, and paid.
  */
-CREATE CONSTRAINT TRIGGER customer_event_is_valid
-  AFTER INSERT ON customer_event
-  DEFERRABLE
+CREATE TRIGGER customer_event_is_valid
+  BEFORE INSERT ON customer_event
   FOR EACH ROW
   EXECUTE PROCEDURE validate_customer_event();
 
