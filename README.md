@@ -15,7 +15,7 @@ user@foo: ~ $ cd irs
 user@foo: ~/irs $ pipenv install --ignore-pipfile
 ... pipenv does it's thing ...
 ```
-You are now ready to tango! The easiest way to see if it worked is to drop into a virtualenv and run the test suite:
+You are now ready to tango! The easiest way to see if it worked is to drop into a virtualenv and run the test suite (make sure you have postgres up and [running first](#database)):
 ```
 user@foo: ~/irs $ pipenv shell
 (irs-0Z00RQNN) user@foo: ~/irs $ pytest
@@ -30,6 +30,14 @@ $ pipenv run python some_app.py
 
 ### Database
 
+For most developers, you shouldn't worry about fiddling with databases. In terms of automated unit testing however, you will need an instance of postgres running. As such, use `docker` to handle all the setup for you:
+```
+$ docker run --rm -p 5432:5432 postgres
+```
+
+If, however, you do need to hack on the database, then read on...
+#### Creation
+
 Instructions for local machine database development. The following assumes that you:
 
 1. Are running on a linux based machine.
@@ -37,7 +45,7 @@ Instructions for local machine database development. The following assumes that 
 3. The postgresql localhost server is running.
 4. You have created a database called `irs`.
 
-#### Creation
+
 After creating a new database called irs, run this command from terminal to generate schema:
 ```
 $ sudo -u postgres psql irs < db/schema.sql
@@ -78,9 +86,14 @@ $ git push
 *Note: You will need to re-add any files that pre-commit fixes up for you. If there weren't any and it
 passed everything then you may commit what your original staged files*
 
-### pytest
+### Testing
 
 Running `pytest` in the root directory will run all the unit tests. Pytest is verifying for implementation correctness and to make sure there are no regressions. The idea is to ensure that the code is exercised and we know that it works.
+```
+$ pytest
+```
+Before running `pytest`, make sure you are using docker to spin up a [testing database](#database).
+
 
 ### Coverage
 
