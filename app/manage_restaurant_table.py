@@ -66,8 +66,38 @@ class RestaurantTable():
         """Create a restaurant table."""
         self.id = id
         self.shape = Shape(str(shape))  # You can pass the enum, or a string!
-        self.coordinate = None  # Coordinate(0, 0)
+        self.coordinate = coordinate  # Expects a coordinate named tuple
         self.state = State(str(state))
         self.capacity = capacity
         self.width = width
         self.height = height
+
+
+class ManageRestaurantTable():
+    """Class for managing restaurant tables."""
+
+    def __init__(self, db_connection):
+        """
+        Initialise the manager.
+
+        :param db_connection: A psycopg2 connection to the database.
+        """
+        self.db_connection = db_connection
+
+    def list(self):
+        """List of all the restaurant tables.
+
+        :return: Return a list of restaurant tables, and a template id.
+        """
+        with self.db_connection.cursor() as curs:
+            curs.execute(
+                "SELECT rt.*, et.description "
+                "FROM restaurant_table rt "
+                "JOIN event et on et.restaurant_table_id=rt.restaurant_table_id "
+                "WHERE et.event_id = ("
+                " SELECT e.event_id FROM event e "
+                " WHERE e.restaurant_table_id = rt.restaurant_table_id "
+                " ORDER BY event_dt desc LIMIT 1"
+                ")"
+            )
+            print(curs.fetchmany())

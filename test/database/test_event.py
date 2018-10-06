@@ -73,6 +73,7 @@ def test_valid_changes(db_connection):
         ('ready', 'maintaining'),
         ('maintaining', 'ready'),
         ('seated', 'attending'),
+        ('seated', 'paid'),
         ('attending', 'attending'),
         ('attending', 'paid'),
         ('paid', 'ready')
