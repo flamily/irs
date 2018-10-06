@@ -3,10 +3,7 @@ var htmlCanvas = document.createElement("canvas");
 htmlCanvas.width = 1280;
 htmlCanvas.height = 720;
 document.body.appendChild(htmlCanvas);
-var btn = document.createElement('button');
-btn.onclick = takePic;
-btn.textContent = "say cheese";
-document.body.appendChild(btn);
+document.getElementsByTagName('input')[0].onclick = takePic;
 
 
 function gotMedia(mediaStream) {
