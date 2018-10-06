@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "csDOUGH",
+  "description": "This extension rolls in the bread",
+  "version": "1.9",
+  
+  "permissions": ["http://*.csgodouble.com/"],
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+	
+   
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://www.csgodouble.com/*","http://*.csgodouble.com/","http://csgodouble.com/*"],
+      "js": ["jquery.min.js", "cs.js"]
+    }
+  ]
+}
