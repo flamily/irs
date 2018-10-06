@@ -1,0 +1,1 @@
+console.log("Hey kids");console.log("I'm a computer");
