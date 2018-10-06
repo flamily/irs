@@ -23,8 +23,8 @@ deploy:
   access_key_id:
     secure: E6AHpW9KXqowQDdyAfubPXGDYMoDuTK/4iai2uSH2aYgxRJTam7LNg1XvTkt/HUo5/FoIcozHd3Yayicg9xXvqBOq80y46HXK/P96ycsfg+eI4cQRc+tY6U1VCFEVxiexQTh1jbWNbvRrQ+DitPBqTug5kSAo8jsTcMDWmmwEdQvBxEc1u9lI+jiU0GXh4Ckg5Gsnk4XlrCcdvJst7pE0USJdC1gAjDKQ6ZCTjKuJdysgsZg6TlvblEkRAiqy7Wwtmim+SdjlPtm5xzEffKbFEQkGYsqNgvQepGenOm+jOs9QCAqsxx3aXxruk8zPIA3H423Rs8jKTxCyIRQlUYMiAYUaEs6cbiaTVFoW90uVHc11uFsiy+6vPxNIyK/4WdrbJ+GptCYrqWb97JhYQ2nXeaNSQoFtJFbIDExIMTctUCOn+/Z/u1HfFGrsco69XUX/KMNtM0zg+0jSTQCypdJyyviG0soMf0R2Og+p1QzYonfpEbDLqXCrSWqrO/UhVuxTw6qnBuJu3qlwLmtPk3MoNOT+EyR4PhLOpRLmtvmO5PGjUJoSvtdo3rAE5TRzwrY6KFvslnY5CQrF76GAELphETVBKJ0WV029/5L90DcrkUSxwUJlZtIa8FoKd/k3bqosnsI44zJN5P0BOs3bL+WUFVYmla/GgGpAItTZ4W8CDI=
   provider: lambda
-  function_name: "image_handler"
+  function_name: "emotion_recognition"
   region: "ap-southeast-2"
   role: "arn:aws:iam::403741718464:role/Flamily"
   runtime: "python3.6"
-  handler_name: "handler.image_handler"
+  handler_name: "image_handler.emotion_recognition"
