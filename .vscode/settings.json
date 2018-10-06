@@ -1,0 +1,9 @@
+{
+    "python.pythonPath": "/Users/robinwohlers/.local/share/virtualenvs/irs-X_SPPuUc/bin/python3",
+    "python.unitTest.pyTestArgs": [
+        "."
+    ],
+    "python.unitTest.unittestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false,
+    "python.unitTest.pyTestEnabled": true
+}
