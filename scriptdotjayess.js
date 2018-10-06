@@ -36,3 +36,30 @@ function takePic(){
 }
   
 console.log("I'm a computer");
+
+
+
+var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+var recognition = new SpeechRecognition();
+recognition.continuous = true;
+recognition.onresult = function(event) {
+	txt = event.results[event.resultIndex][0].transcript
+	console.log(txt);
+	commandlist = ["confirm", "deny", "yes", "no", "maybe"];
+	
+	recognised = txt.split(" ")
+	
+	for (word in recognised){
+		x = commandlist.indexOf(recognised[word]);
+		if (x!=-1){
+			console.log(commandlist.indexOf(recognised[word]));
+		}
+		
+		
+	}
+	
+}
+
+recognition.start();
+
+
