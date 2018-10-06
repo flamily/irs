@@ -3,6 +3,7 @@ from flask.cli import with_appcontext
 
 from psycopg2 import pool
 from irs import config
+from werkzeug.local import LocalProxy
 
 __pool = pool.ThreadedConnectionPool(1, 5, config.connection_string())
 
@@ -15,6 +16,9 @@ def get_db_conn():
     if 'db_conn' not in g:
         g.db_conn = __pool.getconn()
     return g.db_conn
+
+
+db = LocalProxy(get_db_conn)
 
 
 def __teardown_db_conn(exception=None):
