@@ -59,12 +59,13 @@ class State(Enum):
             raise Exception('Unknown event: {}'.format(recent_event))
 
 
-class RestaurantTable():
+class RestaurantTable():  # pylint:disable=too-few-public-methods
     """Object version of restaurant table db record."""
 
-    def __init__(self, id, shape, coordinate, width, height, state, capacity):
+    def __init__(self, rt_id, shape, coordinate, width, height,
+                 state, capacity):
         """Create a restaurant table."""
-        self.id = int(id)
+        self.rt_id = int(rt_id)
         self.shape = Shape(str(shape))  # You can pass the enum, or a string!
         self.coordinate = coordinate  # Expects a coordinate named tuple
         self.state = State(str(state))
@@ -73,7 +74,7 @@ class RestaurantTable():
         self.height = int(height)
 
 
-class ManageRestaurantTable():
+class ManageRestaurantTable():  # pylint:disable=too-few-public-methods
     """Class for managing restaurant tables."""
 
     def __init__(self, db_connection):
@@ -102,16 +103,16 @@ class ManageRestaurantTable():
             )
 
             rt_list = []
-            for rt in curs.fetchall():
+            for table in curs.fetchall():
                 rt_list.append(
                     RestaurantTable(
-                        id=rt[0],
-                        capacity=rt[1],
-                        coordinate=Coordinate(x=rt[2], y=rt[3]),
-                        width=rt[4],
-                        height=rt[5],
-                        shape=Shape(rt[6]),
-                        state=State.resolve_state(Event(rt[7]))
+                        rt_id=table[0],
+                        capacity=table[1],
+                        coordinate=Coordinate(x=table[2], y=table[3]),
+                        width=table[4],
+                        height=table[5],
+                        shape=Shape(table[6]),
+                        state=State.resolve_state(Event(table[7]))
                     )
                 )
 

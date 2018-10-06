@@ -1,5 +1,5 @@
 """
-These tests check the constraints of the event relation.
+These tests check the restaurant table manage.
 
 Author: Andrew Pope
 Date: 06/10/2018
@@ -33,8 +33,8 @@ def test_list(database_snapshot):
         with conn.cursor() as curs:
             mgt = ManageRestaurantTable(conn)
             rt_list = mgt.list()
-            assert len(rt_list) is 2
-            assert rt_list[0].id is 1
+            assert len(rt_list) == 2
+            assert rt_list[0].rt_id == 1
             assert rt_list[0].state is State.unavailable
-            assert rt_list[1].id is 2
+            assert rt_list[1].rt_id == 2
             assert rt_list[1].state is State.occupied
