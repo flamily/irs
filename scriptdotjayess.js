@@ -4,7 +4,10 @@ htmlCanvas.width = 1280;
 htmlCanvas.height = 720;
 document.body.appendChild(htmlCanvas);
 document.getElementsByTagName('input')[0].onclick = takePic;
-
+document.getElementsByTagName('input')[1].onclick = listenForTen;
+var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+var recognition = new SpeechRecognition();
+recognition.continuous = true;
 
 function gotMedia(mediaStream) {
   mediaStreamTrack = mediaStream.getVideoTracks()[0];
@@ -37,11 +40,14 @@ function takePic(){
   
 console.log("I'm a computer");
 
+function listenForTen(){
+	recognition.start();
+	setTimeout(function () {recognition.stop();console.log("lalalala I can't hear you")}, 10000);
+}
 
 
-var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-var recognition = new SpeechRecognition();
-recognition.continuous = true;
+
+
 recognition.onresult = function(event) {
 	txt = event.results[event.resultIndex][0].transcript
 	console.log(txt);
@@ -60,6 +66,7 @@ recognition.onresult = function(event) {
 	
 }
 
-recognition.start();
+
+
 
 
