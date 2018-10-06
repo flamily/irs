@@ -28,6 +28,15 @@ For you to be able to run any of the applications, everything must occur within 
 $ pipenv run python some_app.py
 ```
 
+### Viewing flask templates
+
+`routes.py` handles all the template rendering. To view the templates in your browser, you can run a local flask server.
+```
+ export FLASK_APP=routes.py
+ python -m flask run
+```
+Then you can view it on `http://127.0.0.1:5000/`
+
 ### Database
 
 For most developers, you shouldn't worry about fiddling with databases. In terms of automated unit testing however, you will need an instance of postgres running. As such, use `docker` to handle all the setup for you:
