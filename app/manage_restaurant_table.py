@@ -18,7 +18,7 @@ class Shape(Enum):
 
     def __str__(self):
         """Return string version of enum."""
-        return self.value
+        return self.value  # pragma: no cover
 
 
 class Event(Enum):
@@ -32,7 +32,7 @@ class Event(Enum):
 
     def __str__(self):
         """Return string version of enum."""
-        return self.value
+        return self.value  # pragma: no cover
 
 
 class State(Enum):
@@ -49,14 +49,14 @@ class State(Enum):
     @staticmethod
     def resolve_state(recent_event):
         """Resolve a state based on the most recent event."""
-        if recent_event is Event.ready:
-            return State.available
-        elif recent_event in [Event.seated, Event.attending]:
+        parsed = Event(str(recent_event))  # Make sure it's actually an event
+
+        if parsed in [Event.seated, Event.attending]:
             return State.occupied
-        elif recent_event in [Event.maintaining, Event.paid]:
+        elif parsed in [Event.maintaining, Event.paid]:
             return State.unavailable
         else:
-            raise Exception('Unknown event: {}'.format(recent_event))
+            return State.available
 
 
 class RestaurantTable():  # pylint:disable=too-few-public-methods

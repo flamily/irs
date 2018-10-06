@@ -19,9 +19,11 @@ def test_list(database_snapshot):
         with conn.cursor() as curs:
             id1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
             id2 = insert_restaurant_table(curs, 2, 3, 4, 'ellipse')
+            id3 = insert_restaurant_table(curs, 2, 1, 5, 'ellipse')
             s_id = insert_staff(curs, 'gcostanza', 'management')
             insert_event(curs, 'ready', id1, s_id)
             insert_event(curs, 'ready', id2, s_id)
+            insert_event(curs, 'ready', id3, s_id)
             conn.commit()
             insert_event(curs, 'seated', id1, s_id)
             insert_event(curs, 'seated', id2, s_id)
@@ -33,8 +35,10 @@ def test_list(database_snapshot):
         with conn.cursor() as curs:
             mgt = ManageRestaurantTable(conn)
             rt_list = mgt.list()
-            assert len(rt_list) == 2
+            assert len(rt_list) == 3
             assert rt_list[0].rt_id == 1
             assert rt_list[0].state is State.unavailable
             assert rt_list[1].rt_id == 2
             assert rt_list[1].state is State.occupied
+            assert rt_list[2].rt_id == 3
+            assert rt_list[2].state is State.available
