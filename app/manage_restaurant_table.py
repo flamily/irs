@@ -85,10 +85,39 @@ class ManageRestaurantTable():  # pylint:disable=too-few-public-methods
         """
         self.db_connection = db_connection
 
+    def ready(self):
+        assert True
+
+    def maintain(self):
+        assert True
+
+    def ordered(self):
+        """Menu items etc??"""
+        assert True
+
+    def paid(self, table_id, staff_id):
+        """...."""
+        # with self.db_connection.cursor() as curs:
+        # db_cursor.execute(
+        #     "INSERT INTO event "
+        #     "(description, restaurant_table_id, staff_id) "
+        #     "VALUES (%s, %s, %s) "
+        #     "RETURNING event_id",
+        #     (
+        #         description, restaurant_table_id, staff_id
+        #     )
+        # )
+        assert True
+
+    def applyConfirmation(self, table_id, staff_id, party_size):
+        """...."""
+        # Inserts reservation, event??
+        assert True
+
     def list(self):
         """List of all the restaurant tables.
 
-        :return: Return a list of restaurant tables, and a template id.
+        :return: Return a list of restaurant tables.
         """
         with self.db_connection.cursor() as curs:
             curs.execute(
