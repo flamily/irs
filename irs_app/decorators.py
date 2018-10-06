@@ -3,14 +3,14 @@ from flask import request, render_template
 
 
 def templated(template=None):
-    def decorator(f):
-        @wraps(f)
+    def decorator(incoming_func):
+        @wraps(incoming_func)
         def decorated_function(*args, **kwargs):
             template_name = template
             if template_name is None:
                 template_name = request.endpoint \
                     .replace('.', '/') + '.html'
-            ctx = f(*args, **kwargs)
+            ctx = incoming_func(*args, **kwargs)
             if ctx is None:
                 ctx = {}
             elif not isinstance(ctx, dict):

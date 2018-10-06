@@ -1,9 +1,7 @@
-from flask import current_app, g
-from flask.cli import with_appcontext
-
+from flask import g
 from psycopg2 import pool
-from irs import config
 from werkzeug.local import LocalProxy
+from irs import config
 
 __pool = pool.ThreadedConnectionPool(1, 5, config.connection_string())
 
@@ -22,7 +20,8 @@ db = LocalProxy(get_db_conn)
 
 
 def __teardown_db_conn(exception=None):
-    #if the request has an error, close the connection and make a new one
+    # if the request has an error,
+    #  might need to close the connection and make a new one
     db_conn = g.pop('db_conn', None)
     if db_conn is not None:
         if exception is not None:
