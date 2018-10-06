@@ -12,13 +12,13 @@ $ pip install pipenv
 Then, to install the specific dependencies for this project, navigate to the project directory and run:
 ```
 user@foo: ~ $ cd irs
-user@foo: ~/irs $ pipenv install --ignore-pipfile
+user@foo: ~/irs $ pipenv install
 ... pipenv does it's thing ...
 ```
 You are now ready to tango! The easiest way to see if it worked is to drop into a virtualenv and run the test suite (make sure you have postgres up and [running first](#database)):
 ```
 user@foo: ~/irs $ pipenv shell
-(irs-0Z00RQNN) user@foo: ~/irs $ pytest
+(irs-0Z00RQNN) user@foo: ~/irs $ pytest -p no:warnings
 ... testing ...
 (irs-0Z00RQNN) user@foo: ~/irs $ exit
 user@foo: ~/irs $
