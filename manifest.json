@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Flam Slam",
-  "description": "Hello World",
-  "version": "0.1",
+  "name": "Flamily Image Capture",
+  "description": "Hey kids i'm a computer",
+  "version": "0.2",
   
   "permissions": ["file://*/*"],
   "browser_action": {
