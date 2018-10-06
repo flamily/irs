@@ -51,12 +51,12 @@ class State(Enum):
         """Resolve a state based on the most recent event."""
         if recent_event is Event.ready:
             return State.available
-        elif recent_event is (Event.seated or Event.attending):
+        elif recent_event in [Event.seated, Event.attending]:
             return State.occupied
-        elif recent_event is (Event.maintaining or Event.paid):
+        elif recent_event in [Event.maintaining, Event.paid]:
             return State.unavailable
         else:
-            raise Exception('Unknown event')
+            raise Exception('Unknown event: {}'.format(recent_event))
 
 
 class RestaurantTable():
@@ -64,13 +64,13 @@ class RestaurantTable():
 
     def __init__(self, id, shape, coordinate, width, height, state, capacity):
         """Create a restaurant table."""
-        self.id = id
+        self.id = int(id)
         self.shape = Shape(str(shape))  # You can pass the enum, or a string!
         self.coordinate = coordinate  # Expects a coordinate named tuple
         self.state = State(str(state))
-        self.capacity = capacity
-        self.width = width
-        self.height = height
+        self.capacity = int(capacity)
+        self.width = int(width)
+        self.height = int(height)
 
 
 class ManageRestaurantTable():
@@ -93,11 +93,26 @@ class ManageRestaurantTable():
             curs.execute(
                 "SELECT rt.*, et.description "
                 "FROM restaurant_table rt "
-                "JOIN event et on et.restaurant_table_id=rt.restaurant_table_id "
+                "JOIN event et on et.restaurant_table_id=rt.restaurant_table_id "  # noqa: E501
                 "WHERE et.event_id = ("
                 " SELECT e.event_id FROM event e "
                 " WHERE e.restaurant_table_id = rt.restaurant_table_id "
                 " ORDER BY event_dt desc LIMIT 1"
                 ")"
             )
-            print(curs.fetchmany())
+
+            rt_list = []
+            for rt in curs.fetchall():
+                rt_list.append(
+                    RestaurantTable(
+                        id=rt[0],
+                        capacity=rt[1],
+                        coordinate=Coordinate(x=rt[2], y=rt[3]),
+                        width=rt[4],
+                        height=rt[5],
+                        shape=Shape(rt[6]),
+                        state=State.resolve_state(Event(rt[7]))
+                    )
+                )
+
+            return rt_list
