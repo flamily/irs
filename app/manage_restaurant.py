@@ -40,10 +40,55 @@ def paid(db_conn, table_id, staff_id):
     assert True
 
 
-def applyConfirmation(db_conn, table_id, staff_id, party_size):
-    """...."""
-    # Inserts reservation, event??
-    assert True
+def lookup_reservation(db_conn, table_id):
+    """Return the reservation id of the currently occupied table.
+
+    :param table_id: The table id to lookup.
+    :return: reservation_id or None (if not occupied).
+    """
+    return 1
+
+
+def create_reservation(db_conn, table_id, staff_id, group_size):
+    """Create a reservation at a table.
+
+    :param table_id: Id of the restaurant table to book.
+    :param staff_id: Id of the staff member who made the reservation.
+    :param group_size: Number of customer's in reservation.
+    :return: (event_id, reservation_id) of newly created reservation.
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "INSERT INTO event "
+            "(description, restaurant_table_id, staff_id) "
+            "VALUES (%s, %s, %s) "
+            "RETURNING event_id",
+            (
+                str(Event.seated), table_id, staff_id
+            )
+        )
+        event_id = curs.fetchone()[0]
+        curs.execute(
+            "INSERT INTO reservation "
+            "(group_size) "
+            "VALUES (%s) "
+            "RETURNING reservation_id",
+            (
+                group_size,
+            )
+        )
+        reservation_id = curs.fetchone()[0]
+        curs.execute(
+            "INSERT INTO customer_event "
+            "(event_id, reservation_id) "
+            "VALUES (%s, %s) ",
+            (
+                event_id, reservation_id
+            )
+        )
+        db_conn.commit()
+
+    return (event_id, reservation_id)
 
 
 def overview(db_conn):
@@ -79,3 +124,35 @@ def overview(db_conn):
             )
 
         return rt_list
+
+
+def get_table(db_conn, table_id):
+    """Get details for a specifc restaurant table.
+
+    :param db_conn: An active connection to the database.
+    :param table_id: Id of table to find
+    :return: A RestaurantTable.
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "SELECT rt.*, et.description "
+            "FROM restaurant_table rt "
+            "JOIN event et on et.restaurant_table_id=rt.restaurant_table_id "  # noqa: E501
+            "WHERE et.event_id = ("
+            " SELECT e.event_id FROM event e "
+            " WHERE e.restaurant_table_id = rt.restaurant_table_id "
+            " ORDER BY event_dt desc LIMIT 1"
+            ") "
+            "AND rt.restaurant_table_id = %s",
+            (table_id,)
+        )
+        table = curs.fetchone()
+        return RestaurantTable(
+            rt_id=table[0],
+            capacity=table[1],
+            coordinate=Coordinate(x=table[2], y=table[3]),
+            width=table[4],
+            height=table[5],
+            shape=Shape(table[6]),
+            latest_event=Event(table[7])
+        )
