@@ -1,4 +1,4 @@
-from flask import send_from_directory, request, redirect, url_for
+from flask import request, redirect, url_for
 
 from irs.irs_app import app
 from irs.irs_app.decorators import templated
