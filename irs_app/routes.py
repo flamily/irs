@@ -5,20 +5,10 @@ from irs.irs_app.decorators import templated
 from irs.irs_app.db import db
 
 
-@app.route('/js/<path:path>')
-def send_js(path):
-    return send_from_directory('templates/static/js', path)
-
-
-@app.route('/vendor/<path:path>')
-def send_vendor(path):
-    return send_from_directory('templates/static/vendor', path)
-
-
 @app.route('/')
 @templated()
-def index(name=None):
-    return name
+def index():
+    return redirect(url_for('friend'))
 
 
 @app.route('/friend', methods=['POST'])
@@ -37,12 +27,12 @@ def friend_post():
                     'management'
                 )
             )
-    return redirect(url_for('friend_post'))
+    return redirect(url_for('friend'))
 
 
 @app.route('/friend', methods=['GET'])
 @templated()
-def friend(assa=None):
+def friend():
     with db.cursor() as curs:
         curs.execute('select username from staff;')
         return dict(friends=curs.fetchall())
