@@ -23,7 +23,7 @@ class SatisfactionScore:
 
 		return self.detect(image_as_bytes)
 
-	def detect(self, image, face_id=True, landmarks=False, attributes='emotion, glasses'):
+	def detect(self, image, face_id=True, landmarks=False, attributes='emotion,glasses'):
 		return self._cognitive_face.face.detect(image, face_id, landmarks, attributes)
 
 
