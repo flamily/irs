@@ -1,11 +1,10 @@
+import threading
 from flask import g, current_app
 from psycopg2 import pool
-import threading
 from werkzeug.local import LocalProxy
 from irs import config
 
 
-__pool = None
 __pool_lock = threading.Lock()
 
 
@@ -14,18 +13,20 @@ def __lazy_pool():
     Unsure if the singleton needs to be thread safe
     Using double locking pattern to be sure.
     """
-    global __pool
-    if not __pool:
+    if 'DB_POOL' not in current_app.config:
         with __pool_lock:
-            if not __pool:
-                __pool = pool.ThreadedConnectionPool(1, 5, config.connection_string())
-    return __pool
+            if 'DB_POOL' not in current_app.config:
+                conn = config.connection_string()
+                new_pool = pool.ThreadedConnectionPool(1, 5, conn)
+                current_app.config['DB_POOL'] = new_pool
+    return current_app.config['DB_POOL']
 
 
 def __pool_facade():
     """
     Allows unit tests to inject a connection pool
-    Consider inverting this and putting it inside the singleton constructor '__lazy_pool'
+    Consider inverting this and putting it inside
+      singleton constructor '__lazy_pool'
     """
     injected_pool = current_app.config.get('TESTING_DB_POOL', None)
     if injected_pool is None:

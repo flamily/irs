@@ -1,5 +1,6 @@
 from irs.irs_app.db import db
 
+
 def test_db_commit(app):
     def add_staff():
         with db.cursor() as curs:
@@ -19,8 +20,8 @@ def test_db_commit(app):
     app.add_url_rule('/add_staff', 'add_staff', add_staff)
     client = app.test_client()
 
-    rv = client.get('/add_staff')
-    
+    client.get('/add_staff')
+
     pool = app.config['TESTING_DB_POOL']
     conn = pool.getconn()
     try:
@@ -29,6 +30,7 @@ def test_db_commit(app):
             assert curs.rowcount is 1
     finally:
         pool.putconn(conn)
+
 
 def test_db_rollback(app):
     def throw_wobbly():
@@ -48,8 +50,9 @@ def test_db_rollback(app):
         raise ValueError('we wanted this to happen')
     app.add_url_rule('/throw_wobbly', 'throw_wobbly', throw_wobbly)
     client = app.test_client()
-    rv = client.get('/throw_wobbly')
-    
+
+    client.get('/throw_wobbly')
+
     pool = app.config['TESTING_DB_POOL']
     conn = pool.getconn()
     try:
