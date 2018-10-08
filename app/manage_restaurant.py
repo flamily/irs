@@ -12,19 +12,37 @@ from irs.app.restaurant_table import (
 )
 
 
-def ready(db_conn):
-    assert True
-
-
 def ordered(db_conn):
     """Menu items etc??"""
     assert True
 
 
+def ready(db_conn, table_id, staff_id):
+    """Mark a table as ready.
+
+    :param table_id: Id of the restaurant table to mark as ready.
+    :param staff_id: Id of the staff member who made the reservation.
+    :return: event_id of the ready event
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "INSERT INTO event "
+            "(description, restaurant_table_id, staff_id) "
+            "VALUES (%s, %s, %s) "
+            "RETURNING event_id",
+            (
+                str(Event.ready), table_id, staff_id
+            )
+        )
+        event_id = curs.fetchone()[0]
+        db_conn.commit()
+    return event_id
+
+
 def maintain(db_conn, table_id, staff_id):
     """Mark a table for maintainence.
 
-    :param table_id: Id of the restaurant table to book.
+    :param table_id: Id of the restaurant table to maintain.
     :param staff_id: Id of the staff member who made the reservation.
     :return: event_id of the maintain event
     """

@@ -12,6 +12,40 @@ from irs.test.database.util import (
     insert_staff, insert_restaurant_table, insert_event, insert_customer_event
 )
 
+def test_cant_ready(database_snapshot):
+    """Attempt to maintain a seated table."""
+    msg = "a table can only become ready after being paid or maintained"
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
+            sid = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, str(Event.seated), id1, sid)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            with pytest.raises(psycopg2.InternalError) as excinfo:
+                mg.ready(conn, id1, sid)
+            assert msg in str(excinfo.value)
+
+
+def test_ready(database_snapshot):
+    """Attempt to mark a table as ready."""
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
+            id2 = insert_restaurant_table(curs, 2, 3, 4, 'rectangle')
+            sid = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, str(Event.paid), id1, sid)
+            insert_event(curs, str(Event.maintaining), id2, sid)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            mg.ready(conn, id1, sid)
+            mg.ready(conn, id2, sid)
+            for rt in mg.overview(conn):
+                assert rt.latest_event is Event.ready
+                assert rt.state is State.available
+
 
 def test_cant_maintain(database_snapshot):
     """Attempt to maintain a seated table."""
@@ -20,7 +54,7 @@ def test_cant_maintain(database_snapshot):
         with conn.cursor() as curs:
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
             sid = insert_staff(curs, 'gcostanza', 'management')
-            insert_event(curs, 'seated', id1, sid)
+            insert_event(curs, str(Event.seated), id1, sid)
             conn.commit()
 
         with conn.cursor() as curs:
@@ -35,7 +69,7 @@ def test_maintain(database_snapshot):
         with conn.cursor() as curs:
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
             sid = insert_staff(curs, 'gcostanza', 'management')
-            insert_event(curs, 'ready', id1, sid)
+            insert_event(curs, str(Event.ready), id1, sid)
             conn.commit()
 
         with conn.cursor() as curs:
@@ -52,8 +86,8 @@ def test_cant_pay(database_snapshot):
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
             id2 = insert_restaurant_table(curs, 2, 3, 4, 'rectangle')
             sid = insert_staff(curs, 'gcostanza', 'management')
-            insert_event(curs, 'ready', id1, sid)
-            insert_event(curs, 'ready', id2, sid)
+            insert_event(curs, str(Event.ready), id1, sid)
+            insert_event(curs, str(Event.ready), id2, sid)
             conn.commit()
 
         with conn.cursor() as curs:
@@ -68,8 +102,8 @@ def test_paid(database_snapshot):
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
             id2 = insert_restaurant_table(curs, 2, 3, 4, 'rectangle')
             sid = insert_staff(curs, 'gcostanza', 'management')
-            insert_event(curs, 'ready', id1, sid)
-            insert_event(curs, 'ready', id2, sid)
+            insert_event(curs, str(Event.ready), id1, sid)
+            insert_event(curs, str(Event.ready), id2, sid)
             conn.commit()
 
         with conn.cursor() as curs:
@@ -88,18 +122,18 @@ def test_lookup_reservation_multiple(database_snapshot):
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
             id2 = insert_restaurant_table(curs, 2, 3, 4, 'rectangle')
             sid = insert_staff(curs, 'gcostanza', 'management')
-            insert_event(curs, 'ready', id1, sid)
-            insert_event(curs, 'ready', id2, sid)
+            insert_event(curs, str(Event.ready), id1, sid)
+            insert_event(curs, str(Event.ready), id2, sid)
             conn.commit()
 
         with conn.cursor() as curs:
             (_, r1id) = mg.create_reservation(conn, id1, sid, 2)
             (_, r2id) = mg.create_reservation(conn, id2, sid, 1)
             # Say that they paid
-            e1 = insert_event(curs, 'paid', id1, sid)
+            e1 = insert_event(curs, str(Event.paid), id1, sid)
             conn.commit()
             insert_customer_event(curs, e1, r1id)
-            insert_event(curs, 'ready', id1, sid)
+            insert_event(curs, str(Event.ready), id1, sid)
             conn.commit()
             (_, r3id) = mg.create_reservation(conn, id1, sid, 2)
 
@@ -115,8 +149,8 @@ def test_lookup_reservation_simple(database_snapshot):
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
             id2 = insert_restaurant_table(curs, 2, 3, 4, 'rectangle')
             sid = insert_staff(curs, 'gcostanza', 'management')
-            insert_event(curs, 'ready', id1, sid)
-            insert_event(curs, 'ready', id2, sid)
+            insert_event(curs, str(Event.ready), id1, sid)
+            insert_event(curs, str(Event.ready), id2, sid)
             conn.commit()
 
         with conn.cursor() as curs:
@@ -133,7 +167,7 @@ def test_already_reserved(database_snapshot):
         with conn.cursor() as curs:
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
             sid = insert_staff(curs, 'gcostanza', 'management')
-            insert_event(curs, 'ready', id1, sid)
+            insert_event(curs, str(Event.ready), id1, sid)
             conn.commit()
 
         with conn.cursor() as curs:
@@ -151,8 +185,8 @@ def test_create_reservation(database_snapshot):
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
             id2 = insert_restaurant_table(curs, 2, 3, 4, 'rectangle')
             sid = insert_staff(curs, 'gcostanza', 'management')
-            insert_event(curs, 'ready', id1, sid)
-            insert_event(curs, 'ready', id2, sid)
+            insert_event(curs, str(Event.ready), id1, sid)
+            insert_event(curs, str(Event.ready), id2, sid)
             conn.commit()
 
         with conn.cursor() as curs:
@@ -176,7 +210,7 @@ def test_get_table(db_connection):
     with db_connection.cursor() as curs:
         id1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
         sid = insert_staff(curs, 'gcostanza', 'management')
-        insert_event(curs, 'ready', id1, sid)
+        insert_event(curs, str(Event.ready), id1, sid)
 
         rt = mg.get_table(db_connection, 1)
         assert rt.rt_id == 1
@@ -191,7 +225,7 @@ def test_get_missing_table(db_connection):
     with db_connection.cursor() as curs:
         id1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
         sid = insert_staff(curs, 'gcostanza', 'management')
-        insert_event(curs, 'ready', id1, sid)
+        insert_event(curs, str(Event.ready), id1, sid)
         with pytest.raises(TypeError) as excinfo:
             mg.get_table(db_connection, 69)
         assert msg in str(excinfo.value)
@@ -205,15 +239,15 @@ def test_overview(database_snapshot):
             id2 = insert_restaurant_table(curs, 2, 3, 4, 'ellipse')
             id3 = insert_restaurant_table(curs, 2, 1, 5, 'ellipse')
             s_id = insert_staff(curs, 'gcostanza', 'management')
-            insert_event(curs, 'ready', id1, s_id)
-            insert_event(curs, 'ready', id2, s_id)
-            insert_event(curs, 'ready', id3, s_id)
+            insert_event(curs, str(Event.ready), id1, s_id)
+            insert_event(curs, str(Event.ready), id2, s_id)
+            insert_event(curs, str(Event.ready), id3, s_id)
             conn.commit()
-            insert_event(curs, 'seated', id1, s_id)
-            insert_event(curs, 'seated', id2, s_id)
+            insert_event(curs, str(Event.seated), id1, s_id)
+            insert_event(curs, str(Event.seated), id2, s_id)
             conn.commit()
-            insert_event(curs, 'paid', id1, s_id)
-            insert_event(curs, 'attending', id2, s_id)
+            insert_event(curs, str(Event.paid), id1, s_id)
+            insert_event(curs, str(Event.attending), id2, s_id)
             conn.commit()
 
         with conn.cursor() as curs:
