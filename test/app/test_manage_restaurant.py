@@ -306,12 +306,15 @@ def test_create_reservation(database_snapshot):
 def test_get_table(db_connection):
     """Check that the manager returns the correct table."""
     with db_connection.cursor() as curs:
-        t1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+        t1 = insert_restaurant_table(curs, 3, 4, 5, 'ellipse')
         staff = insert_staff(curs, 'gcostanza', 'management')
         insert_event(curs, str(Event.ready), t1, staff)
 
     table = mg.get_table(db_connection, 1)
     assert table.rt_id == 1
+    assert table.width == 4
+    assert table.height == 5
+    assert table.capacity == 3
     assert table.shape is Shape.ellipse
     assert table.state is State.available
     assert table.latest_event is Event.ready
