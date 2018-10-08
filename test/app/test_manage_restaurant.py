@@ -7,7 +7,7 @@ Date: 06/10/2018
 import pytest
 import psycopg2
 import irs.app.manage_restaurant as mg
-from irs.app.restaurant_table import State, Event, Shape
+from irs.app.restaurant_table import State, Event, Shape, Coordinate
 from irs.test.database.util import (
     insert_staff, insert_restaurant_table, insert_event, insert_customer_event,
     insert_menu_item
@@ -368,3 +368,25 @@ def test_overview(database_snapshot):
 def test_overview_empty(db_connection):
     """Check that the manager returns nothing."""
     assert not mg.overview(db_connection)
+
+
+def test_table_creation(database_snapshot):
+    """Check that a resturant table can be created."""
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            staff = insert_staff(curs, 'gcostanza', 'management')
+            conn.commit()
+
+        ord = Coordinate(x=0, y=1)
+        t1 = mg.create_restaurant_table(
+            conn, ord, 2, 1, 5, Shape.ellipse, staff
+        )
+
+        table = mg.get_table(conn, t1)
+        assert table.rt_id == t1
+        assert table.width == 1
+        assert table.height == 5
+        assert table.capacity == 2
+        assert table.shape is Shape.ellipse
+        assert table.state is State.available
+        assert table.latest_event is Event.ready

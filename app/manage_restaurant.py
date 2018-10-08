@@ -297,3 +297,39 @@ def get_table(db_conn, table_id):
             shape=Shape(table[6]),
             latest_event=Event(table[7])
         )
+
+
+def create_restaurant_table(db_conn, coordinate, cap, width,
+                            height, shape, staff_id):
+    """Insert a restaurant table and mark it as ready.
+
+    :param coordinate: An instance of the named tuple Coordinate.
+    :param cap: The capacity of the table.
+    :param width: The width of the table.
+    :paaram height: The height of the table.
+    :param shape: An instance of the Shape enum.
+    :param staf_id: The id of the staff member performing this action.
+    :return: The id of the created table.
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "INSERT INTO restaurant_table "
+            "(capacity, x_pos, y_pos, width, height, shape) "
+            "VALUES (%s, %s, %s, %s, %s, %s) "
+            "RETURNING restaurant_table_id",
+            (
+                cap, coordinate.x, coordinate.y, width, height, str(shape)
+            )
+        )
+        rt_id = curs.fetchone()[0]
+        curs.execute(
+            "INSERT INTO event "
+            "(description, restaurant_table_id, staff_id) "
+            "VALUES (%s, %s, %s)",
+            (
+                str(Event.ready), rt_id, staff_id
+            )
+        )
+        db_conn.commit()
+
+    return rt_id

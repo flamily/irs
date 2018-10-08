@@ -61,6 +61,7 @@ class State(Enum):
 # pylint:disable=too-few-public-methods,too-many-arguments
 class RestaurantTable():
     """Object version of restaurant table db record."""
+
     def __init__(self, rt_id, shape, coordinate, width, height,
                  latest_event, capacity):
         """Create a restaurant table."""
