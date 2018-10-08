@@ -4,7 +4,6 @@ These tests check the restaurant table manager.
 Author: Andrew Pope
 Date: 06/10/2018
 """
-# pylint:disable=invalid-name
 import pytest
 import psycopg2
 import irs.app.manage_restaurant as mg

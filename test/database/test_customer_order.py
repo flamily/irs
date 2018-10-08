@@ -4,7 +4,6 @@ These tests check the constraints of the customer_order relation.
 Author: Andrew Pope
 Date: 04/10/2018
 """
-# pylint:disable=invalid-name
 from irs.test.database.util import (
     insert_reservation, insert_customer_order
 )

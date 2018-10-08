@@ -4,7 +4,6 @@ These tests check the constraints of the reservation relation.
 Author: Andrew Pope
 Date: 04/10/2018
 """
-# pylint:disable=invalid-name
 import pytest
 import psycopg2
 from irs.test.database.util import insert_reservation

@@ -178,7 +178,7 @@ def lookup_reservation(db_conn, table_id):
         curs.execute(
             "SELECT ce.reservation_id "
             "FROM customer_event ce "
-            "JOIN event et on et.event_id=ce.event_id "  # noqa: E501
+            "JOIN event et on et.event_id=ce.event_id "
             "WHERE et.event_id = ("
             " SELECT e.event_id FROM event e "
             " WHERE e.restaurant_table_id = %s "
@@ -241,7 +241,7 @@ def overview(db_conn):
         curs.execute(
             "SELECT rt.*, et.description "
             "FROM restaurant_table rt "
-            "JOIN event et on et.restaurant_table_id=rt.restaurant_table_id "  # noqa: E501
+            "JOIN event et on et.restaurant_table_id=rt.restaurant_table_id "
             "WHERE et.event_id = ("
             " SELECT e.event_id FROM event e "
             " WHERE e.restaurant_table_id = rt.restaurant_table_id "
@@ -277,7 +277,7 @@ def get_table(db_conn, table_id):
         curs.execute(
             "SELECT rt.*, et.description "
             "FROM restaurant_table rt "
-            "JOIN event et on et.restaurant_table_id=rt.restaurant_table_id "  # noqa: E501
+            "JOIN event et on et.restaurant_table_id=rt.restaurant_table_id "
             "WHERE et.event_id = ("
             " SELECT e.event_id FROM event e "
             " WHERE e.restaurant_table_id = rt.restaurant_table_id "

@@ -53,10 +53,9 @@ class State(Enum):
 
         if parsed in [Event.seated, Event.attending]:
             return State.occupied
-        elif parsed in [Event.maintaining, Event.paid]:
+        if parsed in [Event.maintaining, Event.paid]:
             return State.unavailable
-        else:
-            return State.available
+        return State.available
 
 
 # pylint:disable=too-few-public-methods, too-many-instance-attributes
