@@ -350,12 +350,21 @@ def test_overview(database_snapshot):
             insert_event(curs, str(Event.ready), t2, staff)
             insert_event(curs, str(Event.ready), t3, staff)
             conn.commit()
-            insert_event(curs, str(Event.seated), t1, staff)
-            insert_event(curs, str(Event.seated), t2, staff)
-            conn.commit()
-            insert_event(curs, str(Event.paid), t1, staff)
-            insert_event(curs, str(Event.attending), t2, staff)
-            conn.commit()
+
+        mg.create_reservation(conn, t1, staff, 5)
+        mg.create_reservation(conn, t2, staff, 5)
+        mg.create_reservation(conn, t3, staff, 5)
+        conn.commit()
+
+        # with conn.cursor() as curs:
+        mg.paid(conn, t1, staff)
+        mg.order(conn, [], t2, staff)
+            # insert_event(curs, str(Event.seated), t1, staff)
+            # insert_event(curs, str(Event.seated), t2, staff)
+            # conn.commit()
+            # insert_event(curs, str(Event.paid), t1, staff)
+            # insert_event(curs, str(Event.attending), t2, staff)
+            #conn.commit()
 
         with conn.cursor() as curs:
             rt_list = mg.overview(conn)
