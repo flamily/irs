@@ -2,7 +2,7 @@ from functools import wraps
 from flask import request, render_template
 
 
-def templated(template=None):
+def templated(template=None):  # pragma: no cover
     def decorator(incoming_func):
         @wraps(incoming_func)
         def decorated_function(*args, **kwargs):

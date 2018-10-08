@@ -8,7 +8,7 @@ from irs import config
 __pool_lock = threading.Lock()
 
 
-def __lazy_pool():
+def __lazy_pool():  # pragma: no cover
     """
     Unsure if the singleton needs to be thread safe
     Using double locking pattern to be sure.
@@ -29,7 +29,7 @@ def __pool_facade():
       singleton constructor '__lazy_pool'
     """
     injected_pool = current_app.config.get('TESTING_DB_POOL', None)
-    if injected_pool is None:
+    if injected_pool is None:  # pragma: no cover
         return __lazy_pool()
     return injected_pool
 

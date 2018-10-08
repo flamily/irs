@@ -1,17 +1,21 @@
-from flask import request, redirect, url_for
+from flask import request, redirect, url_for, Blueprint
 
-from irs.irs_app import app
+# from irs.irs_app import app
 from irs.irs_app.decorators import templated
 from irs.irs_app.db import db
 
 
-@app.route('/')
-@templated()
+# Reference for blueprints here:
+# http://flask.pocoo.org/docs/1.0/blueprints/
+friend_blueprint = Blueprint('friend', __name__, template_folder='templates')
+
+
+@friend_blueprint.route('/')
 def index():
-    return redirect(url_for('friend'))
+    return redirect(url_for('.friend'))
 
 
-@app.route('/friend', methods=['POST'])
+@friend_blueprint.route('/friend', methods=['POST'])
 def friend_post():
     if 'name' in request.form:
         with db.cursor() as curs:
@@ -27,10 +31,10 @@ def friend_post():
                     'management'
                 )
             )
-    return redirect(url_for('friend'))
+    return redirect(url_for('.friend'))
 
 
-@app.route('/friend', methods=['GET'])
+@friend_blueprint.route('/friend', methods=['GET'])
 @templated()
 def friend():
     with db.cursor() as curs:
