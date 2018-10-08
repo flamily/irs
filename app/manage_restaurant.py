@@ -1,5 +1,5 @@
 """
-Driver for managing the restaurant table records in the database.
+Driver for managing the restaurant records in the database.
 
 This file contains a series of functions that manipulate and access records
 in the datbase pertaining to management of the restaurant.
@@ -12,9 +12,86 @@ from irs.app.restaurant_table import (
 )
 
 
-def ordered(db_conn):
-    """Menu items etc??"""
-    assert True
+def lookup_order(db_conn, reservation_id):
+    """Return the order id of the reservation.
+
+    :param table_id: The table id to lookup.
+    :return: reservation_id or throw exception (if no order).
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "SELECT co.customer_order_id "
+            "FROM customer_order co "
+            "WHERE co.reservation_id = %s",
+            (reservation_id,)
+        )
+
+        return curs.fetchone()[0]
+
+
+def order(db_conn, menu_items, table_id, staff_id):
+    """Add a series of menu items to a reservation's order.
+
+    :param menu_items: A list of [(menu_item_id, quantity)] to add to order.
+    :param table_id: The id of the table to add too.
+    :param staff_id: The id of the staff member facilitating the order.
+    :return: (event_id, reservation_id) of the order event.
+    """
+    reservation_id = lookup_reservation(db_conn, table_id)
+
+    try:
+        order_id = lookup_order(db_conn, reservation_id)
+    except TypeError:
+        order_id = None  # The order has yet to exist
+
+    with db_conn.cursor() as curs:
+        if order_id is None:
+            curs.execute(
+                "INSERT INTO customer_order "
+                "(reservation_id) "
+                "VALUES (%s) "
+                "RETURNING customer_order_id",
+                (
+                    reservation_id,
+                )
+            )
+            order_id = curs.fetchone()[0]  # Create the order
+
+    # Append each menu item to the order
+    for menu_item_id, quantity in menu_items:
+        with db_conn.cursor() as curs:
+            curs.execute(
+                "INSERT INTO order_item "
+                "(customer_order_id, menu_item_id, quantity) "
+                "VALUES (%s, %s, %s)",
+                (
+                    order_id, menu_item_id, quantity
+                )
+            )
+
+    # Insert the customer event
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "INSERT INTO event "
+            "(description, restaurant_table_id, staff_id) "
+            "VALUES (%s, %s, %s) "
+            "RETURNING event_id",
+            (
+                str(Event.attending), table_id, staff_id
+            )
+        )
+        event_id = curs.fetchone()[0]
+        curs.execute(
+            "INSERT INTO customer_event "
+            "(event_id, reservation_id) "
+            "VALUES (%s, %s) ",
+            (
+                event_id, reservation_id
+            )
+        )
+
+    db_conn.commit()  # Commit all if nothing as failed.
+    return (event_id, reservation_id)
 
 
 def ready(db_conn, table_id, staff_id):
@@ -35,7 +112,7 @@ def ready(db_conn, table_id, staff_id):
             )
         )
         event_id = curs.fetchone()[0]
-        db_conn.commit()
+    db_conn.commit()
     return event_id
 
 
@@ -57,7 +134,7 @@ def maintain(db_conn, table_id, staff_id):
             )
         )
         event_id = curs.fetchone()[0]
-        db_conn.commit()
+    db_conn.commit()
     return event_id
 
 
@@ -89,7 +166,7 @@ def paid(db_conn, table_id, staff_id):
                 event_id, reservation_id
             )
         )
-        db_conn.commit()
+    db_conn.commit()
     return (event_id, reservation_id)
 
 
@@ -112,7 +189,6 @@ def lookup_reservation(db_conn, table_id):
             "AND et.description in ('seated', 'attending')",
             (table_id,)
         )
-
         return curs.fetchone()[0]
 
 
@@ -153,8 +229,8 @@ def create_reservation(db_conn, table_id, staff_id, group_size):
                 event_id, reservation_id
             )
         )
-        db_conn.commit()
 
+    db_conn.commit()
     return (event_id, reservation_id)
 
 
@@ -198,7 +274,7 @@ def get_table(db_conn, table_id):
 
     :param db_conn: An active connection to the database.
     :param table_id: Id of table to find
-    :return: A RestaurantTable.
+    :return: A RestaurantTable or None.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -213,6 +289,7 @@ def get_table(db_conn, table_id):
             "AND rt.restaurant_table_id = %s",
             (table_id,)
         )
+
         table = curs.fetchone()
         return RestaurantTable(
             rt_id=table[0],
