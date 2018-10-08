@@ -9,8 +9,52 @@ import psycopg2
 import irs.app.manage_restaurant as mg
 from irs.app.restaurant_table import State, Event, Shape
 from irs.test.database.util import (
-    insert_staff, insert_restaurant_table, insert_event, insert_customer_event
+    insert_staff, insert_restaurant_table, insert_event, insert_customer_event,
+    insert_menu_item
 )
+
+def test_lookup_missing_order(db_connection):
+    assert True
+
+def test_lookup_order(db_connection):
+    assert True
+
+def test_append_to_order(database_snapshot):
+    assert True
+
+def test_new_order(database_snapshot):
+    """Attempt to create a new order for a reservation."""
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
+            sid = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, str(Event.ready), id1, sid)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            m1 = insert_menu_item(curs, 'fried rice')
+            m2 = insert_menu_item(curs, 'spring rolls')
+            menu_items = [(m1, 2), (m2, 3)]
+            conn.commit()
+
+        with conn.cursor() as curs:
+            (_, rid) = mg.create_reservation(conn, id1, sid, 5)
+            (_, r2id, oid) = mg.order(conn, menu_items, id1, sid)
+            rt = mg.get_table(conn, id1)
+            assert rt.latest_event is Event.attending
+            assert rt.state is State.occupied
+            assert rid == r2id
+
+            curs.execute(
+                "SELECT menu_item_id from order_item "
+                "WHERE customer_order_id = %s",
+                (oid,)
+            )
+            order_items = curs.fetchall()
+            assert len(order_items) == 2
+            assert order_items[0][0] == m1
+            assert order_items[1][0] == m2
+
 
 def test_cant_ready(database_snapshot):
     """Attempt to maintain a seated table."""

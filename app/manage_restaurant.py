@@ -35,7 +35,7 @@ def order(db_conn, menu_items, table_id, staff_id):
     :param menu_items: A list of [(menu_item_id, quantity)] to add to order.
     :param table_id: The id of the table to add too.
     :param staff_id: The id of the staff member facilitating the order.
-    :return: (event_id, reservation_id) of the order event.
+    :return: (event_id, reservation_id, order_id) of the order event.
     """
     reservation_id = lookup_reservation(db_conn, table_id)
 
@@ -91,7 +91,7 @@ def order(db_conn, menu_items, table_id, staff_id):
         )
 
     db_conn.commit()  # Commit all if nothing as failed.
-    return (event_id, reservation_id)
+    return (event_id, reservation_id, order_id)
 
 
 def ready(db_conn, table_id, staff_id):
