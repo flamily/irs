@@ -23,10 +23,9 @@ def test_lookup_missing_order(database_snapshot):
             insert_event(curs, str(Event.ready), t1, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            (_, r1) = mg.create_reservation(conn, t1, staff, 5)
-            with pytest.raises(TypeError):
-                mg.lookup_order(conn, r1)
+        (_, r1) = mg.create_reservation(conn, t1, staff, 5)
+        with pytest.raises(TypeError):
+            mg.lookup_order(conn, r1)
 
 
 def test_lookup_order(database_snapshot):
@@ -38,11 +37,10 @@ def test_lookup_order(database_snapshot):
             insert_event(curs, str(Event.ready), t1, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            (_, r1) = mg.create_reservation(conn, t1, staff, 5)
-            (_, r2, o1) = mg.order(conn, [], t1, staff)
-            lookedup = mg.lookup_order(conn, r1)
-            assert o1 == lookedup
+        (_, r1) = mg.create_reservation(conn, t1, staff, 5)
+        (_, r2, o1) = mg.order(conn, [], t1, staff)
+        lookedup = mg.lookup_order(conn, r1)
+        assert o1 == lookedup
 
 
 def test_append_to_order(database_snapshot):
@@ -60,10 +58,10 @@ def test_append_to_order(database_snapshot):
             menu_items = [(m1, 2), (m2, 3)]
             conn.commit()
 
-        with conn.cursor() as curs:
-            (_, r1) = mg.create_reservation(conn, t1, staff, 5)
-            (_, r2, o1) = mg.order(conn, menu_items, t1, staff)
+        (_, r1) = mg.create_reservation(conn, t1, staff, 5)
+        (_, r2, o1) = mg.order(conn, menu_items, t1, staff)
 
+        with conn.cursor() as curs:
             curs.execute(
                 "SELECT menu_item_id from order_item "
                 "WHERE customer_order_id = %s",
@@ -91,10 +89,10 @@ def test_new_order(database_snapshot):
             menu_items = [(m1, 2), (m2, 3)]
             conn.commit()
 
-        with conn.cursor() as curs:
-            (_, _) = mg.create_reservation(conn, t1, staff, 5)
-            (_, _, o1) = mg.order(conn, menu_items, t1, staff)
+        (_, _) = mg.create_reservation(conn, t1, staff, 5)
+        (_, _, o1) = mg.order(conn, menu_items, t1, staff)
 
+        with conn.cursor() as curs:
             curs.execute(
                 "SELECT menu_item_id from order_item "
                 "WHERE customer_order_id = %s",
@@ -105,8 +103,10 @@ def test_new_order(database_snapshot):
             assert order_items[0][0] == m1
             assert order_items[1][0] == m2
 
-            (_, _, o2) = mg.order(conn, [(m3, 1)], t1, staff)
-            assert o1 == o2
+        (_, _, o2) = mg.order(conn, [(m3, 1)], t1, staff)
+        assert o1 == o2
+
+        with conn.cursor() as curs:
             curs.execute(
                 "SELECT menu_item_id from order_item "
                 "WHERE customer_order_id = %s",
@@ -129,10 +129,9 @@ def test_cant_ready(database_snapshot):
             insert_event(curs, str(Event.seated), t1, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            with pytest.raises(psycopg2.InternalError) as excinfo:
-                mg.ready(conn, t1, staff)
-            assert msg in str(excinfo.value)
+        with pytest.raises(psycopg2.InternalError) as excinfo:
+            mg.ready(conn, t1, staff)
+        assert msg in str(excinfo.value)
 
 
 def test_ready(database_snapshot):
@@ -146,12 +145,11 @@ def test_ready(database_snapshot):
             insert_event(curs, str(Event.maintaining), t2, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            mg.ready(conn, t1, staff)
-            mg.ready(conn, t2, staff)
-            for rt in mg.overview(conn):
-                assert rt.latest_event is Event.ready
-                assert rt.state is State.available
+        mg.ready(conn, t1, staff)
+        mg.ready(conn, t2, staff)
+        for rt in mg.overview(conn):
+            assert rt.latest_event is Event.ready
+            assert rt.state is State.available
 
 
 def test_cant_maintain(database_snapshot):
@@ -164,10 +162,9 @@ def test_cant_maintain(database_snapshot):
             insert_event(curs, str(Event.seated), t1, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            with pytest.raises(psycopg2.InternalError) as excinfo:
-                mg.maintain(conn, t1, staff)
-            assert msg in str(excinfo.value)
+        with pytest.raises(psycopg2.InternalError) as excinfo:
+            mg.maintain(conn, t1, staff)
+        assert msg in str(excinfo.value)
 
 
 def test_maintain(database_snapshot):
@@ -179,11 +176,10 @@ def test_maintain(database_snapshot):
             insert_event(curs, str(Event.ready), t1, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            mg.maintain(conn, t1, staff)
-            table = mg.get_table(conn, t1)
-            assert table.latest_event is Event.maintaining
-            assert table.state is State.unavailable
+        mg.maintain(conn, t1, staff)
+        table = mg.get_table(conn, t1)
+        assert table.latest_event is Event.maintaining
+        assert table.state is State.unavailable
 
 
 def test_cant_pay(database_snapshot):
@@ -197,9 +193,8 @@ def test_cant_pay(database_snapshot):
             insert_event(curs, str(Event.ready), t2, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            with pytest.raises(TypeError):
-                mg.paid(conn, t1, staff)  # Fails to lookup a reservation id
+        with pytest.raises(TypeError):
+            mg.paid(conn, t1, staff)  # Fails to lookup a reservation id
 
 
 def test_paid(database_snapshot):
@@ -213,13 +208,12 @@ def test_paid(database_snapshot):
             insert_event(curs, str(Event.ready), t2, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            (e1, r1) = mg.create_reservation(conn, t1, staff, 5)
-            (_, r2) = mg.paid(conn, t1, staff)
-            table = mg.get_table(conn, t1)
-            assert table.latest_event is Event.paid
-            assert table.state is State.unavailable
-            assert r1 == r2
+        (e1, r1) = mg.create_reservation(conn, t1, staff, 5)
+        (_, r2) = mg.paid(conn, t1, staff)
+        table = mg.get_table(conn, t1)
+        assert table.latest_event is Event.paid
+        assert table.state is State.unavailable
+        assert r1 == r2
 
 
 def test_lookup_reservation_multiple(database_snapshot):
@@ -233,20 +227,22 @@ def test_lookup_reservation_multiple(database_snapshot):
             insert_event(curs, str(Event.ready), t2, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            (_, r1) = mg.create_reservation(conn, t1, staff, 2)
-            (_, r2) = mg.create_reservation(conn, t2, staff, 1)
-            # Say that they paid
-            e1 = insert_event(curs, str(Event.paid), t1, staff)
-            conn.commit()
-            insert_customer_event(curs, e1, r1)
-            insert_event(curs, str(Event.ready), t1, staff)
-            conn.commit()
-            (_, r3) = mg.create_reservation(conn, t1, staff, 2)
+        (_, r1) = mg.create_reservation(conn, t1, staff, 2)
+        (_, r2) = mg.create_reservation(conn, t2, staff, 1)
 
         with conn.cursor() as curs:
-            assert mg.lookup_reservation(conn, t1) == r3
-            assert mg.lookup_reservation(conn, t2) == r2
+            # Say that they paid
+            e1 = insert_event(curs, str(Event.paid), t1, staff)
+            insert_customer_event(curs, e1, r1)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            insert_event(curs, str(Event.ready), t1, staff)
+            conn.commit()
+
+        (_, r3) = mg.create_reservation(conn, t1, staff, 2)
+        assert mg.lookup_reservation(conn, t1) == r3
+        assert mg.lookup_reservation(conn, t2) == r2
 
 
 def test_lookup_reservation_simple(database_snapshot):
@@ -260,11 +256,8 @@ def test_lookup_reservation_simple(database_snapshot):
             insert_event(curs, str(Event.ready), t2, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            (_, r1) = mg.create_reservation(conn, t1, staff, 2)
-
-        with conn.cursor() as curs:
-            assert mg.lookup_reservation(conn, t1) == r1
+        (_, r1) = mg.create_reservation(conn, t1, staff, 2)
+        assert mg.lookup_reservation(conn, t1) == r1
 
 
 def test_already_reserved(database_snapshot):
@@ -277,8 +270,7 @@ def test_already_reserved(database_snapshot):
             insert_event(curs, str(Event.ready), t1, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            (_, r1) = mg.create_reservation(conn, t1, staff, 5)
+        (_, r1) = mg.create_reservation(conn, t1, staff, 5)
 
         with pytest.raises(psycopg2.InternalError) as excinfo:
             mg.create_reservation(conn, t1, staff, 5)
@@ -296,12 +288,10 @@ def test_create_reservation(database_snapshot):
             insert_event(curs, str(Event.ready), t2, staff)
             conn.commit()
 
-        with conn.cursor() as curs:
-            # NB - Does not currently validate group_size
-            (e1, r1) = mg.create_reservation(conn, t1, staff, 5)
-            rt = mg.get_table(conn, t1)
-            assert rt.latest_event is Event.seated
-            assert rt.state is State.occupied
+        (e1, r1) = mg.create_reservation(conn, t1, staff, 5)
+        rt = mg.get_table(conn, t1)
+        assert rt.latest_event is Event.seated
+        assert rt.state is State.occupied
 
         with conn.cursor() as curs:
             curs.execute(
@@ -319,11 +309,11 @@ def test_get_table(db_connection):
         staff = insert_staff(curs, 'gcostanza', 'management')
         insert_event(curs, str(Event.ready), t1, staff)
 
-        table = mg.get_table(db_connection, 1)
-        assert table.rt_id == 1
-        assert table.shape is Shape.ellipse
-        assert table.state is State.available
-        assert table.latest_event is Event.ready
+    table = mg.get_table(db_connection, 1)
+    assert table.rt_id == 1
+    assert table.shape is Shape.ellipse
+    assert table.state is State.available
+    assert table.latest_event is Event.ready
 
 
 def test_get_missing_table(db_connection):
@@ -333,9 +323,10 @@ def test_get_missing_table(db_connection):
         t1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
         staff = insert_staff(curs, 'gcostanza', 'management')
         insert_event(curs, str(Event.ready), t1, staff)
-        with pytest.raises(TypeError) as excinfo:
-            mg.get_table(db_connection, 69)
-        assert msg in str(excinfo.value)
+
+    with pytest.raises(TypeError) as excinfo:
+        mg.get_table(db_connection, 69)  # Table 69 does not exist!
+    assert msg in str(excinfo.value)
 
 
 def test_overview(database_snapshot):
@@ -353,33 +344,22 @@ def test_overview(database_snapshot):
 
         mg.create_reservation(conn, t1, staff, 5)
         mg.create_reservation(conn, t2, staff, 5)
-        mg.create_reservation(conn, t3, staff, 5)
-        conn.commit()
-
-        # with conn.cursor() as curs:
         mg.paid(conn, t1, staff)
         mg.order(conn, [], t2, staff)
-            # insert_event(curs, str(Event.seated), t1, staff)
-            # insert_event(curs, str(Event.seated), t2, staff)
-            # conn.commit()
-            # insert_event(curs, str(Event.paid), t1, staff)
-            # insert_event(curs, str(Event.attending), t2, staff)
-            #conn.commit()
 
-        with conn.cursor() as curs:
-            rt_list = mg.overview(conn)
-            assert len(rt_list) == 3
-            assert rt_list[0].rt_id == 1
-            assert rt_list[0].state is State.unavailable
-            assert rt_list[0].latest_event is Event.paid
+        rt_list = mg.overview(conn)
+        assert len(rt_list) == 3
+        assert rt_list[0].rt_id == 1
+        assert rt_list[0].state is State.unavailable
+        assert rt_list[0].latest_event is Event.paid
 
-            assert rt_list[1].rt_id == 2
-            assert rt_list[1].state is State.occupied
-            assert rt_list[1].latest_event is Event.attending
+        assert rt_list[1].rt_id == 2
+        assert rt_list[1].state is State.occupied
+        assert rt_list[1].latest_event is Event.attending
 
-            assert rt_list[2].rt_id == 3
-            assert rt_list[2].state is State.available
-            assert rt_list[2].latest_event is Event.ready
+        assert rt_list[2].rt_id == 3
+        assert rt_list[2].state is State.available
+        assert rt_list[2].latest_event is Event.ready
 
 
 def test_overview_empty(db_connection):

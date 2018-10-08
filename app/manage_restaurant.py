@@ -57,9 +57,8 @@ def order(db_conn, menu_items, table_id, staff_id):
             )
             order_id = curs.fetchone()[0]  # Create the order
 
-    # Append each menu item to the order
-    for menu_item_id, quantity in menu_items:
-        with db_conn.cursor() as curs:
+        # Append each menu item to the order
+        for menu_item_id, quantity in menu_items:
             curs.execute(
                 "INSERT INTO order_item "
                 "(customer_order_id, menu_item_id, quantity) "
@@ -69,8 +68,7 @@ def order(db_conn, menu_items, table_id, staff_id):
                 )
             )
 
-    # Insert the customer event
-    with db_conn.cursor() as curs:
+        # Insert the customer event
         curs.execute(
             "INSERT INTO event "
             "(description, restaurant_table_id, staff_id) "
@@ -90,7 +88,7 @@ def order(db_conn, menu_items, table_id, staff_id):
             )
         )
 
-    db_conn.commit()  # Commit all if nothing as failed.
+        db_conn.commit()  # Commit all if nothing has failed.
     return (event_id, reservation_id, order_id)
 
 
@@ -112,7 +110,7 @@ def ready(db_conn, table_id, staff_id):
             )
         )
         event_id = curs.fetchone()[0]
-    db_conn.commit()
+        db_conn.commit()
     return event_id
 
 
@@ -134,7 +132,7 @@ def maintain(db_conn, table_id, staff_id):
             )
         )
         event_id = curs.fetchone()[0]
-    db_conn.commit()
+        db_conn.commit()
     return event_id
 
 
@@ -166,7 +164,7 @@ def paid(db_conn, table_id, staff_id):
                 event_id, reservation_id
             )
         )
-    db_conn.commit()
+        db_conn.commit()
     return (event_id, reservation_id)
 
 
@@ -229,8 +227,7 @@ def create_reservation(db_conn, table_id, staff_id, group_size):
                 event_id, reservation_id
             )
         )
-
-    db_conn.commit()
+        db_conn.commit()
     return (event_id, reservation_id)
 
 
