@@ -16,13 +16,31 @@ def ready(db_conn):
     assert True
 
 
-def maintain(db_conn):
-    assert True
-
-
 def ordered(db_conn):
     """Menu items etc??"""
     assert True
+
+
+def maintain(db_conn, table_id, staff_id):
+    """Mark a table for maintainence.
+
+    :param table_id: Id of the restaurant table to book.
+    :param staff_id: Id of the staff member who made the reservation.
+    :return: event_id of the maintain event
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "INSERT INTO event "
+            "(description, restaurant_table_id, staff_id) "
+            "VALUES (%s, %s, %s) "
+            "RETURNING event_id",
+            (
+                str(Event.maintaining), table_id, staff_id
+            )
+        )
+        event_id = curs.fetchone()[0]
+        db_conn.commit()
+    return event_id
 
 
 def paid(db_conn, table_id, staff_id):
@@ -30,12 +48,9 @@ def paid(db_conn, table_id, staff_id):
 
     :param table_id: Id of the restaurant table to book.
     :param staff_id: Id of the staff member who made the reservation.
+    :return: (event_id, reservation_id) of the paid event.
     """
     reservation_id = lookup_reservation(db_conn, table_id)
-    # if reservation_id is None:
-    #     raise Exception("No reservation exists for table id: {}".format(
-    #         table_id
-    #     ))
 
     with db_conn.cursor() as curs:
         curs.execute(
@@ -57,6 +72,7 @@ def paid(db_conn, table_id, staff_id):
             )
         )
         db_conn.commit()
+    return (event_id, reservation_id)
 
 
 def lookup_reservation(db_conn, table_id):

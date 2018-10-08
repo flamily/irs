@@ -12,7 +12,41 @@ from irs.test.database.util import (
     insert_staff, insert_restaurant_table, insert_event, insert_customer_event
 )
 
+
+def test_cant_maintain(database_snapshot):
+    """Attempt to maintain a seated table."""
+    msg = "a table can only be maintained if it was initially ready"
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
+            sid = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, 'seated', id1, sid)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            with pytest.raises(psycopg2.InternalError) as excinfo:
+                mg.maintain(conn, id1, sid)
+            assert msg in str(excinfo.value)
+
+
+def test_maintain(database_snapshot):
+    """Attempt to maintain a ready table."""
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
+            sid = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, 'ready', id1, sid)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            mg.maintain(conn, id1, sid)
+            rt = mg.get_table(conn, id1)
+            assert rt.latest_event is Event.maintaining
+            assert rt.state is State.unavailable
+
+
 def test_cant_pay(database_snapshot):
+    """Attempt to pay for a table that doesn't have an active reservation."""
     with database_snapshot.getconn() as conn:
         with conn.cursor() as curs:
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
@@ -23,14 +57,12 @@ def test_cant_pay(database_snapshot):
             conn.commit()
 
         with conn.cursor() as curs:
-            (eid, rid) = mg.create_reservation(conn, id1, sid, 5)
-            mg.paid(conn, id1, sid)
-            rt = mg.get_table(conn, id1)
-            assert rt.latest_event is Event.paid
-            assert rt.state is State.unavailable
-            assert False
+            with pytest.raises(TypeError):
+                mg.paid(conn, id1, sid)  # Fails to lookup a reservation id
+
 
 def test_paid(database_snapshot):
+    """Confirm that a reservation can be paid for."""
     with database_snapshot.getconn() as conn:
         with conn.cursor() as curs:
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
@@ -42,14 +74,15 @@ def test_paid(database_snapshot):
 
         with conn.cursor() as curs:
             (eid, rid) = mg.create_reservation(conn, id1, sid, 5)
-            mg.paid(conn, id1, sid)
+            (_, r2id) = mg.paid(conn, id1, sid)
             rt = mg.get_table(conn, id1)
             assert rt.latest_event is Event.paid
             assert rt.state is State.unavailable
+            assert rid == r2id
 
 
 def test_lookup_reservation_multiple(database_snapshot):
-    """Check that the manager returns the correct reservation form multiple."""
+    """Check that the correct reservation is returned from multiple."""
     with database_snapshot.getconn() as conn:
         with conn.cursor() as curs:
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
@@ -76,7 +109,7 @@ def test_lookup_reservation_multiple(database_snapshot):
 
 
 def test_lookup_reservation_simple(database_snapshot):
-    """Check that the manager returns the correct table."""
+    """Check that the correct reservation is returned."""
     with database_snapshot.getconn() as conn:
         with conn.cursor() as curs:
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
