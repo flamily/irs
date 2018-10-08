@@ -27,6 +27,17 @@ def test_create_reservation(database_snapshot):
             (event_id, reservation_id) = mg.create_reservation(
                 conn, id1, sid, 5
             )  # NB - Does not currently validate group_size
+            rt = mg.get_table(conn, id1)
+            assert rt.latest_event is Event.seated
+            assert rt.state is State.occupied
+
+        with conn.cursor() as curs:
+            curs.execute(
+                "SELECT * FROM customer_event WHERE event_id = %s "
+                "AND reservation_id = %s",
+                (event_id, reservation_id)
+            )
+            assert curs.rowcount is 1
 
 
 def test_get_table(db_connection):
@@ -88,3 +99,8 @@ def test_overview(database_snapshot):
             assert rt_list[2].rt_id == 3
             assert rt_list[2].state is State.available
             assert rt_list[2].latest_event is Event.ready
+
+
+def test_overview_empty(db_connection):
+    """Check that the manager returns nothing."""
+    assert len(mg.overview(db_connection)) == 0
