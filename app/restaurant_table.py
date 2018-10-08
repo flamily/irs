@@ -44,7 +44,7 @@ class State(Enum):
 
     def __str__(self):
         """Return string version of enum."""
-        return self.value
+        return self.value  # pragma: no cover
 
     @staticmethod
     def resolve_state(latest_event):
@@ -59,12 +59,14 @@ class State(Enum):
             return State.available
 
 
-class RestaurantTable():  # pylint:disable=too-few-public-methods
+# pylint:disable=too-few-public-methods, too-many-instance-attributes
+class RestaurantTable():
     """Object version of restaurant table db record."""
 
     def __init__(self, rt_id, shape, coordinate, width, height,
                  latest_event, capacity):
         """Create a restaurant table."""
+        # pylint:disable=too-many-instance-attributes
         self.rt_id = int(rt_id)
         self.shape = Shape(str(shape))  # You can pass the enum, or a string!
         self.coordinate = coordinate    # Expects the named tuple 'Coordinate'

@@ -4,6 +4,7 @@ These tests check the restaurant table manager.
 Author: Andrew Pope
 Date: 06/10/2018
 """
+# pylint:disable=invalid-name
 import pytest
 import psycopg2
 import irs.app.manage_restaurant as mg
@@ -38,7 +39,7 @@ def test_lookup_order(database_snapshot):
             conn.commit()
 
         (_, r1) = mg.create_reservation(conn, t1, staff, 5)
-        (_, r2, o1) = mg.order(conn, [], t1, staff)
+        (_, _, o1) = mg.order(conn, [], t1, staff)
         lookedup = mg.lookup_order(conn, r1)
         assert o1 == lookedup
 
@@ -58,8 +59,8 @@ def test_append_to_order(database_snapshot):
             menu_items = [(m1, 2), (m2, 3)]
             conn.commit()
 
-        (_, r1) = mg.create_reservation(conn, t1, staff, 5)
-        (_, r2, o1) = mg.order(conn, menu_items, t1, staff)
+        (_, _) = mg.create_reservation(conn, t1, staff, 5)
+        (_, _, o1) = mg.order(conn, menu_items, t1, staff)
 
         with conn.cursor() as curs:
             curs.execute(
@@ -208,7 +209,7 @@ def test_paid(database_snapshot):
             insert_event(curs, str(Event.ready), t2, staff)
             conn.commit()
 
-        (e1, r1) = mg.create_reservation(conn, t1, staff, 5)
+        (_, r1) = mg.create_reservation(conn, t1, staff, 5)
         (_, r2) = mg.paid(conn, t1, staff)
         table = mg.get_table(conn, t1)
         assert table.latest_event is Event.paid
@@ -270,7 +271,7 @@ def test_already_reserved(database_snapshot):
             insert_event(curs, str(Event.ready), t1, staff)
             conn.commit()
 
-        (_, r1) = mg.create_reservation(conn, t1, staff, 5)
+        mg.create_reservation(conn, t1, staff, 5)
 
         with pytest.raises(psycopg2.InternalError) as excinfo:
             mg.create_reservation(conn, t1, staff, 5)
@@ -364,4 +365,4 @@ def test_overview(database_snapshot):
 
 def test_overview_empty(db_connection):
     """Check that the manager returns nothing."""
-    assert len(mg.overview(db_connection)) == 0
+    assert not mg.overview(db_connection)
