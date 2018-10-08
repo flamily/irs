@@ -7,7 +7,9 @@ Date: 06/10/2018
 import pytest
 import psycopg2
 import irs.app.manage_restaurant as mg
-from irs.app.restaurant_table import State, Event, Shape, Coordinate
+from irs.app.restaurant_table import (
+    State, Event, Shape, Coordinate, RestaurantTable
+)
 from irs.test.database.util import (
     insert_staff, insert_restaurant_table, insert_event, insert_customer_event,
     insert_menu_item
@@ -372,21 +374,53 @@ def test_overview_empty(db_connection):
 
 def test_table_creation(database_snapshot):
     """Check that a resturant table can be created."""
+    expected = RestaurantTable(
+        rt_id=5,  # Is ignored upon assertion
+        capacity=2,
+        coordinate=Coordinate(x=0, y=3),
+        width=1,
+        height=5,
+        shape=Shape.rectangle,
+        latest_event=Event.ready
+    )
+
     with database_snapshot.getconn() as conn:
         with conn.cursor() as curs:
             staff = insert_staff(curs, 'gcostanza', 'management')
             conn.commit()
 
-        ord = Coordinate(x=0, y=1)
         t1 = mg.create_restaurant_table(
-            conn, ord, 2, 1, 5, Shape.ellipse, staff
+            conn, expected, staff
         )
 
-        table = mg.get_table(conn, t1)
-        assert table.rt_id == t1
-        assert table.width == 1
-        assert table.height == 5
-        assert table.capacity == 2
-        assert table.shape is Shape.ellipse
-        assert table.state is State.available
-        assert table.latest_event is Event.ready
+        actual = mg.get_table(conn, t1)
+        assert actual.rt_id == t1
+        assert actual.width == expected.width
+        assert actual.height == expected.height
+        assert actual.capacity == expected.capacity
+        assert actual.shape is expected.shape
+        assert actual.state is expected.state
+        assert actual.latest_event is expected.latest_event
+
+
+def test_put_satisfaction(database_snapshot):
+    """Create a satisfaciton record for a customer event."""
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            t1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+            staff = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, str(Event.ready), t1, staff)
+            conn.commit()
+
+        ce1 = mg.create_reservation(conn, t1, staff, 5)
+        mg.put_satisfaction(conn, ce1, 99)
+        ce2 = mg.order(conn, [], t1, staff)
+        mg.put_satisfaction(conn, (ce2[0], ce2[1]), 52)
+        ce3 = mg.paid(conn, t1, staff)
+        mg.put_satisfaction(conn, ce3, 50)
+
+        with conn.cursor() as curs:
+            curs.execute(
+                "SELECT * FROM satisfaction"
+            )
+            assert curs.rowcount == 3

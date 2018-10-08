@@ -75,4 +75,5 @@ class RestaurantTable():
 
     @property
     def state(self):
+        """Determine the state of the table based on the most recent event."""
         return State.resolve_state(self.latest_event)

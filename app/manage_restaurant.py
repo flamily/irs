@@ -299,17 +299,14 @@ def get_table(db_conn, table_id):
         )
 
 
-def create_restaurant_table(db_conn, coordinate, cap, width,
-                            height, shape, staff_id):
+def create_restaurant_table(db_conn, restaurant_table, staff_id):
     """Insert a restaurant table and mark it as ready.
 
-    :param coordinate: An instance of the named tuple Coordinate.
-    :param cap: The capacity of the table.
-    :param width: The width of the table.
-    :paaram height: The height of the table.
-    :param shape: An instance of the Shape enum.
-    :param staf_id: The id of the staff member performing this action.
+    :param restaurant_table: An instance of the RestaurantTable class.
+    :param staff_id: The staff member making the transaciton.
     :return: The id of the created table.
+    :note: This will use `restaurant_table.latest_event` to determine the first
+    event/state of the table. It also ignores the rt_id field.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -318,7 +315,11 @@ def create_restaurant_table(db_conn, coordinate, cap, width,
             "VALUES (%s, %s, %s, %s, %s, %s) "
             "RETURNING restaurant_table_id",
             (
-                cap, coordinate.x, coordinate.y, width, height, str(shape)
+                restaurant_table.capacity,
+                restaurant_table.coordinate.x, restaurant_table.coordinate.y,
+                restaurant_table.width,
+                restaurant_table.height,
+                str(restaurant_table.shape)
             )
         )
         rt_id = curs.fetchone()[0]
@@ -327,9 +328,28 @@ def create_restaurant_table(db_conn, coordinate, cap, width,
             "(description, restaurant_table_id, staff_id) "
             "VALUES (%s, %s, %s)",
             (
-                str(Event.ready), rt_id, staff_id
+                str(restaurant_table.latest_event), rt_id, staff_id
             )
         )
         db_conn.commit()
 
     return rt_id
+
+
+def put_satisfaction(db_conn, customer_event_id, score):
+    """Create a satisfaction record for a customer event.
+
+    :param customer_event_id: A tuple of (event_id, reservation_id).
+    :param score: The satisfaction score.
+    """
+    (event_id, reservation_id) = customer_event_id
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "INSERT INTO satisfaction "
+            "(event_id, reservation_id, score) "
+            "VALUES (%s, %s, %s) ",
+            (
+                event_id, reservation_id, score
+            )
+        )
+        db_conn.commit()
