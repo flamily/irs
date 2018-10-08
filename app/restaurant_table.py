@@ -58,19 +58,20 @@ class State(Enum):
         return State.available
 
 
-# pylint:disable=too-few-public-methods, too-many-instance-attributes
+# pylint:disable=too-few-public-methods,too-many-arguments
 class RestaurantTable():
     """Object version of restaurant table db record."""
-
     def __init__(self, rt_id, shape, coordinate, width, height,
                  latest_event, capacity):
         """Create a restaurant table."""
-        # pylint:disable=too-many-instance-attributes
         self.rt_id = int(rt_id)
         self.shape = Shape(str(shape))  # You can pass the enum, or a string!
         self.coordinate = coordinate    # Expects the named tuple 'Coordinate'
         self.latest_event = Event(str(latest_event))
-        self.state = State.resolve_state(self.latest_event)
         self.capacity = int(capacity)
         self.width = int(width)
         self.height = int(height)
+
+    @property
+    def state(self):
+        return State.resolve_state(self.latest_event)
