@@ -1,6 +1,5 @@
 from flask import request, redirect, url_for, Blueprint
 
-# from irs.irs_app import app
 from irs.irs_app.decorators import templated
 from irs.irs_app.db import db
 
