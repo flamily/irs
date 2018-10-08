@@ -26,7 +26,17 @@ def ordered(db_conn):
 
 
 def paid(db_conn, table_id, staff_id):
-    """...."""
+    """Pay for a reservation at a table.
+
+    :param table_id: Id of the restaurant table to book.
+    :param staff_id: Id of the staff member who made the reservation.
+    """
+    reservation_id = lookup_reservation(db_conn, table_id)
+    if reservation_id is None:
+        raise Exception("No reservation exists for table id: {}".format(
+            table_id
+        ))
+
     with db_conn.cursor() as curs:
         curs.execute(
             "INSERT INTO event "
@@ -37,7 +47,16 @@ def paid(db_conn, table_id, staff_id):
                 str(Event.paid), table_id, staff_id
             )
         )
-    assert True
+        event_id = curs.fetchone()[0]
+        curs.execute(
+            "INSERT INTO customer_event "
+            "(event_id, reservation_id) "
+            "VALUES (%s, %s) ",
+            (
+                event_id, reservation_id
+            )
+        )
+        db_conn.commit()
 
 
 def lookup_reservation(db_conn, table_id):
@@ -46,7 +65,21 @@ def lookup_reservation(db_conn, table_id):
     :param table_id: The table id to lookup.
     :return: reservation_id or None (if not occupied).
     """
-    return 1
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "SELECT ce.reservation_id "
+            "FROM customer_event ce "
+            "JOIN event et on et.event_id=ce.event_id "  # noqa: E501
+            "WHERE et.event_id = ("
+            " SELECT e.event_id FROM event e "
+            " WHERE e.restaurant_table_id = %s "
+            " ORDER BY event_dt desc LIMIT 1"
+            ") "
+            "AND et.description in ('seated', 'attending')",
+            (table_id,)
+        )
+
+        return curs.fetchone()[0]
 
 
 def create_reservation(db_conn, table_id, staff_id, group_size):

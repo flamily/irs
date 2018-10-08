@@ -1,19 +1,20 @@
 """
-These tests check the restaurant table manage.
+These tests check the restaurant table manager.
 
 Author: Andrew Pope
 Date: 06/10/2018
 """
 import pytest
+import psycopg2
 import irs.app.manage_restaurant as mg
 from irs.app.restaurant_table import State, Event, Shape
 from irs.test.database.util import (
-    insert_staff, insert_restaurant_table, insert_event
+    insert_staff, insert_restaurant_table, insert_event, insert_customer_event
 )
 
 
-def test_create_reservation(database_snapshot):
-    """Check that the manager can successfully create a reservation."""
+def test_lookup_reservation_multiple(database_snapshot):
+    """Check that the manager returns the correct reservation form multiple."""
     with database_snapshot.getconn() as conn:
         with conn.cursor() as curs:
             id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
@@ -24,9 +25,71 @@ def test_create_reservation(database_snapshot):
             conn.commit()
 
         with conn.cursor() as curs:
-            (event_id, reservation_id) = mg.create_reservation(
-                conn, id1, sid, 5
-            )  # NB - Does not currently validate group_size
+            (_, r1id) = mg.create_reservation(conn, id1, sid, 2)
+            (_, r2id) = mg.create_reservation(conn, id2, sid, 1)
+            # Say that they paid
+            e1 = insert_event(curs, 'paid', id1, sid)
+            conn.commit()
+            insert_customer_event(curs, e1, r1id)
+            insert_event(curs, 'ready', id1, sid)
+            conn.commit()
+            (_, r3id) = mg.create_reservation(conn, id1, sid, 2)
+
+        with conn.cursor() as curs:
+            assert mg.lookup_reservation(conn, id1) == r3id
+            assert mg.lookup_reservation(conn, id2) == r2id
+
+
+def test_lookup_reservation_simple(database_snapshot):
+    """Check that the manager returns the correct table."""
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
+            id2 = insert_restaurant_table(curs, 2, 3, 4, 'rectangle')
+            sid = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, 'ready', id1, sid)
+            insert_event(curs, 'ready', id2, sid)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            (_, rid) = mg.create_reservation(conn, id1, sid, 2)
+
+        with conn.cursor() as curs:
+            assert mg.lookup_reservation(conn, id1) == rid
+
+
+def test_already_reserved(database_snapshot):
+    """Check the manager fails when reserving an already reserved table."""
+    msg = "a customer cannot be seated at a table if it was not available"
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
+            sid = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, 'ready', id1, sid)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            (_, rid) = mg.create_reservation(conn, id1, sid, 5)
+
+        with pytest.raises(psycopg2.InternalError) as excinfo:
+            mg.create_reservation(conn, id1, sid, 5)
+        assert msg in str(excinfo.value)
+
+
+def test_create_reservation(database_snapshot):
+    """Check that the manager can resolve a table id to a reservation."""
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
+            id2 = insert_restaurant_table(curs, 2, 3, 4, 'rectangle')
+            sid = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, 'ready', id1, sid)
+            insert_event(curs, 'ready', id2, sid)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            # NB - Does not currently validate group_size
+            (eid, rid) = mg.create_reservation(conn, id1, sid, 5)
             rt = mg.get_table(conn, id1)
             assert rt.latest_event is Event.seated
             assert rt.state is State.occupied
@@ -35,7 +98,7 @@ def test_create_reservation(database_snapshot):
             curs.execute(
                 "SELECT * FROM customer_event WHERE event_id = %s "
                 "AND reservation_id = %s",
-                (event_id, reservation_id)
+                (eid, rid)
             )
             assert curs.rowcount is 1
 
