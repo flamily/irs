@@ -1,7 +1,7 @@
 from flask import Flask
 
-from irs.irs_app.db import register as register_db
-from irs.irs_app.friend import friend_blueprint
+from irs.web.db import register as register_db
+from irs.web.friend import friend_blueprint
 
 
 app = Flask(__name__)

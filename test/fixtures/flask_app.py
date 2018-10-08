@@ -1,11 +1,11 @@
 import pytest
-from irs import irs_app
+from irs import web
 
 
 @pytest.fixture
 def app(database_snapshot):
-    irs_app.app.config['TESTING_DB_POOL'] = database_snapshot
-    return irs_app.app
+    web.app.config['TESTING_DB_POOL'] = database_snapshot
+    return web.app
 
 
 @pytest.fixture
