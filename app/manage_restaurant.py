@@ -32,10 +32,10 @@ def paid(db_conn, table_id, staff_id):
     :param staff_id: Id of the staff member who made the reservation.
     """
     reservation_id = lookup_reservation(db_conn, table_id)
-    if reservation_id is None:
-        raise Exception("No reservation exists for table id: {}".format(
-            table_id
-        ))
+    # if reservation_id is None:
+    #     raise Exception("No reservation exists for table id: {}".format(
+    #         table_id
+    #     ))
 
     with db_conn.cursor() as curs:
         curs.execute(

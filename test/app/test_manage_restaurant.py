@@ -12,6 +12,41 @@ from irs.test.database.util import (
     insert_staff, insert_restaurant_table, insert_event, insert_customer_event
 )
 
+def test_cant_pay(database_snapshot):
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
+            id2 = insert_restaurant_table(curs, 2, 3, 4, 'rectangle')
+            sid = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, 'ready', id1, sid)
+            insert_event(curs, 'ready', id2, sid)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            (eid, rid) = mg.create_reservation(conn, id1, sid, 5)
+            mg.paid(conn, id1, sid)
+            rt = mg.get_table(conn, id1)
+            assert rt.latest_event is Event.paid
+            assert rt.state is State.unavailable
+            assert False
+
+def test_paid(database_snapshot):
+    with database_snapshot.getconn() as conn:
+        with conn.cursor() as curs:
+            id1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
+            id2 = insert_restaurant_table(curs, 2, 3, 4, 'rectangle')
+            sid = insert_staff(curs, 'gcostanza', 'management')
+            insert_event(curs, 'ready', id1, sid)
+            insert_event(curs, 'ready', id2, sid)
+            conn.commit()
+
+        with conn.cursor() as curs:
+            (eid, rid) = mg.create_reservation(conn, id1, sid, 5)
+            mg.paid(conn, id1, sid)
+            rt = mg.get_table(conn, id1)
+            assert rt.latest_event is Event.paid
+            assert rt.state is State.unavailable
+
 
 def test_lookup_reservation_multiple(database_snapshot):
     """Check that the manager returns the correct reservation form multiple."""
