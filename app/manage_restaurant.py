@@ -15,8 +15,10 @@ from irs.app.restaurant_table import (
 def lookup_order(db_conn, reservation_id):
     """Return the order id of the reservation.
 
-    :param table_id: The table id to lookup.
-    :return: reservation_id or throw exception (if no order).
+    :param db_conn: A psycopg2 connection to the database.
+    :param reservation_id: The reservation id to lookup.
+    :return: customer_order_id
+    :note: Will throw exception if no customer order exists for reservation.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -32,6 +34,7 @@ def lookup_order(db_conn, reservation_id):
 def order(db_conn, menu_items, table_id, staff_id):
     """Add a series of menu items to a reservation's order.
 
+    :param db_conn: A psycopg2 connection to the database.
     :param menu_items: A list of [(menu_item_id, quantity)] to add to order.
     :param table_id: The id of the table to add too.
     :param staff_id: The id of the staff member facilitating the order.
@@ -95,8 +98,9 @@ def order(db_conn, menu_items, table_id, staff_id):
 def ready(db_conn, table_id, staff_id):
     """Mark a table as ready.
 
+    :param db_conn: A psycopg2 connection to the database.
     :param table_id: Id of the restaurant table to mark as ready.
-    :param staff_id: Id of the staff member who made the reservation.
+    :param staff_id: Id of the staff member responsible.
     :return: event_id of the ready event
     """
     with db_conn.cursor() as curs:
@@ -117,8 +121,9 @@ def ready(db_conn, table_id, staff_id):
 def maintain(db_conn, table_id, staff_id):
     """Mark a table for maintainence.
 
+    :param db_conn: A psycopg2 connection to the database.
     :param table_id: Id of the restaurant table to maintain.
-    :param staff_id: Id of the staff member who made the reservation.
+    :param staff_id: Id of the staff member responsible.
     :return: event_id of the maintain event
     """
     with db_conn.cursor() as curs:
@@ -139,8 +144,9 @@ def maintain(db_conn, table_id, staff_id):
 def paid(db_conn, table_id, staff_id):
     """Pay for a reservation at a table.
 
-    :param table_id: Id of the restaurant table to book.
-    :param staff_id: Id of the staff member who made the reservation.
+    :param db_conn: A psycopg2 connection to the database.
+    :param table_id: Id of the restaurant table to pay for.
+    :param staff_id: Id of the staff member responsible.
     :return: (event_id, reservation_id) of the paid event.
     """
     reservation_id = lookup_reservation(db_conn, table_id)
@@ -171,8 +177,10 @@ def paid(db_conn, table_id, staff_id):
 def lookup_reservation(db_conn, table_id):
     """Return the reservation id of the currently occupied table.
 
+    :param db_conn: A psycopg2 connection to the database.
     :param table_id: The table id to lookup.
-    :return: reservation_id or None (if not occupied).
+    :return: reservation_id.
+    :note: Will throw exception if no reservation exists for table.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -193,8 +201,9 @@ def lookup_reservation(db_conn, table_id):
 def create_reservation(db_conn, table_id, staff_id, group_size):
     """Create a reservation at a table.
 
+    :param db_conn: A psycopg2 connection to the database.
     :param table_id: Id of the restaurant table to book.
-    :param staff_id: Id of the staff member who made the reservation.
+    :param staff_id: Id of the staff member responsible.
     :param group_size: Number of customer's in reservation.
     :return: (event_id, reservation_id) of newly created reservation.
     """
@@ -234,7 +243,7 @@ def create_reservation(db_conn, table_id, staff_id, group_size):
 def overview(db_conn):
     """List of all the restaurant tables.
 
-    :param db_conn: An active connection to the database.
+    :param db_conn: A psycopg2 connection to the database.
     :return: Return a list of RestaurantTables.
     """
     with db_conn.cursor() as curs:
@@ -269,8 +278,8 @@ def overview(db_conn):
 def get_table(db_conn, table_id):
     """Get details for a specifc restaurant table.
 
-    :param db_conn: An active connection to the database.
-    :param table_id: Id of table to find
+    :param db_conn: A psycopg2 connection to the database.
+    :param table_id: Id of table to find.
     :return: A RestaurantTable or None.
     """
     with db_conn.cursor() as curs:
@@ -302,8 +311,9 @@ def get_table(db_conn, table_id):
 def create_restaurant_table(db_conn, restaurant_table, staff_id):
     """Insert a restaurant table and mark it as ready.
 
+    :param db_conn: A psycopg2 connection to the database.
     :param restaurant_table: An instance of the RestaurantTable class.
-    :param staff_id: The staff member making the transaciton.
+    :param staff_id: The staff member responsible.
     :return: The id of the created table.
     :note: This will use `restaurant_table.latest_event` to determine the first
     event/state of the table. It also ignores the rt_id field.
@@ -339,6 +349,7 @@ def create_restaurant_table(db_conn, restaurant_table, staff_id):
 def put_satisfaction(db_conn, customer_event_id, score):
     """Create a satisfaction record for a customer event.
 
+    :param db_conn: A psycopg2 connection to the database.
     :param customer_event_id: A tuple of (event_id, reservation_id).
     :param score: The satisfaction score.
     """
