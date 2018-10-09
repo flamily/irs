@@ -1,15 +1,20 @@
 """
-Driver for managing the menu records in the database.
+Driver for managing staff records in the database.
 
 This file contains a series of functions that manipulate and access records
-in the datbase pertaining to management of the restaurant menu.
+in the datbase pertaining to management of staff and authentication.
 
 Author: Andrew Pope
 Date: 09/10/2018
 """
 import collections
 
-MenuItem = collections.namedtuple('MenuItem', 'mi_id name description price')
+# TODO:
+# - Create staff member
+#   - Accepts a cleartext password, and is hashed with a method defined in here
+# - List all staff
+# - Check if password for staff_id is correct
+# - Get permission of staff member
 
 
 def list(db_conn):

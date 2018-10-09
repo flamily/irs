@@ -318,6 +318,8 @@ def create_restaurant_table(db_conn, restaurant_table, staff_id):
     :note: This will use `restaurant_table.latest_event` to determine the first
     event/state of the table. It also ignores the rt_id field.
     """
+    # TODO: List out all parameters so it's inline with other creation
+    # mechanisms
     with db_conn.cursor() as curs:
         curs.execute(
             "INSERT INTO restaurant_table "

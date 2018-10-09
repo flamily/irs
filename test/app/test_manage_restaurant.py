@@ -2,7 +2,7 @@
 These tests check the restaurant table manager.
 
 Author: Andrew Pope
-Date: 06/10/2018
+Date: 08/10/2018
 """
 import pytest
 import psycopg2
@@ -13,6 +13,17 @@ from irs.app.restaurant_table import (
 from irs.test.database.util import (
     insert_staff, insert_restaurant_table, insert_event, insert_customer_event,
     insert_menu_item
+)
+
+# Private global for quick spoofing of table data
+__test_restaurant_table = expected = RestaurantTable(
+    rt_id=5,  # Is ignored
+    capacity=2,
+    coordinate=Coordinate(x=0, y=3),
+    width=1,
+    height=5,
+    shape=Shape.rectangle,
+    latest_event=Event.ready
 )
 
 

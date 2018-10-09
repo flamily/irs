@@ -2,7 +2,7 @@
 These tests check the menu manager.
 
 Author: Andrew Pope
-Date: 06/10/2018
+Date: 09/10/2018
 """
 import pytest
 import psycopg2
