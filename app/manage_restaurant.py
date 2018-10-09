@@ -204,7 +204,7 @@ def create_reservation(db_conn, table_id, staff_id, group_size):
     :param db_conn: A psycopg2 connection to the database.
     :param table_id: Id of the restaurant table to book.
     :param staff_id: Id of the staff member responsible.
-    :param group_size: Number of customer's in reservation.
+    :param group_size: Number of customers in reservation.
     :return: (event_id, reservation_id) of newly created reservation.
     """
     with db_conn.cursor() as curs:
