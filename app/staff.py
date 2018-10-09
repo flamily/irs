@@ -31,5 +31,5 @@ class Staff():
         self.hashed_password = hashed_password
         self.first_name = first_name
         self.last_name = last_name
-        self.start_dt = start_dt
+        self.start_dt = start_dt  # A datetime object
         self.permission = Permission(str(permission))
