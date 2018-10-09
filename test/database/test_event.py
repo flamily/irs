@@ -21,14 +21,14 @@ def test_empty_table(db_connection):
 def test_valid(db_connection):
     """Enter a valid event record."""
     with db_connection.cursor() as curs:
-        s_id = insert_staff(curs, 'gcostanza', 'management')
-        rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
-        e_id = insert_event(curs, 'ready', rt_id, s_id)
+        staff = insert_staff(curs, 'gcostanza', 'management')
+        t1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+        e1 = insert_event(curs, 'ready', t1, staff)
 
     with db_connection.cursor() as curs:
         curs.execute(
             "SELECT * FROM event WHERE event_id = %s",
-            (e_id,)
+            (e1,)
         )
         assert curs.rowcount is 1
 
@@ -37,31 +37,31 @@ def test_invalid_type(db_connection):
     """Check for an invalid event type."""
     with db_connection.cursor() as curs:
         with pytest.raises(psycopg2.DataError):
-            s_id = insert_staff(curs, 'gcostanza', 'management')
-            rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
-            insert_event(curs, 'fake', rt_id, s_id)
+            staff = insert_staff(curs, 'gcostanza', 'management')
+            t1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+            insert_event(curs, 'fake', t1, staff)
 
 
-def assert_valid_change(db_connection, start_e, end_e, rt_id, s_id):
+def assert_valid_change(db_connection, start_e, end_e, table_id, staff):
     """Assert that a change between a start and end event is valid."""
     print('valid event change: {} -> {}'.format(start_e, end_e))
     with db_connection.cursor() as curs:
-        e_id = insert_event(curs, start_e, rt_id, s_id)
+        e1 = insert_event(curs, start_e, table_id, staff)
 
     with db_connection.cursor() as curs:
         curs.execute(
             "SELECT * FROM event WHERE event_id = %s",
-            (e_id,)
+            (e1,)
         )
         assert curs.rowcount is 1
 
     with db_connection.cursor() as curs:
-        e_id = insert_event(curs, end_e, rt_id, s_id)
+        e1 = insert_event(curs, end_e, table_id, staff)
 
     with db_connection.cursor() as curs:
         curs.execute(
             "SELECT * FROM event WHERE event_id = %s",
-            (e_id,)
+            (e1,)
         )
         assert curs.rowcount is 1
 
@@ -73,35 +73,36 @@ def test_valid_changes(db_connection):
         ('ready', 'maintaining'),
         ('maintaining', 'ready'),
         ('seated', 'attending'),
+        ('seated', 'paid'),
         ('attending', 'attending'),
         ('attending', 'paid'),
         ('paid', 'ready')
     ]
     with db_connection.cursor() as curs:
         for start_e, end_e in valid_changes:
-            s_id = insert_staff(curs, 'gcostanza', 'management')
-            rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
-            assert_valid_change(db_connection, start_e, end_e, rt_id, s_id)
+            staff = insert_staff(curs, 'gcostanza', 'management')
+            t1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+            assert_valid_change(db_connection, start_e, end_e, t1, staff)
             db_connection.rollback()
 
 
-def assert_invalid_change(db_connection, start_e, end_e, rt_id, s_id, msg):
+def assert_invalid_change(db_connection, start_e, end_e, table_id, staff, msg):
     """Assert that a change between a start and end event is invalid."""
     # pylint: disable=R0913
     print('invalid event change: {} -> {}'.format(start_e, end_e))
     with db_connection.cursor() as curs:
-        e_id = insert_event(curs, start_e, rt_id, s_id)
+        e1 = insert_event(curs, start_e, table_id, staff)
 
     with db_connection.cursor() as curs:
         curs.execute(
             "SELECT * FROM event WHERE event_id = %s",
-            (e_id,)
+            (e1,)
         )
         assert curs.rowcount is 1
 
     with db_connection.cursor() as curs:
         with pytest.raises(psycopg2.InternalError) as excinfo:
-            e_id = insert_event(curs, end_e, rt_id, s_id)
+            e1 = insert_event(curs, end_e, table_id, staff)
         assert msg in str(excinfo.value)
 
 
@@ -135,9 +136,9 @@ def test_invalid_change(db_connection):
 
     with db_connection.cursor() as curs:
         for start_e, end_e, msg in invalid_changes:
-            s_id = insert_staff(curs, 'gcostanza', 'management')
-            rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+            staff = insert_staff(curs, 'gcostanza', 'management')
+            t1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
             assert_invalid_change(
-                db_connection, start_e, end_e, rt_id, s_id, msg
+                db_connection, start_e, end_e, t1, staff, msg
             )
             db_connection.rollback()

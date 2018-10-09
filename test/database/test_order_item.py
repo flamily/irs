@@ -44,3 +44,14 @@ def test_invalid_quantity(db_connection):
         mi_id = insert_menu_item(curs, 'cereal')
         with pytest.raises(psycopg2.IntegrityError):
             insert_order_item(curs, co_id, mi_id, -1)
+
+
+def test_duplicate_items(db_connection):
+    """Attempt to add duplicate menu items."""
+    with db_connection.cursor() as curs:
+        r_id = insert_reservation(curs, 1)
+        co_id = insert_customer_order(curs, r_id)
+        mi_id = insert_menu_item(curs, 'cereal')
+
+        insert_order_item(curs, co_id, mi_id, 2)
+        insert_order_item(curs, co_id, mi_id, 3)
