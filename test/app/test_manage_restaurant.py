@@ -14,8 +14,7 @@ from irs.app.restaurant_table import (
     State, Event, Shape, Coordinate, RestaurantTable
 )
 from irs.test.database.util import (
-    insert_staff, insert_restaurant_table, insert_event, insert_customer_event,
-    insert_menu_item
+    insert_staff, insert_restaurant_table, insert_event
 )
 
 # Private global for quick spoofing of table data
@@ -74,7 +73,7 @@ def test_lookup_missing_order(database_snapshot):
     """Attempt to lookup a reservation that has no order."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 1)
-
+        conn.commit()
         (_, r1) = mg.create_reservation(conn, t[0], staff, 5)
         with pytest.raises(TypeError):
             mg.lookup_order(conn, r1)
@@ -84,6 +83,7 @@ def test_lookup_order(database_snapshot):
     """Lookup a reservation's order."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 1)
+        conn.commit()
         (_, r1) = mg.create_reservation(conn, t[0], staff, 5)
         (_, _, o1) = mg.order(conn, [], t[0], staff)
         lookedup = mg.lookup_order(conn, r1)
@@ -94,9 +94,10 @@ def test_new_order(database_snapshot):
     """Attempt to create a new order for a reservation."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 1)
+        conn.commit()
+
         mi = __spoof_menu_items(conn, 2)
         expected = [(mi[0], 2), (mi[1], 3)]
-
         (_, _) = mg.create_reservation(conn, t[0], staff, 5)
         (_, _, o1) = mg.order(conn, expected, t[0], staff)
 
@@ -116,6 +117,8 @@ def test_append_to_order(database_snapshot):
     """Attempt to append menu items to existing order."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 1)
+        conn.commit()
+
         mi = __spoof_menu_items(conn, 3)
         expected = [(mi[0], 2), (mi[1], 3)]
 
@@ -154,6 +157,7 @@ def test_cant_ready(database_snapshot):
     msg = "a table can only become ready after being paid or maintained"
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 1)
+        conn.commit()
         mg.create_reservation(conn, t[0], staff, 5)
 
         with pytest.raises(psycopg2.InternalError) as excinfo:
@@ -165,11 +169,15 @@ def test_ready(database_snapshot):
     """Attempt to mark a table as ready."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 2)
+        conn.commit()
         # Pay for table 1
         mg.create_reservation(conn, t[0], staff, 5)
+        conn.commit()
         mg.paid(conn, t[0], staff)
+        conn.commit()
         # Mark table 2 for maintainence
         mg.maintain(conn, t[1], staff)
+        conn.commit()
         # Mark both as being ready
         mg.ready(conn, t[0], staff)
         mg.ready(conn, t[1], staff)
@@ -183,6 +191,7 @@ def test_cant_maintain(database_snapshot):
     msg = "a table can only be maintained if it was initially ready"
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 2)
+        conn.commit()
         mg.create_reservation(conn, t[0], staff, 5)
 
         with pytest.raises(psycopg2.InternalError) as excinfo:
@@ -194,6 +203,7 @@ def test_maintain(database_snapshot):
     """Attempt to maintain a ready table."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 2)
+        conn.commit()
         mg.maintain(conn, t[0], staff)
         table = mg.get_table(conn, t[0])
         assert table.latest_event is Event.maintaining
@@ -204,6 +214,7 @@ def test_cant_pay(database_snapshot):
     """Attempt to pay for a table that doesn't have an active reservation."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 2)
+        conn.commit()
 
         with pytest.raises(TypeError):
             mg.paid(conn, t[0], staff)  # Fails to lookup a reservation id
@@ -213,8 +224,11 @@ def test_paid(database_snapshot):
     """Confirm that a reservation can be paid for."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 2)
+        conn.commit()
         (_, r1) = mg.create_reservation(conn, t[0], staff, 5)
+        conn.commit()
         (_, r2) = mg.paid(conn, t[0], staff)
+        conn.commit()
         table = mg.get_table(conn, t[0])
         assert table.latest_event is Event.paid
         assert table.state is State.unavailable
@@ -225,12 +239,15 @@ def test_lookup_reservation_multiple(database_snapshot):
     """Check that the correct reservation is returned from multiple."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 2)
+        conn.commit()
 
         (_, r1) = mg.create_reservation(conn, t[0], staff, 2)
         (_, r2) = mg.create_reservation(conn, t[1], staff, 1)
-
+        conn.commit()
         mg.paid(conn, t[0], staff)
+        conn.commit()
         mg.ready(conn, t[0], staff)
+        conn.commit()
 
         (_, r3) = mg.create_reservation(conn, t[0], staff, 2)
         assert mg.lookup_reservation(conn, t[0]) == r3
@@ -241,6 +258,7 @@ def test_lookup_reservation_simple(database_snapshot):
     """Check that the correct reservation is returned."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 2)
+        conn.commit()
         (_, r1) = mg.create_reservation(conn, t[0], staff, 2)
         assert mg.lookup_reservation(conn, t[0]) == r1
 
@@ -250,6 +268,7 @@ def test_already_reserved(database_snapshot):
     msg = "a customer cannot be seated at a table if it was not available"
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 1)
+        conn.commit()
         mg.create_reservation(conn, t[0], staff, 5)
 
         with pytest.raises(psycopg2.InternalError) as excinfo:
@@ -261,7 +280,7 @@ def test_create_reservation(database_snapshot):
     """Check that the manager can resolve a table id to a reservation."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 2)
-
+        conn.commit()
         (e1, r1) = mg.create_reservation(conn, t[0], staff, 5)
         rt = mg.get_table(conn, t[0])
         assert rt.latest_event is Event.seated
@@ -305,11 +324,13 @@ def test_overview(database_snapshot):
     """Check that the manager returns the correct states and tables."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 3)
-
+        conn.commit()
         mg.create_reservation(conn, t[0], staff, 5)
         mg.create_reservation(conn, t[1], staff, 5)
+        conn.commit()
         mg.paid(conn, t[0], staff)
         mg.order(conn, [], t[1], staff)
+        conn.commit()
 
         rt_list = mg.overview(conn)
         assert len(rt_list) == 3
@@ -367,6 +388,7 @@ def test_put_satisfaction(database_snapshot):
     """Create a satisfaciton record for a customer event."""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 1)
+        conn.commit()
 
         ce1 = mg.create_reservation(conn, t[0], staff, 5)
         mg.put_satisfaction(conn, ce1, 99)

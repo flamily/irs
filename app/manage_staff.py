@@ -134,5 +134,4 @@ def create_staff_member(db_conn, username, password,
             )
 
         s_id = curs.fetchone()[0]
-        db_conn.commit()
     return s_id

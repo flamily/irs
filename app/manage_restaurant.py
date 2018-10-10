@@ -90,8 +90,6 @@ def order(db_conn, menu_items, table_id, staff_id):
                 event_id, reservation_id
             )
         )
-
-        db_conn.commit()  # Commit all if nothing has failed.
     return (event_id, reservation_id, order_id)
 
 
@@ -114,7 +112,6 @@ def ready(db_conn, table_id, staff_id):
             )
         )
         event_id = curs.fetchone()[0]
-        db_conn.commit()
     return event_id
 
 
@@ -137,7 +134,6 @@ def maintain(db_conn, table_id, staff_id):
             )
         )
         event_id = curs.fetchone()[0]
-        db_conn.commit()
     return event_id
 
 
@@ -170,7 +166,6 @@ def paid(db_conn, table_id, staff_id):
                 event_id, reservation_id
             )
         )
-        db_conn.commit()
     return (event_id, reservation_id)
 
 
@@ -236,7 +231,6 @@ def create_reservation(db_conn, table_id, staff_id, group_size):
                 event_id, reservation_id
             )
         )
-        db_conn.commit()
     return (event_id, reservation_id)
 
 
@@ -345,8 +339,6 @@ def create_restaurant_table(db_conn, capacity, coordinate, width, height,
                 str(Event.ready), rt_id, staff_id
             )
         )
-        db_conn.commit()
-
     return rt_id
 
 
@@ -367,4 +359,3 @@ def put_satisfaction(db_conn, customer_event_id, score):
                 event_id, reservation_id, score
             )
         )
-        db_conn.commit()

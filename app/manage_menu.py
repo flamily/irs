@@ -56,5 +56,4 @@ def create_menu_item(db_conn, name, description, price):
             )
         )
         mi_id = curs.fetchone()[0]
-        db_conn.commit()
     return mi_id
