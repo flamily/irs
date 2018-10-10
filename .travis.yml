@@ -23,5 +23,7 @@ deploy:
   function_name: "satisfaction_lambda"
   region: "ap-southeast-2"
   role: "arn:aws:iam::403741718464:role/Flamily"
+  on:
+    branch: satisfaction_score
   runtime: "python3.6"
   handler_name: "satisfaction_lambda.customer_satisfaction"
