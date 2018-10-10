@@ -302,6 +302,7 @@ def get_table(db_conn, table_id):
         )
 
 
+# pylint:disable=too-many-arguments
 def create_restaurant_table(db_conn, capacity, coordinate, width, height,
                             shape, staff_id):
     """Insert a restaurant table and mark it as ready.

@@ -42,7 +42,7 @@ def __spoof_tables(db_conn, n):
     )
 
     tables = []
-    for i in range(0, n):
+    for _ in range(0, n):
         tables.append(
             mg.create_restaurant_table(
                 db_conn, 2, Coordinate(x=0, y=3), 1,
@@ -241,7 +241,7 @@ def test_lookup_reservation_multiple(database_snapshot):
         t, staff = __spoof_tables(conn, 2)
         conn.commit()
 
-        (_, r1) = mg.create_reservation(conn, t[0], staff, 2)
+        mg.create_reservation(conn, t[0], staff, 2)
         (_, r2) = mg.create_reservation(conn, t[1], staff, 1)
         conn.commit()
         mg.paid(conn, t[0], staff)

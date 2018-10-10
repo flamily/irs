@@ -117,7 +117,8 @@ def create_staff_member(db_conn, username, password,
                 "VALUES (%s, %s, %s, %s, %s) "
                 "RETURNING staff_id",
                 (
-                    username, pwhash, full_name[0], full_name[1], str(permission)
+                    username, pwhash, full_name[0], full_name[1],
+                    str(permission)
                 )
             )
         else:
