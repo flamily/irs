@@ -7,6 +7,8 @@ Date: 08/10/2018
 import pytest
 import psycopg2
 import irs.app.manage_restaurant as mg
+import irs.app.manage_staff as ms
+from irs.app.staff import Permission
 from irs.app.restaurant_table import (
     State, Event, Shape, Coordinate, RestaurantTable
 )
@@ -16,8 +18,8 @@ from irs.test.database.util import (
 )
 
 # Private global for quick spoofing of table data
-__test_restaurant_table = expected = RestaurantTable(
-    rt_id=5,  # Is ignored
+__spoof = RestaurantTable(
+    rt_id=1,  # Ignored in most places
     capacity=2,
     coordinate=Coordinate(x=0, y=3),
     width=1,
@@ -27,16 +29,44 @@ __test_restaurant_table = expected = RestaurantTable(
 )
 
 
+def __spoof_data(db_conn, n):
+    """Load a series of testing records to the database.
+
+    :param db_conn: A psycopg2 connection to the database.
+    :param n: The number of restaurant_tables to create.
+    :return: ([t1_id, t2_id ... tn_id], staff_id)
+    """
+    staff_id = ms.create_staff_member(
+        db_conn, 'ldavid', 'prettygood', ('Larry', 'David'),
+        Permission.wait_staff
+    )
+
+    tables = []
+    for i in range(0, n):
+        tables.append(
+            mg.create_restaurant_table(
+                db_conn, 2, Coordinate(x=0, y=3), 1,
+                5, Shape.rectangle, staff_id
+            )
+        )
+    return (tables, staff_id)
+
+
 def test_lookup_missing_order(database_snapshot):
     """Attempt to lookup a reservation that has no order."""
     with database_snapshot.getconn() as conn:
-        with conn.cursor() as curs:
-            t1 = insert_restaurant_table(curs, 3, 1, 1, 'ellipse')
-            staff = insert_staff(curs, 'gcostanza', 'management')
-            insert_event(curs, str(Event.ready), t1, staff)
-            conn.commit()
+        # s1 = ms.create_staff_member(
+        #     conn, 'ldavid', 'prettygood', ('Larry', 'David'),
+        #     Permission.wait_staff
+        # )
+        #
+        # t1 = mg.create_restaurant_table(
+        #     conn, __spoof.capacity, __spoof.coordinate, __spoof.width,
+        #     __spoof.height, __spoof.shape, s1
+        # )
+        tables, staff = __spoof_data(conn, 1)
 
-        (_, r1) = mg.create_reservation(conn, t1, staff, 5)
+        (_, r1) = mg.create_reservation(conn, tables[0], staff, 5)
         with pytest.raises(TypeError):
             mg.lookup_order(conn, r1)
 
@@ -386,7 +416,7 @@ def test_overview_empty(db_connection):
 def test_table_creation(database_snapshot):
     """Check that a resturant table can be created."""
     expected = RestaurantTable(
-        rt_id=5,  # Is ignored upon assertion
+        rt_id=1,
         capacity=2,
         coordinate=Coordinate(x=0, y=3),
         width=1,
@@ -401,7 +431,8 @@ def test_table_creation(database_snapshot):
             conn.commit()
 
         t1 = mg.create_restaurant_table(
-            conn, expected, staff
+            conn, expected.capacity, expected.coordinate, expected.width,
+            expected.height, expected.shape, staff
         )
 
         actual = mg.get_table(conn, t1)

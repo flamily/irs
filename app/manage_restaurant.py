@@ -308,18 +308,20 @@ def get_table(db_conn, table_id):
         )
 
 
-def create_restaurant_table(db_conn, restaurant_table, staff_id):
+def create_restaurant_table(db_conn, capacity, coordinate, width, height,
+                            shape, staff_id):
     """Insert a restaurant table and mark it as ready.
 
     :param db_conn: A psycopg2 connection to the database.
-    :param restaurant_table: An instance of the RestaurantTable class.
-    :param staff_id: The staff member responsible.
+    :param capacity: The capacity of the table.
+    :param coordinate: An instance of the named tuple Coordinate.
+    :param width: The width of the table.
+    :param height: The height of the table.
+    :param shape: An instance of the Shape enum.
+    :param staff_id: The id of the staff member creating the table.
     :return: The id of the created table.
-    :note: This will use `restaurant_table.latest_event` to determine the first
-    event/state of the table. It also ignores the rt_id field.
+    :note: This will start the table in the 'ready' state.
     """
-    # TODO: List out all parameters so it's inline with other creation
-    # mechanisms
     with db_conn.cursor() as curs:
         curs.execute(
             "INSERT INTO restaurant_table "
@@ -327,11 +329,11 @@ def create_restaurant_table(db_conn, restaurant_table, staff_id):
             "VALUES (%s, %s, %s, %s, %s, %s) "
             "RETURNING restaurant_table_id",
             (
-                restaurant_table.capacity,
-                restaurant_table.coordinate.x, restaurant_table.coordinate.y,
-                restaurant_table.width,
-                restaurant_table.height,
-                str(restaurant_table.shape)
+                capacity,
+                coordinate.x, coordinate.y,
+                width,
+                height,
+                str(shape)
             )
         )
         rt_id = curs.fetchone()[0]
@@ -340,7 +342,7 @@ def create_restaurant_table(db_conn, restaurant_table, staff_id):
             "(description, restaurant_table_id, staff_id) "
             "VALUES (%s, %s, %s)",
             (
-                str(restaurant_table.latest_event), rt_id, staff_id
+                str(Event.ready), rt_id, staff_id
             )
         )
         db_conn.commit()

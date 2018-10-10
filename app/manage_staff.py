@@ -41,8 +41,8 @@ def verify_password(db_conn, username, password):
             "SELECT password FROM staff WHERE username = %s",
             (username,)
         )
-        hash = curs.fetchone()[0]
-    return sha256_crypt.verify(password, hash)
+        pwhash = curs.fetchone()[0]
+    return sha256_crypt.verify(password, pwhash)
 
 
 def get_staff_member(db_conn, username):
@@ -62,14 +62,13 @@ def get_staff_member(db_conn, username):
             s_id=member[0],
             username=member[1],
             hashed_password=member[2],
-            first_name=member[3],
-            last_name=member[4],
+            full_name=(member[3], member[4]),
             start_dt=member[5],
             permission=member[6]
         )
 
 
-def list(db_conn):
+def list_members(db_conn):
     """Get a list of all staff members in the database.
 
     :param db_conn: A psycopg2 connection to the database.
@@ -86,8 +85,7 @@ def list(db_conn):
                     s_id=member[0],
                     username=member[1],
                     hashed_password=member[2],
-                    first_name=member[3],
-                    last_name=member[4],
+                    full_name=(member[3], member[4]),
                     start_dt=member[5],
                     permission=member[6]
                 )
@@ -96,6 +94,7 @@ def list(db_conn):
     return staff_members
 
 
+# pylint:disable=too-many-arguments
 def create_staff_member(db_conn, username, password,
                         full_name, permission, start_dt=None):
     """Insert a staff member into the database.
@@ -109,7 +108,7 @@ def create_staff_member(db_conn, username, password,
     Otherwise, the current datetime will be used (on the db side).
     :return: Id of the newly created staff member.
     """
-    hash = sha256_crypt.hash(password)  # Hash the password with sha256 first
+    pwhash = sha256_crypt.hash(password)  # Hash the password with sha256 first
     with db_conn.cursor() as curs:
         if start_dt is None:
             curs.execute(
@@ -118,7 +117,7 @@ def create_staff_member(db_conn, username, password,
                 "VALUES (%s, %s, %s, %s, %s) "
                 "RETURNING staff_id",
                 (
-                    username, hash, full_name[0], full_name[1], str(permission)
+                    username, pwhash, full_name[0], full_name[1], str(permission)
                 )
             )
         else:
@@ -129,7 +128,7 @@ def create_staff_member(db_conn, username, password,
                 "VALUES (%s, %s, %s, %s, %s, %s) "
                 "RETURNING staff_id",
                 (
-                    username, hash, full_name[0], full_name[1],
+                    username, pwhash, full_name[0], full_name[1],
                     str(permission), str(start_dt)
                 )
             )

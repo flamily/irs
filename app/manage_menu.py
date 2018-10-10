@@ -12,7 +12,7 @@ import collections
 MenuItem = collections.namedtuple('MenuItem', 'mi_id name description price')
 
 
-def list(db_conn):
+def list_menu(db_conn):
     """Get a list of all menu items in the database.
 
     :param db_conn: A psycopg2 connection to the database.

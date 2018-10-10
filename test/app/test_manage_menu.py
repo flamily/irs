@@ -4,8 +4,6 @@ These tests check the menu manager.
 Author: Andrew Pope
 Date: 09/10/2018
 """
-import pytest
-import psycopg2
 import irs.app.manage_menu as menu
 from irs.app.manage_menu import MenuItem
 
@@ -24,9 +22,9 @@ def test_create_menu(database_snapshot):
                 conn, item.name, item.description, item.price
             )
 
-        list = menu.list(conn)
-        assert len(list) == 3
+        actual = menu.list_menu(conn)
+        assert len(actual) == 3
         for i in range(0, 3):
-            assert list[i].name == expected[i].name
-            assert list[i].description == expected[i].description
-            assert list[i].price == expected[i].price
+            assert actual[i].name == expected[i].name
+            assert actual[i].description == expected[i].description
+            assert actual[i].price == expected[i].price

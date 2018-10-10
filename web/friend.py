@@ -1,7 +1,6 @@
+from flask import request, redirect, url_for, Blueprint
 import irs.app.manage_staff as smanager
 from irs.app.staff import Permission
-from flask import request, redirect, url_for, Blueprint
-
 from irs.web.decorators import templated
 from irs.web.db import db
 
@@ -29,5 +28,5 @@ def friend_post():
 @friend_blueprint.route('/friend', methods=['GET'])
 @templated()
 def friend():
-    usernames = [member.username for member in smanager.list(db)]
+    usernames = [member.username for member in smanager.list_members(db)]
     return dict(friends=usernames)

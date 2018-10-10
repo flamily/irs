@@ -4,12 +4,12 @@ These tests check the staff manager.
 Author: Andrew Pope
 Date: 09/10/2018
 """
+import datetime
 import pytest
 import psycopg2
-import datetime
+from passlib.hash import sha256_crypt
 import irs.app.manage_staff as ms
 from irs.app.staff import (Staff, Permission)
-from passlib.hash import sha256_crypt
 
 
 def test_create_member(database_snapshot):
@@ -100,11 +100,11 @@ def test_bad_password(database_snapshot):
 def test_list_members(database_snapshot):
     """Test to list all the staff members."""
     expected = [
-        Staff(1, 'ldavid', 'prettygood', 'Larry', 'David',
+        Staff(1, 'ldavid', 'prettygood', ('Larry', 'David'),
               'ignored', Permission.management),
-        Staff(2, 'jseinfeld', 'idontwanttobeapriate', 'Jerry', 'Seinfeld',
+        Staff(2, 'jseinfeld', 'idontwanttobeapriate', ('Jerry', 'Seinfeld'),
               'ignored', Permission.wait_staff),
-        Staff(3, 'gcostanza', 'serenitynow', 'George', 'Costanza',
+        Staff(3, 'gcostanza', 'serenitynow', ('George', 'Costanza'),
               'ignored', Permission.robot)
     ]
 
@@ -116,7 +116,7 @@ def test_list_members(database_snapshot):
                 staff.permission
             )
 
-        actual = ms.list(conn)
+        actual = ms.list_members(conn)
         assert len(actual) == 3
         for i in range(0, 3):
             assert actual[i].username == expected[i].username
