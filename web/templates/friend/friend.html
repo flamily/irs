@@ -1,0 +1,13 @@
+<html>
+    <body>
+        <ul>
+        {% for user in friends %}
+            <li>{{ user[0] }}</li>
+        {% endfor %}
+        </ul>
+        <form action="/friend" method="post">
+            First name: <input type="text" name="name"><br>
+            <input type="submit" value="Submit">
+          </form> 
+    </body>
+</html>

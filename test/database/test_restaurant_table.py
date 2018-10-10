@@ -19,12 +19,12 @@ def test_empty_table(db_connection):
 def test_valid(db_connection):
     """Enter a valid record."""
     with db_connection.cursor() as curs:
-        rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+        t1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
 
     with db_connection.cursor() as curs:
         curs.execute(
             "SELECT * FROM restaurant_table WHERE restaurant_table_id=%s",
-            (rt_id,)
+            (t1,)
         )
         assert curs.rowcount is 1
 
@@ -35,7 +35,7 @@ def test_no_event(database_snapshot):
 
     with database_snapshot.getconn() as conn:
         with conn.cursor() as curs:
-            rt_id = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
+            t1 = insert_restaurant_table(curs, 1, 1, 1, 'ellipse')
             with pytest.raises(psycopg2.InternalError) as excinfo:
                 conn.commit()
             assert expected_error in str(excinfo.value)
@@ -43,7 +43,7 @@ def test_no_event(database_snapshot):
         with conn.cursor() as curs:
             curs.execute(
                 "SELECT * FROM restaurant_table WHERE restaurant_table_id=%s",
-                (rt_id,)
+                (t1,)
             )
             assert curs.rowcount is 0
 
