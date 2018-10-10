@@ -1,10 +1,11 @@
 import cognitive_face as CF
 import locale
+import os
 
 class SatisfactionScore:
-	def __init__(self, location='australiaeast'):
-		self._base_url = "https://%s.api.cognitive.microsoft.com/face/v1.0/" % location
-		KEY = '850b8b8a63a04e888601d6acbf6fb172'
+	def __init__(self):
+		self._base_url = os.environ['EMOTION_API_BASE_URL']
+		KEY = os.environ['EMOTION_API_KEY']
 		self._cognitive_face = CF
 		self._cognitive_face.Key.set(KEY)
 		self._cognitive_face.BaseUrl.set(self._base_url)
