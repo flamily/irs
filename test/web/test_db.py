@@ -1,21 +1,14 @@
+import irs.app.manage_staff as smanager
+from irs.app.staff import Permission
 from irs.web.db import db
 
 
 def test_db_commit(app):
     def add_staff():
-        with db.cursor() as curs:
-            curs.execute(
-                "INSERT INTO staff "
-                "(username, password, first_name, last_name, permission) "
-                "values (%s, %s, %s, %s, %s)",
-                (
-                    'george',
-                    'password',
-                    'george',
-                    'george',
-                    'management'
-                )
-            )
+        smanager.create_staff_member(
+            db, 'ldavid', 'password', ('Larry', 'David'),
+            Permission.management
+        )
         return "success"
     app.add_url_rule('/add_staff', 'add_staff', add_staff)
     client = app.test_client()
@@ -34,19 +27,10 @@ def test_db_commit(app):
 
 def test_db_rollback(app):
     def throw_wobbly():
-        with db.cursor() as curs:
-            curs.execute(
-                "INSERT INTO staff "
-                "(username, password, first_name, last_name, permission) "
-                "values (%s, %s, %s, %s, %s)",
-                (
-                    'george',
-                    'password',
-                    'george',
-                    'george',
-                    'management'
-                )
-            )
+        smanager.create_staff_member(
+            db, 'ldavid', 'password', ('Larry', 'David'),
+            Permission.management
+        )
         raise ValueError('we wanted this to happen')
     app.add_url_rule('/throw_wobbly', 'throw_wobbly', throw_wobbly)
     client = app.test_client()

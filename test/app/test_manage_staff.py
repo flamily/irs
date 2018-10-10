@@ -7,18 +7,9 @@ Date: 09/10/2018
 import pytest
 import psycopg2
 import datetime
-from datetime import tzinfo
 import irs.app.manage_staff as ms
 from irs.app.staff import (Staff, Permission)
 from passlib.hash import sha256_crypt
-
-"""
-Tests:
-- list
-- lookup
-- Create with a different start date (datetime)
-"""
-
 
 
 def test_create_member(database_snapshot):
@@ -29,13 +20,45 @@ def test_create_member(database_snapshot):
             Permission.wait_staff
         )
 
-        member = ms.get_member(conn, 'ldavid')
+        member = ms.get_staff_member(conn, 'ldavid')
         assert member.s_id == s_id
         assert member.permission == Permission.wait_staff
         assert member.first_name == 'Larry'
         assert member.last_name == 'David'
         assert member.hashed_password != 'prettygood'
         assert sha256_crypt.verify('prettygood', member.hashed_password)
+
+
+def test_lookup_member_id(database_snapshot):
+    """Create a staff member."""
+    with database_snapshot.getconn() as conn:
+        s1 = ms.create_staff_member(
+            conn, 'ldavid', 'prettygood', ('Larry', 'David'),
+            Permission.wait_staff
+        )
+        s2 = ms.create_staff_member(
+            conn, 'jseinfeld', 'prettygood', ('Jerry', 'Seinfeld'),
+            Permission.wait_staff
+        )
+        s3 = ms.create_staff_member(
+            conn, 'gcostanza', 'prettygood', ('George', 'Costanza'),
+            Permission.wait_staff
+        )
+
+        assert ms.lookup_id(conn, 'ldavid') == s1
+        assert ms.lookup_id(conn, 'jseinfeld') == s2
+        assert ms.lookup_id(conn, 'gcostanza') == s3
+
+
+def test_lookup_missing_member(database_snapshot):
+    """Attempt to lookup id for missing member."""
+    with database_snapshot.getconn() as conn:
+        ms.create_staff_member(
+            conn, 'ldavid', 'prettygood', ('Larry', 'David'),
+            Permission.wait_staff
+        )
+        with pytest.raises(TypeError):
+            ms.lookup_id(conn, 'spagetti')
 
 
 def test_create_member_with_date(database_snapshot):
@@ -50,7 +73,7 @@ def test_create_member_with_date(database_snapshot):
             Permission.wait_staff, start
         )
 
-        member = ms.get_member(conn, 'ldavid')
+        member = ms.get_staff_member(conn, 'ldavid')
         assert member.start_dt == start
 
 
@@ -72,21 +95,6 @@ def test_bad_password(database_snapshot):
             Permission.wait_staff
         )
         assert not ms.verify_password(conn, 'ldavid', 'prettybad')
-
-
-class Staff():
-    """Object version of the staff db record."""
-
-    def __init__(self, s_id, username, hashed_password, first_name, last_name,
-                 start_dt, permission):
-        """Store a staff record."""
-        self.s_id = int(s_id)
-        self.username = username
-        self.hashed_password = hashed_password
-        self.first_name = first_name
-        self.last_name = last_name
-        self.start_dt = start_dt  # A datetime object
-        self.permission = Permission(str(permission))
 
 
 def test_list_members(database_snapshot):

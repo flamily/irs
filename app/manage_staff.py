@@ -7,15 +7,25 @@ in the datbase pertaining to management of staff and authentication.
 Author: Andrew Pope
 Date: 09/10/2018
 """
-from datetime import datetime
 from passlib.hash import sha256_crypt
 from irs.app.staff import Staff
-# TODO:
-# - List all staff
-# - Get permission of staff member (based on username)
-# - Get staff id from username
-# - Get staff member based on username
-# - Update Robin's example that creates staff members
+
+
+def lookup_id(db_conn, username):
+    """Get a staff member's unique id used in restaurant events.
+
+    :param db_conn: A psycopg2 connection to the database.
+    :param username: The username of the staff member.
+    :return: staff_id.
+    :note: Will throw exception if staff member does not exist.
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "SELECT staff_id FROM staff WHERE username = %s", (username,)
+        )
+        s_id = curs.fetchone()[0]
+    return s_id
+
 
 def verify_password(db_conn, username, password):
     """Verify that the supplied staff password is correct.
@@ -35,7 +45,7 @@ def verify_password(db_conn, username, password):
     return sha256_crypt.verify(password, hash)
 
 
-def get_member(db_conn, username):
+def get_staff_member(db_conn, username):
     """Get the member based on their username.
 
     :param db_conn: A psycopg2 connection to the database.
