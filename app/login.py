@@ -1,12 +1,9 @@
 from urllib.parse import urlparse, urljoin
 from flask import (
-    abort, request, redirect,
+    redirect,
     url_for, Blueprint, render_template,
     request, session
 )
-
-from irs.app.decorators import templated
-from irs.app.db import db
 
 
 # Reference for blueprints here:

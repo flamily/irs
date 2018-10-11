@@ -1,4 +1,4 @@
-from flask import request, redirect, url_for, Blueprint, render_template
+from flask import request, redirect, url_for, Blueprint
 
 from irs.app.decorators import templated
 from irs.app.db import db
