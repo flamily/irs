@@ -1,7 +1,7 @@
-from flask import request, redirect, url_for, Blueprint
+from flask import request, redirect, url_for, Blueprint, render_template
 
-from irs.web.decorators import templated
-from irs.web.db import db
+from irs.app.decorators import templated
+from irs.app.db import db
 
 
 # Reference for blueprints here:
@@ -9,12 +9,7 @@ from irs.web.db import db
 friend_blueprint = Blueprint('friend', __name__, template_folder='templates')
 
 
-@friend_blueprint.route('/')
-def index():
-    return redirect(url_for('.friend'))
-
-
-@friend_blueprint.route('/friend', methods=['POST'])
+@friend_blueprint.route('', methods=['POST'])
 def friend_post():
     if 'name' in request.form:
         with db.cursor() as curs:
@@ -30,12 +25,12 @@ def friend_post():
                     'management'
                 )
             )
-    return redirect(url_for('.friend'))
+    return redirect(url_for('.friend_get'))
 
 
-@friend_blueprint.route('/friend', methods=['GET'])
-@templated()
-def friend():
+@friend_blueprint.route('', methods=['GET'])
+@templated(template='friend/friend.html')
+def friend_get():
     with db.cursor() as curs:
         curs.execute('select username from staff;')
         return dict(friends=curs.fetchall())
