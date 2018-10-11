@@ -10,8 +10,8 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "irs_app",
-                "FLASK_DEBUG": 1,
+                "FLASK_APP": "web",
+                "FLASK_ENV": "development",
             },
             "args": [
                 "run",
