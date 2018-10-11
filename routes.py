@@ -51,9 +51,3 @@ def error():
         page_title=page_title,
         breadcrumb_title=breadcrumb_title
     )
-
-
-@APP.route('/user#new')
-def new_user():
-    page_title = 'IRS - Create User'
-    return render_template('register.html', page_title=page_title)
