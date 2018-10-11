@@ -8,7 +8,16 @@ Please make sure:
 1. Installed postgresql and during this process, the default postgres user has been created.
 2. The postgresql localhost server is running.
 
-### Automated Setup
+### Viewing flask templates
+
+`routes.py` handles all the template rendering. To view the templates in your browser, you can run a local flask server.
+```
+ export FLASK_APP=routes.py
+ python -m flask run
+```
+Then you can view it on `http://127.0.0.1:5000/`
+
+### Database
 
 _Note: the automated setup will create a db for you as postgres user and also load the schema, pipenv and requirements as well as the pre-commit hooks_
 
