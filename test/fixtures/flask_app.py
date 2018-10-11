@@ -4,8 +4,8 @@ from irs import app as web
 
 @pytest.fixture
 def app(database_snapshot):
-    web.app.config['TESTING_DB_POOL'] = database_snapshot
-    return web.app
+    web.APP.config['TESTING_DB_POOL'] = database_snapshot
+    return web.APP
 
 
 @pytest.fixture

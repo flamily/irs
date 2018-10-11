@@ -2,6 +2,7 @@ from irs.app.db import db
 import irs.app.manage_staff as smanager
 from irs.app.staff import Permission
 
+
 def test_db_commit(app):
     def add_staff():
         smanager.create_staff_member(

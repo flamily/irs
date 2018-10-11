@@ -11,8 +11,8 @@ def test_friends_add(client):
     assert b'<li>' + friend + b'</li>' in rv.data
 
 
-## Deprecated since routing has been updated as '/' should be directing to index.
-#def test_friends_redirect(client):
+# Deprecated since routing has been updated as '/' should be directing to index
+# def test_friends_redirect(client):
 #    rv = client.get('/friend')
 #    assert rv.status_code == 302
 #    assert '/friend' in rv.location
