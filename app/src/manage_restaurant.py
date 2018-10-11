@@ -12,6 +12,44 @@ from irs.app.src.restaurant_table import (
 )
 
 
+def __create_event(db_curs, event, table_id, staff_id):
+    """Create a table event in the database.
+
+    :param db_curs: A psycopg2 cursor object.
+    :param event: An instance of the Event enum.
+    :param table_id: The table the event is occuring upon.
+    :param staff_id: The id of the staff member making it hapen.
+    :return: event_id.
+    """
+    db_curs.execute(
+        "INSERT INTO event "
+        "(description, restaurant_table_id, staff_id) "
+        "VALUES (%s, %s, %s) "
+        "RETURNING event_id",
+        (
+            str(event), table_id, staff_id
+        )
+    )
+    return db_curs.fetchone()[0]
+
+
+def __create_customer_event(db_curs, event_id, reservation_id):
+    """Create a customer event in the database.
+
+    :param db_curs: A psycopg2 cursor object.
+    :param event_id: The responsible event_id.
+    :param reservation_id: The reservation upon which the event occured at.
+    """
+    db_curs.execute(
+        "INSERT INTO customer_event "
+        "(event_id, reservation_id) "
+        "VALUES (%s, %s) ",
+        (
+            event_id, reservation_id
+        )
+    )
+
+
 def lookup_order(db_conn, reservation_id):
     """Return the order id of the reservation.
 
@@ -71,27 +109,9 @@ def order(db_conn, menu_items, table_id, staff_id):
                 )
             )
 
-        # Insert the customer event
-        curs.execute(
-            "INSERT INTO event "
-            "(description, restaurant_table_id, staff_id) "
-            "VALUES (%s, %s, %s) "
-            "RETURNING event_id",
-            (
-                str(Event.attending), table_id, staff_id
-            )
-        )
-        event_id = curs.fetchone()[0]
-        curs.execute(
-            "INSERT INTO customer_event "
-            "(event_id, reservation_id) "
-            "VALUES (%s, %s) ",
-            (
-                event_id, reservation_id
-            )
-        )
-
-        db_conn.commit()  # Commit all if nothing has failed.
+        # Insert the attending event
+        event_id = __create_event(curs, Event.attending, table_id, staff_id)
+        __create_customer_event(curs, event_id, reservation_id)
     return (event_id, reservation_id, order_id)
 
 
@@ -104,17 +124,7 @@ def ready(db_conn, table_id, staff_id):
     :return: event_id of the ready event
     """
     with db_conn.cursor() as curs:
-        curs.execute(
-            "INSERT INTO event "
-            "(description, restaurant_table_id, staff_id) "
-            "VALUES (%s, %s, %s) "
-            "RETURNING event_id",
-            (
-                str(Event.ready), table_id, staff_id
-            )
-        )
-        event_id = curs.fetchone()[0]
-        db_conn.commit()
+        event_id = __create_event(curs, Event.ready, table_id, staff_id)
     return event_id
 
 
@@ -127,17 +137,7 @@ def maintain(db_conn, table_id, staff_id):
     :return: event_id of the maintain event
     """
     with db_conn.cursor() as curs:
-        curs.execute(
-            "INSERT INTO event "
-            "(description, restaurant_table_id, staff_id) "
-            "VALUES (%s, %s, %s) "
-            "RETURNING event_id",
-            (
-                str(Event.maintaining), table_id, staff_id
-            )
-        )
-        event_id = curs.fetchone()[0]
-        db_conn.commit()
+        event_id = __create_event(curs, Event.maintaining, table_id, staff_id)
     return event_id
 
 
@@ -152,25 +152,8 @@ def paid(db_conn, table_id, staff_id):
     reservation_id = lookup_reservation(db_conn, table_id)
 
     with db_conn.cursor() as curs:
-        curs.execute(
-            "INSERT INTO event "
-            "(description, restaurant_table_id, staff_id) "
-            "VALUES (%s, %s, %s) "
-            "RETURNING event_id",
-            (
-                str(Event.paid), table_id, staff_id
-            )
-        )
-        event_id = curs.fetchone()[0]
-        curs.execute(
-            "INSERT INTO customer_event "
-            "(event_id, reservation_id) "
-            "VALUES (%s, %s) ",
-            (
-                event_id, reservation_id
-            )
-        )
-        db_conn.commit()
+        event_id = __create_event(curs, Event.paid, table_id, staff_id)
+        __create_customer_event(curs, event_id, reservation_id)
     return (event_id, reservation_id)
 
 
@@ -208,16 +191,7 @@ def create_reservation(db_conn, table_id, staff_id, group_size):
     :return: (event_id, reservation_id) of newly created reservation.
     """
     with db_conn.cursor() as curs:
-        curs.execute(
-            "INSERT INTO event "
-            "(description, restaurant_table_id, staff_id) "
-            "VALUES (%s, %s, %s) "
-            "RETURNING event_id",
-            (
-                str(Event.seated), table_id, staff_id
-            )
-        )
-        event_id = curs.fetchone()[0]
+        event_id = __create_event(curs, Event.seated, table_id, staff_id)
         curs.execute(
             "INSERT INTO reservation "
             "(group_size) "
@@ -228,15 +202,7 @@ def create_reservation(db_conn, table_id, staff_id, group_size):
             )
         )
         reservation_id = curs.fetchone()[0]
-        curs.execute(
-            "INSERT INTO customer_event "
-            "(event_id, reservation_id) "
-            "VALUES (%s, %s) ",
-            (
-                event_id, reservation_id
-            )
-        )
-        db_conn.commit()
+        __create_customer_event(curs, event_id, reservation_id)
     return (event_id, reservation_id)
 
 
@@ -308,15 +274,20 @@ def get_table(db_conn, table_id):
         )
 
 
-def create_restaurant_table(db_conn, restaurant_table, staff_id):
+# pylint:disable=too-many-arguments
+def create_restaurant_table(db_conn, capacity, coordinate, width, height,
+                            shape, staff_id):
     """Insert a restaurant table and mark it as ready.
 
     :param db_conn: A psycopg2 connection to the database.
-    :param restaurant_table: An instance of the RestaurantTable class.
-    :param staff_id: The staff member responsible.
+    :param capacity: The capacity of the table.
+    :param coordinate: An instance of the named tuple Coordinate.
+    :param width: The width of the table.
+    :param height: The height of the table.
+    :param shape: An instance of the Shape enum.
+    :param staff_id: The id of the staff member creating the table.
     :return: The id of the created table.
-    :note: This will use `restaurant_table.latest_event` to determine the first
-    event/state of the table. It also ignores the rt_id field.
+    :note: This will start the table in the 'ready' state.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -325,24 +296,15 @@ def create_restaurant_table(db_conn, restaurant_table, staff_id):
             "VALUES (%s, %s, %s, %s, %s, %s) "
             "RETURNING restaurant_table_id",
             (
-                restaurant_table.capacity,
-                restaurant_table.coordinate.x, restaurant_table.coordinate.y,
-                restaurant_table.width,
-                restaurant_table.height,
-                str(restaurant_table.shape)
+                capacity,
+                coordinate.x, coordinate.y,
+                width,
+                height,
+                str(shape)
             )
         )
         rt_id = curs.fetchone()[0]
-        curs.execute(
-            "INSERT INTO event "
-            "(description, restaurant_table_id, staff_id) "
-            "VALUES (%s, %s, %s)",
-            (
-                str(restaurant_table.latest_event), rt_id, staff_id
-            )
-        )
-        db_conn.commit()
-
+        __create_event(curs, Event.ready, rt_id, staff_id)  # Default event
     return rt_id
 
 
@@ -363,4 +325,3 @@ def put_satisfaction(db_conn, customer_event_id, score):
                 event_id, reservation_id, score
             )
         )
-        db_conn.commit()
