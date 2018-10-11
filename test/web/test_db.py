@@ -1,4 +1,4 @@
-from irs.web.db import db
+from irs.app.db import db
 
 
 def test_db_commit(app):

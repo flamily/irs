@@ -6,8 +6,8 @@ Date: 06/10/2018
 """
 import pytest
 import psycopg2
-import irs.app.manage_restaurant as mg
-from irs.app.restaurant_table import (
+import irs.app.src.manage_restaurant as mg
+from irs.app.src.restaurant_table import (
     State, Event, Shape, Coordinate, RestaurantTable
 )
 from irs.test.database.util import (
