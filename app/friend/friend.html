@@ -2,7 +2,7 @@
     <body>
         <ul>
         {% for user in friends %}
-            <li>{{ user[0] }}</li>
+            <li>{{ user }}</li>
         {% endfor %}
         </ul>
         <form action="/friend" method="post">

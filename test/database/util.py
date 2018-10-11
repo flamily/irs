@@ -36,15 +36,15 @@ def insert_restaurant_table(db_cursor, cap, width, height, shape):
     return db_cursor.fetchone()[0]
 
 
-def insert_menu_item(db_cursor, name):
+def insert_menu_item(db_cursor, name, price=6.50):
     """Insert a menu item."""
     db_cursor.execute(
         "INSERT INTO menu_item "
-        "(name, description) "
-        "VALUES (%s, %s) "
+        "(name, description, price) "
+        "VALUES (%s, %s, %s) "
         "RETURNING menu_item_id",
         (
-            name, 'A really hot and spicy dish.'
+            name, 'A really hot and spicy dish.', price
         )
     )
 
