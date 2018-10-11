@@ -1,8 +1,8 @@
 from flask import request, redirect, url_for, Blueprint
 import irs.app.manage_staff as smanager
 from irs.app.staff import Permission
-from irs.web.decorators import templated
-from irs.web.db import db
+from irs.app.decorators import templated
+from irs.app.db import db
 
 
 # Reference for blueprints here:
