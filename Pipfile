@@ -41,6 +41,7 @@ configparser = "*"
 "pathlib2" = "*"
 "enum34" = "*"
 scandir = "*"
+passlib = "*"
 
 
 [requires]
