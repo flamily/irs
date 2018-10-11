@@ -1,4 +1,9 @@
-from flask import request, redirect, url_for, Blueprint, render_template
+from urllib.parse import urlparse, urljoin
+from flask import (
+    abort, request, redirect,
+    url_for, Blueprint, render_template,
+    request, session
+)
 
 from irs.app.decorators import templated
 from irs.app.db import db
@@ -9,6 +14,39 @@ from irs.app.db import db
 login_blueprint = Blueprint('login', __name__, template_folder='templates')
 
 
-@login_blueprint.route('')
+# from: http://flask.pocoo.org/snippets/62/
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+        ref_url.netloc == test_url.netloc
+
+
+def get_redirect_target():
+    for target in request.values.get('next'), request.referrer:
+        if not target:
+            continue
+        if is_safe_url(target):
+            return target
+
+
+def redirect_back(endpoint, **values):
+    target = request.form['next']
+    if not target or not is_safe_url(target):
+        target = url_for(endpoint, **values)
+    return redirect(target)
+
+
+@login_blueprint.route("/", methods=['GET', 'POST'])
 def index():
-    return render_template('user/login.html')
+    if request.method == 'POST':
+        session['username'] = request.form['email']
+        return redirect_back('index.index')
+    next = get_redirect_target()
+    return render_template('login.html', next=next)
+
+
+@login_blueprint.route("/logout", methods=['GET'])
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index.index'))
