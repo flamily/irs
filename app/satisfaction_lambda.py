@@ -1,6 +1,6 @@
 import urllib.parse
 import boto3
-from emotion_recognition import SatisfactionScore
+from app/emotion_recognition import SatisfactionScore
 
 print('Loading function')
 s3 = boto3.client('s3')
