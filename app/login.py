@@ -11,7 +11,7 @@ from irs.app.db import db  # noqa: F401
 LOGIN_BLUEPRINT = Blueprint('login', __name__, template_folder='templates')
 
 
-@LOGIN_BLUEPRINT.route('/login')
+@LOGIN_BLUEPRINT.route('/')
 def index():
     page_title = 'Intelligent Restaurant System - Login'
     return render_template('login.html', page_title=page_title)
