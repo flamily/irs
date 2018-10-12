@@ -4,8 +4,8 @@ These tests check the menu manager.
 Author: Andrew Pope
 Date: 09/10/2018
 """
-import irs.app.manage_menu as menu
-from irs.app.manage_menu import MenuItem
+import irs.biz.manage_menu as menu
+from irs.biz.manage_menu import MenuItem
 
 
 def test_create_menu(database_snapshot):
