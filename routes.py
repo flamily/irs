@@ -4,7 +4,7 @@ from flask import render_template
 APP = Flask(__name__, template_folder='app/templates')
 
 
-@APP.route('')
+@APP.route('/')
 def index():
     page_title = 'IRS - Dashboard'
     breadcrumb_title = ''
