@@ -100,11 +100,15 @@ CREATE TABLE customer_order (
 
 /* Entity: Menu Item
  * Purpose: Stores the knowledge of a dish on the resturant's menu.
+ *
+ * Note: The price of a menu item cannot exceed a million
+ *       dollars.
  */
 CREATE TABLE menu_item (
   menu_item_id        serial        PRIMARY KEY,
   name                text          NOT NULL UNIQUE,
-  description         text          NOT NULL
+  description         text          NOT NULL,
+  price               numeric(8,2)  NOT NULL
 );
 
 /* Entity: Order Item

@@ -12,3 +12,9 @@ repos:
     -   id: debug-statements
     -   id: name-tests-test
     -   id: flake8
+
+-   repo: https://github.com/pre-commit/mirrors-pylint
+    rev: v2.1.1
+    hooks:
+    -   id: pylint
+        args: [--disable=missing-docstring]
