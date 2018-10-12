@@ -1,5 +1,5 @@
 import pytest
-from irs import app as web
+from irs import web
 
 
 @pytest.fixture

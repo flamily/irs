@@ -1,6 +1,6 @@
 import irs.biz.manage_staff as smanager
 from irs.biz.staff import Permission
-from irs.app.db import db
+from irs.web.db import db
 
 
 def test_db_commit(app):

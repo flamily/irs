@@ -1,8 +1,8 @@
 from flask import Flask
 
-from irs.app.db import register as register_db
-from irs.app.login import LOGIN_BLUEPRINT
-from irs.app.user import USER_BLUEPRINT
+from irs.web.db import register as register_db
+from irs.web.login import LOGIN_BLUEPRINT
+from irs.web.user import USER_BLUEPRINT
 
 APP = Flask(__name__)
 register_db(APP)
