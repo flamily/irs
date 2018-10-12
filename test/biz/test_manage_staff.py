@@ -8,8 +8,8 @@ import datetime
 import pytest
 import psycopg2
 from passlib.hash import sha256_crypt
-import irs.app.manage_staff as ms
-from irs.app.staff import (Staff, Permission)
+import irs.biz.manage_staff as ms
+from irs.biz.staff import (Staff, Permission)
 
 
 def test_create_member(database_snapshot):

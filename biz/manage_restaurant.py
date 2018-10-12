@@ -7,7 +7,7 @@ in the datbase pertaining to management of the restaurant.
 Author: Andrew Pope
 Date: 06/10/2018
 """
-from irs.app.src.restaurant_table import (
+from irs.biz.restaurant_table import (
     RestaurantTable, Event, Shape, Coordinate
 )
 
