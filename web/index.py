@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from irs.app.decorators import templated, login_required
+from irs.web.decorators import templated, login_required
 
 
 # Reference for blueprints here:

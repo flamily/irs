@@ -1,10 +1,10 @@
 import os
 from flask import Flask
 
-from irs.app.db import register as register_db
-from irs.app.friend import friend_blueprint
-from irs.app.login import login_blueprint
-from irs.app.index import index_blueprint
+from irs.web.db import register as register_db
+from irs.web.friend import friend_blueprint
+from irs.web.login import login_blueprint
+from irs.web.index import index_blueprint
 
 
 app = Flask(__name__)

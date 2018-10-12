@@ -1,7 +1,7 @@
 from flask import request, redirect, url_for, Blueprint
 
-from irs.app.decorators import templated
-from irs.app.db import db
+from irs.web.decorators import templated
+from irs.web.db import db
 
 
 # Reference for blueprints here:
