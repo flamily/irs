@@ -1,7 +1,9 @@
-from flask import Flask
-from flask import render_template
+#
+from flask import Flask  # pylint: disable=import-error
+from flask import render_template  # pylint: disable=import-error
 
-APP = Flask(__name__, template_folder='app/templates')
+APP = Flask(__name__, static_folder='web/static',
+            template_folder='web/templates')
 
 
 @APP.route('/')
