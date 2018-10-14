@@ -1,9 +1,4 @@
-# pylint: disable=unused-import
 from flask import Blueprint, render_template
-from flask import request, redirect, url_for  # noqa: F401
-
-from irs.web.decorators import templated  # noqa: F401
-from irs.web.db import db  # noqa: F401
 
 
 # Reference for blueprints here:

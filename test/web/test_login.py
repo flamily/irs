@@ -1,7 +1,7 @@
 def test_login_empty(client):
-    rv = client.get('/login/')
-    assert rv.status_code == 200
-    assert b'Login' in rv.data
+    endpoint_uri = client.get('/login/')
+    assert endpoint_uri.status_code == 200
+    assert b'Login' in endpoint_uri.data
 
 
 # def test_friends_add(client):
