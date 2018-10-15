@@ -6,7 +6,7 @@ Date: 04/10/2018
 """
 import pytest
 import psycopg2
-from irs.test.database.util import insert_restaurant_table
+from test.database.util import insert_restaurant_table
 
 
 def test_empty_table(db_connection):

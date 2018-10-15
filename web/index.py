@@ -1,14 +1,14 @@
 from flask import Blueprint
 
-from irs.web.decorators import templated, login_required
+from web.decorators import templated, login_required
 
 
 # Reference for blueprints here:
 # http://flask.pocoo.org/docs/1.0/blueprints/
-index_blueprint = Blueprint('index', __name__, template_folder='templates')
+INDEX_BLUEPRINT = Blueprint('index', __name__, template_folder='templates')
 
 
-@index_blueprint.route('/')
+@INDEX_BLUEPRINT.route('/')
 @login_required()
 @templated(template='index.html')
 def index():

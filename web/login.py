@@ -8,7 +8,7 @@ from flask import (
 
 # Reference for blueprints here:
 # http://flask.pocoo.org/docs/1.0/blueprints/
-login_blueprint = Blueprint('login', __name__, template_folder='templates')
+LOGIN_BLUEPRINT = Blueprint('login', __name__, template_folder='templates')
 
 
 # from: http://flask.pocoo.org/snippets/62/
@@ -34,7 +34,7 @@ def redirect_back(endpoint, **values):
     return redirect(target)
 
 
-@login_blueprint.route("/", methods=['GET', 'POST'])
+@LOGIN_BLUEPRINT.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         session['username'] = request.form['email']
@@ -43,7 +43,7 @@ def index():
     return render_template('login.html', next=next)
 
 
-@login_blueprint.route("/logout", methods=['GET'])
+@LOGIN_BLUEPRINT.route("/logout", methods=['GET'])
 def logout():
     session.pop('username', None)
     return redirect(url_for('index.index'))

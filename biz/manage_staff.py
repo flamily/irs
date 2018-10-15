@@ -8,7 +8,7 @@ Author: Andrew Pope
 Date: 09/10/2018
 """
 from passlib.hash import sha256_crypt
-from irs.biz.staff import Staff
+from biz.staff import Staff
 
 
 def lookup_id(db_conn, username):
