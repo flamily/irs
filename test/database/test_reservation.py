@@ -6,7 +6,7 @@ Date: 04/10/2018
 """
 import pytest
 import psycopg2
-from irs.test.database.util import insert_reservation
+from test.database.util import insert_reservation
 
 
 def test_empty_table(db_connection):
