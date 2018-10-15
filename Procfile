@@ -1,1 +1,1 @@
-app: cd .. && gunicorn irs.web:APP --log-file '-' -b 0.0.0.0:${PORT}
+app: gunicorn web:APP --log-file '-' -b 0.0.0.0:${PORT}
