@@ -2,7 +2,7 @@ import threading
 from flask import g, current_app
 from psycopg2 import pool
 from werkzeug.local import LocalProxy
-from irs import config
+import config
 
 
 __pool_lock = threading.Lock()

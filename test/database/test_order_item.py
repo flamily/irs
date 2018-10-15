@@ -6,7 +6,7 @@ Date: 04/10/2018
 """
 import pytest
 import psycopg2
-from irs.test.database.util import (
+from test.database.util import (
     insert_order_item, insert_reservation, insert_customer_order,
     insert_menu_item
 )

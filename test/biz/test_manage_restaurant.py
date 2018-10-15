@@ -6,14 +6,14 @@ Date: 08/10/2018
 """
 import pytest
 import psycopg2
-import irs.biz.manage_restaurant as mg
-import irs.biz.manage_staff as ms
-import irs.biz.manage_menu as mm
-from irs.biz.staff import Permission
-from irs.biz.restaurant_table import (
+import biz.manage_restaurant as mg
+import biz.manage_staff as ms
+import biz.manage_menu as mm
+from biz.staff import Permission
+from biz.restaurant_table import (
     State, Event, Shape, Coordinate, RestaurantTable
 )
-from irs.test.database.util import (
+from test.database.util import (
     insert_staff, insert_restaurant_table, insert_event
 )
 
