@@ -12,8 +12,7 @@ Please make sure:
 
 `routes.py` handles all the template rendering. To view the templates in your browser, you can run a local flask server.
 ```
- export FLASK_APP=routes.py
- python -m flask run
+  FLASK_APP=routes.py flask run
 ```
 Then you can view it on `http://127.0.0.1:5000/`
 
