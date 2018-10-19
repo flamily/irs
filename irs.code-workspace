@@ -8,6 +8,5 @@
 		"python.unitTest.unittestEnabled": false,
 		"python.unitTest.pyTestEnabled": true,
 		"python.unitTest.nosetestsEnabled": false,
-		"python.pythonPath": "/usr/local/opt/python/bin/python3.7",
 	}
 }
