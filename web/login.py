@@ -1,13 +1,8 @@
 from urllib.parse import urlparse, urljoin
-# false positive from pylint again. Can't import flask.
-# pylint: disable=E0401
 from flask import (
     redirect,
-    url_for,
-    Blueprint,
-    render_template,
-    request,
-    session
+    url_for, Blueprint, render_template,
+    request, session
 )
 
 
@@ -26,9 +21,10 @@ def is_safe_url(target):
 
 def get_redirect_target():
     for target in request.values.get('next'), request.referrer:
-        if target and is_safe_url(target):
+        if not target:
+            continue
+        if is_safe_url(target):
             return target
-        return redirect(url_for('index.index'))
 
 
 def redirect_back(endpoint, **values):
@@ -38,13 +34,13 @@ def redirect_back(endpoint, **values):
     return redirect(target)
 
 
-@LOGIN_BLUEPRINT.route("/login", methods=['GET', 'POST'])
+@LOGIN_BLUEPRINT.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         session['username'] = request.form['email']
         return redirect_back('index.index')
-    next_step = get_redirect_target()
-    return render_template('login.html', next=next_step)
+    next = get_redirect_target()
+    return render_template('login.html', next=next)
 
 
 @LOGIN_BLUEPRINT.route("/logout", methods=['GET'])
