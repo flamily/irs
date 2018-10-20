@@ -6,7 +6,7 @@ Date: 04/10/2018
 """
 import pytest
 import psycopg2
-from irs.test.database.util import insert_staff
+from test.database.util import insert_staff
 
 
 def test_empty_table(db_connection):

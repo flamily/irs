@@ -4,7 +4,7 @@ These tests check the constraints of the customer_order relation.
 Author: Andrew Pope
 Date: 04/10/2018
 """
-from irs.test.database.util import (
+from test.database.util import (
     insert_reservation, insert_customer_order
 )
 
