@@ -25,6 +25,7 @@ def get_redirect_target():
             continue
         if is_safe_url(target):
             return target
+    return None
 
 
 def redirect_back(endpoint, **values):
@@ -39,8 +40,9 @@ def index():
     if request.method == 'POST':
         session['username'] = request.form['email']
         return redirect_back('index.index')
-    next = get_redirect_target()
-    return render_template('login.html', next=next)
+    next_url = get_redirect_target()
+    print(next_url)
+    return render_template('login.html', next=next_url)
 
 
 @LOGIN_BLUEPRINT.route("/logout/", methods=['GET', 'POST'])

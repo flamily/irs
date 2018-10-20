@@ -2,16 +2,16 @@ import pytest
 import urllib.parse
 
 
-@pytest.mark.parametrize('next, expect', [
-    (False,                   ''),
-    ('',                      ''),
-    ('http://bad.com/good',   ''),
-    ('http://bad.com',        ''),
-    ('http://localhost/',     'http://localhost/'),
+@pytest.mark.parametrize('next_url, expect', [
+    (False, ''),
+    ('', ''),
+    ('http://bad.com/good', ''),
+    ('http://bad.com', ''),
+    ('http://localhost/', 'http://localhost/'),
     ('http://localhost/good', 'http://localhost/good'),
 ])
-def test_login_populate_redirect(client, next, expect):
-    url = __make_next(next)
+def test_login_populate_redirect(client, next_url, expect):
+    url = __make_next(next_url)
     form = '<input type=hidden value="{}" name=next>'
     form_next = form.format(expect).encode()
 
@@ -20,15 +20,15 @@ def test_login_populate_redirect(client, next, expect):
     assert form_next in result.data
 
 
-@pytest.mark.parametrize('next, expect', [
-    (False,                   'http://localhost/'),
-    ('',                      'http://localhost/'),
-    ('http://bad.com/good',   'http://localhost/'),
-    ('http://bad.com',        'http://localhost/'),
+@pytest.mark.parametrize('next_url, expect', [
+    (False, 'http://localhost/'),
+    ('', 'http://localhost/'),
+    ('http://bad.com/good', 'http://localhost/'),
+    ('http://bad.com', 'http://localhost/'),
     ('http://localhost/good', 'http://localhost/good'),
 ])
-def test_login_redirect_location(client, next, expect):
-    params = __make_params(next)
+def test_login_redirect_location(client, next_url, expect):
+    params = __make_params(next_url)
     result = client.post('/login/', data=params)
     assert result.status_code == 302
     assert expect == result.location
@@ -49,15 +49,16 @@ def test_login_empty(client):
 def test_login_sets_session_cookie(client):
     params = __make_params()
     result = client.post('/login/', data=params)
-    assert len(__get_setcookie(result, 'session')) > 0
+    assert __get_setcookie(result, 'session')
 
 
 def test_logout_resets_session_cookie(client):
     params = __make_params()
     result = client.post('/login/', data=params, follow_redirects=True)
     assert result.status_code == 200
+
     result = client.post('/login/logout/', data=params)
-    assert '' == __get_setcookie(result, 'session')
+    assert __get_setcookie(result, 'session') == ''
 
 
 def test_login(client):
@@ -67,8 +68,8 @@ def test_login(client):
     assert b'Dashboard' in result.data
 
 
-def __make_params(next=False):
-    if not next or next is False:
+def __make_params(next_url=False):
+    if not next_url or next_url is False:
         return dict(
             email='me@email.com',
             password='petemcgee'
@@ -76,14 +77,14 @@ def __make_params(next=False):
     return dict(
         email='me@email.com',
         password='petemcgee',
-        next=next
+        next=next_url
     )
 
 
-def __make_next(next):
-    if not next or next is False:
+def __make_next(next_url):
+    if not next_url or next_url is False:
         return '/login/'
-    n = next.encode()
+    n = next_url.encode()
     e = urllib.parse.quote_plus(n)
     return '/login/?next=' + e
 
