@@ -20,7 +20,7 @@ def templated(template=None):  # pragma: no cover
     return decorator
 
 
-def login_required(allow=['management']):
+def login_required():  # add optional parameter to control groups
     def decorator(incoming_func):
         @wraps(incoming_func)
         def decorated_function(*args, **kwargs):

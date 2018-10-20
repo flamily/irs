@@ -28,7 +28,7 @@ def get_redirect_target():
 
 
 def redirect_back(endpoint, **values):
-    target = request.form['next']
+    target = request.form.get('next', None)
     if not target or not is_safe_url(target):
         target = url_for(endpoint, **values)
     return redirect(target)
@@ -43,7 +43,7 @@ def index():
     return render_template('login.html', next=next)
 
 
-@LOGIN_BLUEPRINT.route("/logout", methods=['GET'])
+@LOGIN_BLUEPRINT.route("/logout/", methods=['GET', 'POST'])
 def logout():
     session.pop('username', None)
     return redirect(url_for('index.index'))
