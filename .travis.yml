@@ -42,6 +42,7 @@ deploy:
   skip_cleanup: true
   on: &2
     repo: flamily/irs
+    branch: satisfaction_score
   bucket: flamily-core-ec2
   region: ap-southeast-2
   
@@ -57,3 +58,4 @@ deploy:
   deployment_group: flamily
   region: ap-southeast-2
   on: *2
+    branch: satisfaction_score
