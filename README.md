@@ -10,7 +10,7 @@ Please make sure:
 
 ### Viewing flask templates
 
-`routes.py` handles all the template rendering. To view the templates in your browser, you can run a local flask server.
+To view the templates in your browser, you can run a local flask server.
 ```
  export FLASK_APP=web flask run
  python -m flask run
