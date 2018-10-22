@@ -1,18 +1,32 @@
 language: python
 python:
-  - '3.6'
+- '3.6'
 cache:
-  - pip
+- pip
 install:
-  - 'pip install pipenv'
-  - 'pipenv install --ignore-pipfile'
+- pip install pipenv
+- pipenv install --ignore-pipfile
 services:
-  - postgres
+- postgres
 script:
-  - coverage run -m pytest
-  - coverage report --omit '/usr/*,/home/travis/virtualenv/*' -m --skip-covered --fail-under=100
-  - find . -iname "*.py" | xargs pylint -d "c0111, R0801, C0103, C0411"
-  - flake8
+- coverage run -m pytest
+- coverage report --omit '/usr/*,/home/travis/virtualenv/*' -m --skip-covered --fail-under=100
+- find . -iname "*.py" | xargs pylint -d "c0111, R0801, C0103, C0411"
+- flake8
 notifications:
   slack:
     secure: YBb8/uqXg4DpIxzsKQfTD8oiFDHf09tM76ymqkPfp02ITUwgY4C0h1xIM1PQgXlOdC+gVOudkrbbwjJQH58fxjM1KNADIHKJ2Q7wg5mjhtPwDxiLeYi2c1U7xPwN8+sMoxM4Nke3r1ZuB/6dsGv16LGawlHLWN0pGL7ZrnBm3aoegKkIUg/WZD6VlsmbtEgIrwbQVS/6TeM+xs3KBx5U45P+d8VAMy++uKmAny/GnJ02vVwffGHCf/GaGKgfFTNadBIvuBUnTpwTsUuwlmr7QVKIVWJUTxMTjA0ZcnjU2zydBzLIOJIhF0xA/GbmLJLJ4UvTFuzO4lpgW8SjWMTIIqMIRpV7r4Ry3NK4oP6RRGkQh7+mVUqie9NXtvZjFCO8XwicitPA8feLCnyZPIYY3w9NmARe4EnPKOwXjGDMg31/FcpeKiJRQcZ9lhsTpCqau6WwnpKec4RPbEuNmIMAc7z0+TgZKbwFe+nxXgwZHhy3Ofq+NYkHjLXx3kSWPQR51Yl5pU9iwvepyrtDsxm59CtxX7wpxo217SD/ArU8rEsID3WtZPbncUh3o6yNnCoUo89nP3Rlx6pOldyLk4LOiQXzkCbPDfznVM9umf3qSywy1iY2qgCnTMjXQgwh3KzJEPHbKJsRIeYiy3rL2Ztc36exKRQJUkGxnMTdI7cYt20=
+deploy:
+  access_key_id: AKIAIOUPSN73EV3LPFPQ
+  secret_access_key:
+    secure: jdLOD+QOSrJ7KiAOl3iMr9GAdvj0+TgJfbhZhJV4qv/IcHgHjEvVrqUk8UJTItqbtOYTHJZpbOMGNEP81jwBtSh/jhH/cJRrDbwohVcocJudIoKxY4Hi2haRGsTlM/O8XxDYCaUfvOHWghSkMZ+BmMZhrG1r5p3fOk+CLKRxeDmlKFFmQ5eP2aHWOzBSGa4NOiunL2TdUVXZbYU+0feCV/HNTJUloorUZd6KGp6JU6vsPaj5uPp1Oow44meXJaio7TTEeJfFcrPaTQmkfHdsrVrv248WAGyfGhH3NJUDowr1aLW6d4Ap/NbHnmbonYBOnCjPjcoc3Ygv6sWgDhpBJADLw/2OBYmyCFLxrtn60qHrVPlT3utA5cVxF42lpqUJuaAnu56urWsWCXaZGCOQQWysmqZORobZMdP32Gpi86zyV3X+h2z9FdwS3lCrgRucjYaarVxIfaDv7ZAUDaMlPtx71vMYYi5Gy8Qn3BM5VlxUX1d7dtrsO9OfZX69IBtCbtsztL+8CG7gUYMBxn3Y+O/gPaBcsIswkrnXVuMlvhxUZHrYMShKGuZYYjMMEq2McH556luMhVk9iqYOR0Z2jB5iQQw8CHayPp6R/z6/ixp0bQK5o6Cpn6LbAdxdk0ND3+tCXUZb6V/Ih8AYB5MpbUBwAwbWBuBWFKFlBz5T8uk=
+  provider: lambda
+  function_name: "ping"
+  region: "ap-southeast-2"
+  # role: "arn:aws:iam::0123456789012:role/lambda_basic_execution"
+  role: "arn:aws:lambda:ap-southeast-2:647081355413:function:ping"
+  runtime: "python3.6"
+  handler_name: "handler"
+  on:
+    branch: aws
+    repo: flamily/irs
