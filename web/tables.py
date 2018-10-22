@@ -30,6 +30,8 @@ def pay():
     # Get the exit image and send to bucket
     customer_img = request.form['customer_img']  # TODO: What format will this be??
     # TODO: Send to bucket?? (customer_img, event_id, reservation_id)
+
+    db.commit()
     return status.HTTP_200_OK  # TODO: What are we returning, I doubt we would need to redirect to another page??
 
 
@@ -44,6 +46,8 @@ def maintain():
     # TODO: How do we catch exceptions that invalidate table state rules?
     # And how to display to user?
     mr.maintain(db, table_id, staff_id)
+
+    db.commit()
     return status.HTTP_200_OK
 
 
@@ -58,4 +62,6 @@ def ready():
     # TODO: How do we catch exceptions that invalidate table state rules?
     # And how to display to user?
     mr.ready(db, table_id, staff_id)
+
+    db.commit()
     return status.HTTP_200_OK
