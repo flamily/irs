@@ -6,7 +6,7 @@ Date: 04/10/2018
 """
 import pytest
 import psycopg2
-from irs.test.database.util import (
+from test.database.util import (
     insert_order_item, insert_reservation, insert_customer_order,
     insert_menu_item
 )
@@ -44,3 +44,14 @@ def test_invalid_quantity(db_connection):
         mi_id = insert_menu_item(curs, 'cereal')
         with pytest.raises(psycopg2.IntegrityError):
             insert_order_item(curs, co_id, mi_id, -1)
+
+
+def test_duplicate_items(db_connection):
+    """Attempt to add duplicate menu items."""
+    with db_connection.cursor() as curs:
+        r_id = insert_reservation(curs, 1)
+        co_id = insert_customer_order(curs, r_id)
+        mi_id = insert_menu_item(curs, 'cereal')
+
+        insert_order_item(curs, co_id, mi_id, 2)
+        insert_order_item(curs, co_id, mi_id, 3)
