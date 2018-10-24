@@ -16,7 +16,7 @@ from web.decorators import login_required, templated
 
 TABLES_BLUEPRINT = Blueprint('tables', __name__, template_folder='templates')
 
-# TODO: List of tasks that need to be considered
+# NB: List of tasks that need to be considered
 #  - Handling exceptions (at the moment the generic html pages are displayed),
 #    no message is shown. Perhaps we should change from default error codes
 #    (e.g. if resource is missing)
@@ -25,6 +25,11 @@ TABLES_BLUEPRINT = Blueprint('tables', __name__, template_folder='templates')
 #  - In the template 'tables.html' we need to:
 #       1. Make it pretty.
 #       2. Get it to capture an image with Jason's js library.
+
+
+def __mock_bucket_send(img, event_id, reservation_id):
+    """Send image to bucket (mock)."""
+    print("Sent ({}, {}): {}".format(event_id, reservation_id, img))
 
 
 @TABLES_BLUEPRINT.route('/tables', methods=['GET'])
@@ -49,7 +54,7 @@ def pay():
 
     # Get the exit image and send to bucket
     customer_img = request.form['customerImg']
-    # TODO: Send to bucket?? (customer_img, event_id, reservation_id)
+    __mock_bucket_send(customer_img, event_id, reservation_id)
 
     return redirect(url_for('tables.index'))
 
