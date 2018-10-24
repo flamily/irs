@@ -71,11 +71,11 @@ def test_login(client):
 def __make_params(next_url=False):
     if not next_url or next_url is False:
         return dict(
-            email='me@email.com',
+            username='me@email.com',
             password='petemcgee'
         )
     return dict(
-        email='me@email.com',
+        username='me@email.com',
         password='petemcgee',
         next=next_url
     )
