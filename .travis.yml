@@ -40,8 +40,8 @@ deploy:
     secure: E6AHpW9KXqowQDdyAfubPXGDYMoDuTK/4iai2uSH2aYgxRJTam7LNg1XvTkt/HUo5/FoIcozHd3Yayicg9xXvqBOq80y46HXK/P96ycsfg+eI4cQRc+tY6U1VCFEVxiexQTh1jbWNbvRrQ+DitPBqTug5kSAo8jsTcMDWmmwEdQvBxEc1u9lI+jiU0GXh4Ckg5Gsnk4XlrCcdvJst7pE0USJdC1gAjDKQ6ZCTjKuJdysgsZg6TlvblEkRAiqy7Wwtmim+SdjlPtm5xzEffKbFEQkGYsqNgvQepGenOm+jOs9QCAqsxx3aXxruk8zPIA3H423Rs8jKTxCyIRQlUYMiAYUaEs6cbiaTVFoW90uVHc11uFsiy+6vPxNIyK/4WdrbJ+GptCYrqWb97JhYQ2nXeaNSQoFtJFbIDExIMTctUCOn+/Z/u1HfFGrsco69XUX/KMNtM0zg+0jSTQCypdJyyviG0soMf0R2Og+p1QzYonfpEbDLqXCrSWqrO/UhVuxTw6qnBuJu3qlwLmtPk3MoNOT+EyR4PhLOpRLmtvmO5PGjUJoSvtdo3rAE5TRzwrY6KFvslnY5CQrF76GAELphETVBKJ0WV029/5L90DcrkUSxwUJlZtIa8FoKd/k3bqosnsI44zJN5P0BOs3bL+WUFVYmla/GgGpAItTZ4W8CDI=
   local_dir: dpl_cd_upload
   skip_cleanup: true
-  on: &2
-    repo: flamily/irs
+  on:
+    branch: satisfaction_score
   bucket: flamily-core-ec2
   region: ap-southeast-2
   
@@ -56,4 +56,5 @@ deploy:
   application: flamily
   deployment_group: flamily
   region: ap-southeast-2
-  on: *2
+  on: 
+    branch: satisfaction_score
