@@ -5,14 +5,15 @@ Author: Andrew Pope
 Date: 22/10/2018
 """
 from flask import (
-    redirect,
-    url_for, Blueprint,
-    request, session
+    redirect, url_for, Blueprint, request, session
 )
 from web.db import db
+from web.decorators import (
+    login_required, templated
+)
 import biz.manage_restaurant as mr
 import biz.manage_staff as ms
-from web.decorators import login_required, templated
+
 
 TABLES_BLUEPRINT = Blueprint('tables', __name__, template_folder='templates')
 
