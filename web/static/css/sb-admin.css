@@ -402,3 +402,18 @@ h4 {
 .container-space {
   margin-top: 50px;
 }
+
+.submit-button {
+  width: 80px;
+  height: 80px;
+  margin-top: 30px;
+  margin-left: 30px;
+  border-radius: 7px;
+  font-family: 'Roboto',sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #FFFFFF;
+  background-color: darkgreen;
+  border-color: darkgreen;
+  text-align: center;
+}
