@@ -400,7 +400,8 @@ h4 {
 .container-space {
   margin-top: 50px;
 }
- .btn-large {
+
+.btn-lg {
   width: 300px;
   height: 90px;
   margin-top: 30px;
@@ -411,7 +412,8 @@ h4 {
   color:#FFFFFF;
   text-align:center;
 }
- .btn-sm-left {
+
+.btn-sm-left {
   width: 120px;
   height: 90px;
   margin-top: 30px;
@@ -423,7 +425,8 @@ h4 {
   color:#FFFFFF;
   text-align:center;
 }
- .btn-sm-right {
+
+.btn-sm-right {
   width: 120px;
   height: 90px;
   margin-top: 30px;
@@ -435,7 +438,8 @@ h4 {
   color:#FFFFFF;
   text-align:center;
 }
- .unavailable-table {
+
+.unavailable-table {
   background-color: #CC3220;
   border-radius: 7px;
   opacity: 0.7;
@@ -444,7 +448,8 @@ h4 {
   color:#FFFFFF;
   text-align:center;
 }
- .header-div {
+
+.header-div {
   background-color: #343a40;
   font-family:'Roboto',sans-serif;
   font-weight:200;
