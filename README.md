@@ -10,9 +10,10 @@ Please make sure:
 
 ### Viewing flask templates
 
-To view the templates in your browser, you can run a local flask server.
+To view the templates in your browser, you can run a local flask server. To see your changes, refresh the page.
 ```
  export FLASK_APP=web flask run
+ export FLASK_DEBUG=1
  python -m flask run
 ```
 Then you can view it on `http://127.0.0.1:5000/`
