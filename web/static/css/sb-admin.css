@@ -13,16 +13,6 @@ body {
   height: 100%;
 }
 
-.robot-bg {
-  background: #495057;
-}
-
-.h1 {
-  color: #fff;
-  text-align: center;
-  padding: 30px;
-}
-
 #wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -382,4 +372,27 @@ body.sidebar-toggled footer.sticky-footer {
   body.sidebar-toggled footer.sticky-footer {
     width: calc(100% - 90px);
   }
+}
+
+.h1 {
+  color: #fff;
+  text-align: center;
+  padding: 30px;
+}
+
+.button-select-pad {
+  width: 80px;
+  height: 80px;
+  margin-top: 30px;
+  margin-left: 30px;
+  border-radius: 7px;
+  font-family: 'Roboto',sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.container-space {
+  margin-top: 50px;
 }

@@ -42,7 +42,7 @@ def index():
         return redirect_back('index.index')
     next_url = get_redirect_target()
     print(next_url)
-    return render_template('welcome.html', next=next_url)
+    return render_template('login.html', next=next_url)
 
 
 @LOGIN_BLUEPRINT.route("/logout/", methods=['GET', 'POST'])
