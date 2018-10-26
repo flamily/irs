@@ -28,7 +28,7 @@
       <div id="num-pad" class="container container-space text-center">
         <form action="partySize.htm" method="get">
           <div class="input">
-              <input type="text" name="partySize" value="" maxlength="4" class="display" readonly="readonly" />
+              <input type="text" name="partySize" value="" maxlength="4" class="display text-center" readonly="readonly" />
           </div>
           <div class="row">
             <div class="col">
@@ -54,7 +54,9 @@
           <div class="row">
             <div class="col">
               <button type="button" class="btn-primary btn-select-pad" onclick="addNum('0');">0</button>
-              <button type="button" class="btn-primary fas fa-backspace btn-select-pad" onclick="delNum();"></button>
+              <button type="button" class="btn-primary btn-select-pad" onclick="delNum();">
+                <span class="fa fa-backspace"></span>
+              </button>
             </div>
           </div>
         </form>
