@@ -37,4 +37,8 @@
     event.preventDefault();
   });
 
+  $('#table-layout').find('button').click(function(){
+    $('#statusModal').modal('show');
+    $('#tableId').val($(this).data('tableid'));
+  });
 })(jQuery); // End of use strict
