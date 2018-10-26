@@ -4,6 +4,8 @@ These tests check the constraints of the customer_order relation.
 Author: Andrew Pope
 Date: 04/10/2018
 """
+import pytest
+import psycopg2
 from test.database.util import (
     insert_reservation, insert_customer_order
 )
@@ -28,3 +30,10 @@ def test_valid(db_connection):
             (co_id,)
         )
         assert curs.rowcount is 1
+
+
+def test_invalid(db_connection):
+    """Attempt to create an invalid customer order."""
+    with db_connection.cursor() as curs:
+        with pytest.raises(psycopg2.IntegrityError):
+            insert_customer_order(curs, 'wot')
