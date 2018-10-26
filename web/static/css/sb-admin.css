@@ -380,6 +380,12 @@ h1 {
   padding: 30px;
 }
 
+h4 {
+  color: #fff;
+  text-align: center;
+  padding: 30px;
+}
+
 .btn-select-pad {
   margin: 0 5px 5px 0;
   width: 60px;
