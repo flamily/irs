@@ -381,16 +381,14 @@ body.sidebar-toggled footer.sticky-footer {
 }
 
 .btn-select-pad {
-  width: 80px;
-  height: 80px;
-  margin-top: 30px;
-  margin-left: 30px;
-  border-radius: 7px;
-  font-family: 'Roboto',sans-serif;
-  font-weight: 500;
-  font-size: 20px;
-  color: #FFFFFF;
+  margin: 0 5px 5px 0;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  line-height: 60px;
   text-align: center;
+  border: 1px solid #f9f9f9;
+  border-radius: 5px;
 }
 
 .container-space {
