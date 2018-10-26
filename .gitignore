@@ -5,3 +5,5 @@
 .coverage
 /htmlcov
 .vscode/
+/web/node_modules
+/web/static/dist
