@@ -1,0 +1,21 @@
+{% with page_title = page_title %}
+  {% include 'header.html' %}
+{% endwith %}
+  <body class="robot-bg">
+    <div class="container">
+      <h1>Welcome to Avalon Smart Restaurant</h1>
+      <form action="/" method="post">
+        <div h4>Enter how many people you wish to seat</div>
+        <div class="form-group">
+          <div class="form-label-group">
+            <input name="customerno" type="string" id="customerno" class="form-control" placeholder="Enter number of people" required="required" autofocus="autofocus">
+            <label for="seat">Enter number</label>
+          </div>
+        </div>
+        <input type=hidden value="{{ next or '' }}" name=next>
+        <input type=submit value="Continue" class="btn btn-primary btn-block">
+      </form>
+    </div>
+  </body>
+  {% include 'footer.html' %}
+</html>

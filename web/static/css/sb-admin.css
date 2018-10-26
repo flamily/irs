@@ -13,6 +13,16 @@ body {
   height: 100%;
 }
 
+.robot-bg {
+  background: #495057;
+}
+
+.h1 {
+  color: #fff;
+  text-align: center;
+  padding: 30px;
+}
+
 #wrapper {
   display: -webkit-box;
   display: -ms-flexbox;
