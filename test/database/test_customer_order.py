@@ -35,5 +35,6 @@ def test_valid(db_connection):
 def test_invalid(db_connection):
     """Attempt to create an invalid customer order."""
     with db_connection.cursor() as curs:
+        r_id = insert_reservation(curs, 1)
         with pytest.raises(psycopg2.IntegrityError):
-            insert_customer_order(curs, 'wot')
+            insert_customer_order(3, r_id)
