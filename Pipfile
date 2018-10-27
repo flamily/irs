@@ -39,6 +39,7 @@ scandir = "*"
 passlib = "*"
 gunicorn = "*"
 flask-testing = "*"
+blinker = "*"
 
 [requires]
 python_version = "3.6"
