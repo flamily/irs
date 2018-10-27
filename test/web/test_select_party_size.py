@@ -9,6 +9,5 @@ class SelectPartySize(TestCase):
         app.config['TESTING'] = True
         return app
 
-    def test_assert_mytemplate_used(self):
-        self.app.get("/select-party-size")
-        self.assert_template_used(tmpl_name_attribute='select-party-size.html')
+    def test_assert_url(self):
+        self.client.get("/select-party-size")
