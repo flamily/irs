@@ -10,5 +10,5 @@ class SelectPartySize(TestCase):
         return app
 
     def test_assert_mytemplate_used(self):
-        self.client.get("/select-party-size")
-        self.assert_template_used('select-party-size.html')
+        self.app.get("/select-party-size")
+        self.assert_template_used(tmpl_name_attribute='select-party-size.html')
