@@ -7,8 +7,9 @@ Date: 09/10/2018
 import biz.manage_menu as menu
 from biz.manage_menu import MenuItem
 
+
 def test_empty_table(db_connection):
-    """Check that the staff table has no records."""
+    """Check that the menu_item table has no records."""
     with db_connection.cursor() as curs:
         curs.execute("SELECT * FROM menu_item")
         assert curs.rowcount is 0
