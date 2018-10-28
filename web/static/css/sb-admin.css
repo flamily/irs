@@ -387,8 +387,35 @@ h4 {
 }
 
 .btn-select-pad {
-  width: 80px;
-  height: 80px;
+  margin: 0 5px 5px 0;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  line-height: 60px;
+  text-align: center;
+  border: 1px solid #f9f9f9;
+  border-radius: 5px;
+}
+
+.container-space {
+  margin-top: 50px;
+}
+
+.btn-lg {
+  width: 300px;
+  height: 90px;
+  margin-top: 30px;
+  background-color: #80B34F;
+  border-radius: 7px;
+  font-family:'Roboto',sans-serif;
+  font-weight:500;
+  color:#FFFFFF;
+  text-align:center;
+}
+
+.btn-sm-left {
+  width: 120px;
+  height: 90px;
   margin-top: 30px;
   margin-left: 30px;
   border-radius: 7px;
@@ -406,6 +433,10 @@ h4 {
 .submit-button {
   width: 80px;
   height: 80px;
+
+.btn-sm-right {
+  width: 120px;
+  height: 90px;
   margin-top: 30px;
   margin-left: 30px;
   border-radius: 7px;
@@ -418,6 +449,20 @@ h4 {
   text-align: center;
 }
 
-.container-space {
-  margin-top: 50px;
+.unavailable-table {
+  background-color: #CC3220;
+  border-radius: 7px;
+  opacity: 0.7;
+  font-family:'Roboto',sans-serif;
+  font-weight:500;
+  color:#FFFFFF;
+  text-align:center;
+}
+
+.header-div {
+  background-color: #343a40;
+  font-family:'Roboto',sans-serif;
+  font-weight:200;
+  color:#FFFFFF;
+  padding: 15px;
 }
