@@ -430,9 +430,26 @@ h4 {
   margin-top: 50px;
 }
 
-.submit-button {
-  width: 80px;
-  height: 80px;
+.confirm-button {
+  height: 60px;
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+  margin-top: 20px;
+}
+
+.backspace {
+  width: 100px;
+  margin-right: 0px;
+  background-color: #CC3220;
+  color: white;
+}
+
+.numpad-field {
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: xx-large;
+}
 
 .btn-sm-right {
   width: 120px;
