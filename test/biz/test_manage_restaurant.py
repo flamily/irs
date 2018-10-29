@@ -13,6 +13,9 @@ from biz.staff import Permission
 from biz.restaurant_table import (
     State, Event, Shape, Coordinate, RestaurantTable
 )
+from test.database.util import (	
+    insert_staff, insert_restaurant_table, insert_event	
+)
 
 # Private global for quick spoofing of table data
 __spoof = RestaurantTable(
