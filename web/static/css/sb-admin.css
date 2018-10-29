@@ -377,7 +377,7 @@ body.sidebar-toggled footer.sticky-footer {
 h1 {
   color: #fff;
   text-align: center;
-  padding: 30px;
+  padding: 20px;
 }
 
 h4 {
@@ -436,6 +436,7 @@ h4 {
   border-color: #28a745;
   color: white;
   margin-top: 20px;
+  font-size: 24px;
 }
 
 .backspace {

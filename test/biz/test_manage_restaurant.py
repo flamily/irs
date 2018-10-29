@@ -4,18 +4,15 @@ These tests check the restaurant table manager.
 Author: Andrew Pope
 Date: 08/10/2018
 """
-from test.database.util import (
-    insert_staff, insert_restaurant_table, insert_event
-)
-from biz.restaurant_table import (
-    State, Event, Shape, Coordinate, RestaurantTable
-)
-from biz.staff import Permission
+import pytest
+import psycopg2
 import biz.manage_restaurant as mg
 import biz.manage_staff as ms
 import biz.manage_menu as mm
-import pytest
-import psycopg2
+from biz.staff import Permission
+from biz.restaurant_table import (
+    State, Event, Shape, Coordinate, RestaurantTable
+)
 
 # Private global for quick spoofing of table data
 __spoof = RestaurantTable(
@@ -67,23 +64,6 @@ def __spoof_menu_items(db_conn, n):
             )
         )
     return items
-
-
-def test_empty_tables(db_connection):
-    """Check that the menu_item table has no records."""
-    with db_connection.cursor() as curs:
-        curs.execute("SELECT * FROM menu_item")
-        assert curs.rowcount is 0
-
-    """Check that the staff table has no records."""
-    with db_connection.cursor() as curs:
-        curs.execute("SELECT * FROM staff")
-        assert curs.rowcount is 0
-
-    """Check that the event table has no records."""
-    with db_connection.cursor() as curs:
-        curs.execute("SELECT * FROM event")
-        assert curs.rowcount is 0
 
 
 def test_lookup_missing_order(database_snapshot):
