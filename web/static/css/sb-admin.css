@@ -456,3 +456,13 @@ h4 {
   color:#FFFFFF;
   padding: 15px;
 }
+
+.start-btn {
+  border-radius: 250px;
+  height: 250px;
+  width: 250px;
+  border-color: white;
+  background: radial-gradient(circle at 100px 100px, #28a745, rgb(57, 156, 107));
+  color: white;
+  font-size: 24px;
+}
