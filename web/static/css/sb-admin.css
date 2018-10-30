@@ -377,7 +377,7 @@ body.sidebar-toggled footer.sticky-footer {
 h1 {
   color: #fff;
   text-align: center;
-  padding: 30px;
+  padding: 20px;
 }
 
 h4 {
@@ -417,13 +417,39 @@ h4 {
   width: 120px;
   height: 90px;
   margin-top: 30px;
-  margin-right: 30px;
-  background-color: #80B34F;
+  margin-left: 30px;
   border-radius: 7px;
-  font-family:'Roboto',sans-serif;
-  font-weight:500;
-  color:#FFFFFF;
-  text-align:center;
+  font-family: 'Roboto',sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.container-space {
+  margin-top: 50px;
+}
+
+.confirm-button {
+  height: 60px;
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+  margin-top: 20px;
+  font-size: 24px;
+}
+
+.backspace {
+  width: 100px;
+  margin-right: 0px;
+  background-color: #CC3220;
+  color: white;
+}
+
+.numpad-field {
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: xx-large;
 }
 
 .btn-sm-right {
@@ -431,12 +457,14 @@ h4 {
   height: 90px;
   margin-top: 30px;
   margin-left: 30px;
-  background-color: #80B34F;
   border-radius: 7px;
-  font-family:'Roboto',sans-serif;
-  font-weight:500;
-  color:#FFFFFF;
-  text-align:center;
+  font-family: 'Roboto',sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #FFFFFF;
+  background-color: darkgreen;
+  border-color: darkgreen;
+  text-align: center;
 }
 
 .unavailable-table {

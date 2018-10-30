@@ -1,0 +1,72 @@
+{% include 'header.html' %}
+  <body class="bg-dark">
+    <script type="text/javascript">
+      function addNum(key){
+        var partySize = document.forms[0].partySize;
+        if(partySize.value.length < 2){
+          partySize.value = partySize.value + key;
+        }
+        if(partySize.value.length == 2){
+          setTimeout(submitForm,1000);
+        }
+      }
+      function delNum(){
+        var partySize = document.forms[0].partySize;
+        if(partySize.value.length > 0){
+          partySize.value = partySize.value.slice(0, partySize.value.length-1);
+        }
+        if(partySize.value.length <= 0){
+          setTimeout(submitForm,1000);
+        }
+      }
+    </script>
+    <div class="container">
+      <div class="text-center">
+        <h1>Welcome to Avalon Smart Restaurant</h1>
+        <p style="color:white; font-size: 24px;">Please enter how many people you wish to seat:<p>
+      </div>
+      <div id="num-pad" class="container text-center">
+        <form action="partySize.htm" method="get">
+          <div class="input">
+              <input type="text" name="partySize" value="" maxlength="4" class="display text-center numpad-field" readonly="readonly" />
+          </div>
+          <div class="row">
+            <div class="col">
+              <button type="button" class="btn-primary btn-select-pad" onclick="addNum('1');">1</button>
+              <button type="button" class="btn-primary btn-select-pad" onclick="addNum('2');">2</button>
+              <button type="button" class="btn-primary btn-select-pad" onclick="addNum('3');">3</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+                <button type="button" class="btn-primary btn-select-pad" onclick="addNum('4');">4</button>
+                <button type="button" class="btn-primary btn-select-pad" onclick="addNum('5');">5</button>
+                <button type="button" class="btn-primary btn-select-pad" onclick="addNum('6');">6</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <button type="button" class="btn-primary btn-select-pad" onclick="addNum('7');">7</button>
+              <button type="button" class="btn-primary btn-select-pad" onclick="addNum('8');">8</button>
+              <button type="button" class="btn-primary btn-select-pad" onclick="addNum('9');">9</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <button type="button" class="btn-primary btn-select-pad" onclick="addNum('0');">0</button>
+              <button type="button" class="btn-select-pad backspace" onclick="delNum();">
+                <span class="fa fa-backspace"></span>
+              </button>
+            </div>
+          </div>
+          <div class="row justify-content-center">
+            <div class="col-sm-4">
+                <input type=submit value="Confirm" class="btn btn-block confirm-button">
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+  {% include 'footer.html' %}
+</html>
