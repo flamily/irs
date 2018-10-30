@@ -12,4 +12,4 @@ INDEX_BLUEPRINT = Blueprint('index', __name__, template_folder='templates')
 @login_required()
 @templated(template='index.html')
 def index():
-    return dict(page_title='bingo')
+    return dict(page_title='IRS - Admin Dashboard')
