@@ -373,3 +373,124 @@ body.sidebar-toggled footer.sticky-footer {
     width: calc(100% - 90px);
   }
 }
+
+h1 {
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}
+
+h4 {
+  color: #fff;
+  text-align: center;
+  padding: 30px;
+}
+
+.btn-select-pad {
+  margin: 0 5px 5px 0;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  line-height: 60px;
+  text-align: center;
+  border: 1px solid #f9f9f9;
+  border-radius: 5px;
+}
+
+.container-space {
+  margin-top: 50px;
+}
+
+.btn-lg {
+  width: 300px;
+  height: 90px;
+  margin-top: 30px;
+  background-color: #80B34F;
+  border-radius: 7px;
+  font-family:'Roboto',sans-serif;
+  font-weight:500;
+  color:#FFFFFF;
+  text-align:center;
+}
+
+.btn-sm-left {
+  width: 120px;
+  height: 90px;
+  margin-top: 30px;
+  margin-left: 30px;
+  border-radius: 7px;
+  font-family: 'Roboto',sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.container-space {
+  margin-top: 50px;
+}
+
+.confirm-button {
+  height: 60px;
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+  margin-top: 20px;
+  font-size: 24px;
+}
+
+.backspace {
+  width: 100px;
+  margin-right: 0px;
+  background-color: #CC3220;
+  color: white;
+}
+
+.numpad-field {
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: xx-large;
+}
+
+.btn-sm-right {
+  width: 120px;
+  height: 90px;
+  margin-top: 30px;
+  margin-left: 30px;
+  border-radius: 7px;
+  font-family: 'Roboto',sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  color: #FFFFFF;
+  background-color: darkgreen;
+  border-color: darkgreen;
+  text-align: center;
+}
+
+.unavailable-table {
+  background-color: #CC3220;
+  border-radius: 7px;
+  opacity: 0.7;
+  font-family:'Roboto',sans-serif;
+  font-weight:500;
+  color:#FFFFFF;
+  text-align:center;
+}
+
+.header-div {
+  background-color: #343a40;
+  font-family:'Roboto',sans-serif;
+  font-weight:200;
+  color:#FFFFFF;
+  padding: 15px;
+}
+
+.start-btn {
+  border-radius: 250px;
+  height: 250px;
+  width: 250px;
+  border-color: white;
+  background: radial-gradient(circle at 100px 100px, #28a745, rgb(57, 156, 107));
+  color: white;
+  font-size: 24px;
+}
