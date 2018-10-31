@@ -4,7 +4,8 @@ from flask import (
     url_for, Blueprint, render_template,
     request, session
 )
-
+from web.db import db
+import biz.manage_staff as ms
 
 # Reference for blueprints here:
 # http://flask.pocoo.org/docs/1.0/blueprints/
@@ -38,8 +39,19 @@ def redirect_back(endpoint, **values):
 @LOGIN_BLUEPRINT.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        session['username'] = request.form['username']
+        username = request.form['username']
+        password = request.form['password']
+
+        # TODO: Catch exception if login is wrong.
+        if not ms.verify_password(db, username, password):
+            # TODO: Tell that password is invalid?
+            return redirect(url_for('login.index'))
+
+        # The password was valid - redirect to landing page
+        session['username'] = username
         return redirect_back('index.index')
+
+    # This is a GET request for the login page
     next_url = get_redirect_target()
     print(next_url)
     return render_template('login.html', next=next_url)

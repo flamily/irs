@@ -10,7 +10,7 @@
 INSERT INTO staff (username, password, first_name, last_name, permission)
 VALUES (
   'jclank',
-  'c0cfd5754185d29c6ffea84f2fa16207697c3ccb472356b931e06d0478e7c1d1', --password is 'jclank' SHA256
+  '$5$rounds=535000$fHNettCoJWtNUYkf$FFzzNYIpZ4nqpgLfa5aMOuCTxV3a2PP5AJkrxJQHCy2', --password is 'jclank' sha256_crypt
   'johnny',
   'clank',
   'robot'
@@ -19,7 +19,7 @@ VALUES (
 INSERT INTO staff (username, password, first_name, last_name, permission)
 VALUES (
   'ckramer',
-  '35425042f61ef16208c366831f67b78d35302ce99c1d5d33958307e478b8088e', --password is 'ckramer' SHA256
+  '$5$rounds=535000$OvSwVSaJ2RcK0jpS$G/cukyv6qmoDkT3YcCf.O6VDrmuCtv9wBi4p12agCH2', --password is 'ckramer' sha256_crypt
   'cosmo',
   'kramer',
   'wait_staff'
@@ -28,7 +28,7 @@ VALUES (
 INSERT INTO staff (username, password, first_name, last_name, permission)
 VALUES (
   'gcostanza',
-  'a79cd3eff3ba06db6271ac674503a5cd2fab9ea0d9723591049de31cc08c2ebc', --password is 'gcostanza' SHA256
+  '$5$rounds=535000$x7FdjKGvYTQPWoML$1RgQMrBI4j9Y1sHfE1tpONChJeqtidxYwSl/O9Y/XL8', --password is 'gcostanza' sha256_crypt
   'george',
   'Costanza',
   'management'
