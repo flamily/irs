@@ -11,7 +11,7 @@ SELECT_PARTY_SIZE_BLUEPRINT = Blueprint(
     'select_party_size', __name__, template_folder='templates')
 
 
-@SELECT_PARTY_SIZE_BLUEPRINT.route('/select-party-size', methods=['GET'])
+@SELECT_PARTY_SIZE_BLUEPRINT.route('/select-party-size')
 @templated(template='select-party-size.html')
 @login_required()
 def index():
