@@ -1,5 +1,7 @@
-{% include 'header.html' %}
-  <body class="bg-dark">
+{% with page_title = page_title %}
+  {% include 'header.html' %}
+{% endwith %}
+  <body id="page-top" class="bg-dark">
     <script type="text/javascript">
       function addNum(key){
         var partySize = document.forms[0].partySize;
@@ -68,5 +70,4 @@
       </div>
     </div>
   </body>
-  {% include 'footer.html' %}
 </html>

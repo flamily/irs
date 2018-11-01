@@ -1,13 +1,33 @@
-from flask_testing import TestCase
 from flask import Flask
 
 
-class SelectPartySize(TestCase):
+import biz.manage_staff as ms
+from biz.staff import Permission
 
-    def create_app(self):
-        app = Flask(__name__)
-        app.config['TESTING'] = True
-        return app
 
-    def test_assert_url(self):
-        self.client.get("/select-party-size")
+def __spoof_user(client):
+    """A user must be present and 'logged in'.
+
+    :param client: The client running the flask app.
+    :return: staff_id
+    """
+    pool = client.testing_db_pool
+    conn = pool.getconn()
+    s_id = ms.create_staff_member(
+        conn, 'rrobot', 'password', ('Roberto', 'Robot'),
+        Permission.robot
+    )
+    conn.commit()
+    pool.putconn(conn)
+    with client.session_transaction() as sess:
+        sess['username'] = 'rrobot'
+
+    return s_id
+
+
+def test_index(client):
+    """Test that select_party_size endpoint can be hit."""
+    __spoof_user(client)
+    result = client.get('/select-party-size')
+    assert result.status_code == 200
+    # assert b'Robot - Select Party Size Tables' in result.data
