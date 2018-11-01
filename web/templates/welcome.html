@@ -1,5 +1,7 @@
-{% include 'header.html' %}
-  <body class="bg-dark">
+{% with page_title = page_title %}
+  {% include 'header.html' %}
+{% endwith %}
+  <body id="page-top" class="bg-dark">
     <div class="container">
         <div class="row justify-content-center">
           <h1>Welcome to Avalon Smart Restaurant</h1>
