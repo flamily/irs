@@ -41,6 +41,8 @@ def verify_password(db_conn, username, password):
             "SELECT password FROM staff WHERE username = %s",
             (username,)
         )
+        if curs.rowcount != 1:
+            return False
         pwhash = curs.fetchone()[0]
     return sha256_crypt.verify(password, pwhash)
 
