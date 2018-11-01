@@ -2,7 +2,7 @@ import biz.manage_staff as ms
 from biz.staff import Permission
 
 
-def __spoof_user(client):
+def __spoof_robot_user(client):
     """A user must be present and 'logged in'.
 
     :param client: The client running the flask app.
@@ -24,7 +24,7 @@ def __spoof_user(client):
 
 def test_index(client):
     """Test that select_party_size endpoint can be hit."""
-    __spoof_user(client)
-    result = client.get('/select-party-size')
+    __spoof_robot_user(client)
+    result = client.get('/welcome')
     assert result.status_code == 200
-    # assert b'Robot - Select Party Size Tables' in result.data
+    assert b'Welcome' in result.data
