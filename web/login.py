@@ -4,8 +4,11 @@ from flask import (
     url_for, Blueprint, render_template,
     request, session
 )
+
+from biz import manage_staff as ms
+from biz.staff import Staff
 from web.db import db
-import biz.manage_staff as ms
+
 
 # Reference for blueprints here:
 # http://flask.pocoo.org/docs/1.0/blueprints/
@@ -41,19 +44,13 @@ def index():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
-        # TODO: Catch exception if login is wrong.
+        if len(username) < Staff.minimum_username_length() or len(password) < Staff.minimum_password_length():
+            return render_template('login.html', next=None) # TODO: print error message
         if not ms.verify_password(db, username, password):
-            # TODO: Tell that password is invalid?
-            return redirect(url_for('login.index'))
-
-        # The password was valid - redirect to landing page
+            return render_template('login.html', next=None) # TODO: print error message
         session['username'] = username
         return redirect_back('index.index')
-
-    # This is a GET request for the login page
     next_url = get_redirect_target()
-    print(next_url)
     return render_template('login.html', next=next_url)
 
 
@@ -61,3 +58,10 @@ def index():
 def logout():
     session.pop('username', None)
     return redirect(url_for('index.index'))
+
+
+def check_login_parameters(username, password) -> (bool, str):
+    if len(username) < Staff.minimum_username_length():
+        return (False, 'Username must be at least {Staff.minimum_username_length()} letters')
+    if len(password) < Staff.minimum_password_length():
+        return (False, 'Must supply a')
