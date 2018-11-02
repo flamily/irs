@@ -72,7 +72,7 @@ var irs = (function() {
 
     function robot() {
         //check if we are running on the robot
-        if (typeof irs_raw == "undefined") {
+        if(typeof irs_raw === "undefined") {
             return null
         }
         /* setup the robot callback handlers */
