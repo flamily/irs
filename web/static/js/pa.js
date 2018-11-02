@@ -19,19 +19,25 @@ var irs = (function() {
                 console.log(txt);
 
                 recognised = txt.split(" ")
+				
+				
 
                 for (word in recognised){
                     x = words.indexOf(recognised[word]);
                     if (x!=-1){
-                        console.log(words.indexOf(recognised[word]));
-                    }			
+                        callback(words.indexOf(recognised[word]));
+						break
+                    }
                 
                 }
-                
+				if (x == -1){
+					callback(x)
+				}
+                recognition.stop();
             }
             
             recognition.start();
-            setTimeout(function () {recognition.stop();console.log("lalalala I can't hear you")}, 10000);
+            setTimeout(function () {recognition.stop();console.log("lalalala I can't hear you")}, timeout);
 
         }
         
