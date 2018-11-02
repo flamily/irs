@@ -1,5 +1,10 @@
+from werkzeug.local import LocalProxy
 from functools import wraps
-from flask import session, request, render_template, redirect, url_for
+from flask import (
+    session, request, render_template, redirect, url_for
+)
+from web.db import db
+import biz.manage_staff as ms
 
 
 def templated(template=None):  # pragma: no cover
@@ -30,3 +35,16 @@ def login_required():  # add optional parameter to control groups
             return incoming_func(*args, **kwargs)
         return decorated_function
     return decorator
+
+
+def get_user():
+    # Attempt to get user or default to none
+    username = session.get('username', None)
+    if not username:
+        return login_required()  # TODO: Or redirect here...
+
+    # TODO: Catch user non-existant exception? (NoneType)
+    return ms.get_staff_member(db, username)
+
+
+user = LocalProxy(get_user)
