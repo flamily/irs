@@ -12,7 +12,7 @@ url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/David_Schwimmer
 #url = 'https://i.dailymail.co.uk/i/pix/2017/07/18/14/427394C200000578-4707164-Happy_people_are_healthier_Some_65_percent_of_relevant_studies_f-m-21_1500384450707.jpg'
 
 
-def dodgyCSS(url):
+def jankyCSS(url):
     satisfaction = SatisfactionScore()
     raw_results = satisfaction.detect_from_url(url)
     results = raw_results[0]["faceAttributes"]["emotion"]
