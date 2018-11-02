@@ -1,7 +1,11 @@
 var irs = (function() {
+    function js_speak(phrase) {
+        var msg = new SpeechSynthesisUtterance(phrase);
+        window.speechSynthesis.speak(msg);
+    }
     function chrome() {
         /* do some magical checking that chrome is available */
-        if (true===1) {
+        if (typeof (window.SpeechRecognition || window.webkitSpeechRecognition) === "undefined") {
             return null
         }
 
@@ -12,9 +16,7 @@ var irs = (function() {
             var recognition = new SpeechRecognition();
             
             recognition.continuous = true;
-			
-			
-
+            
             recognition.onresult = function(event) {
 
                 txt = event.results[event.resultIndex][0].transcript
@@ -76,10 +78,7 @@ var irs = (function() {
         return {
             photo: function() {},
             listen: listen,
-            say: function(phrase) {
-                var msg = new SpeechSynthesisUtterance(phrase);
-                window.speechSynthesis.speak(msg);
-            },
+            say: js_speak,
             identify: function() {
                 return 2
             }
@@ -101,5 +100,22 @@ var irs = (function() {
             identify: function() {return 1}
         }
     }
-    return robot() || chrome() || {identify: function() {return 0}}
+
+    function basic() {
+        return {
+            identify: function() {
+                return 0;
+            },
+            say: js_speak,
+            listen: function(_, _, cb) {
+                console.error('irs.listen is not available on this platform. use chrome')
+                cb(-3)
+            },
+            photo: function(cb) {
+                console.error('irs.photo is not available on this platform. use chrome')
+                cb(null)
+            }
+        }
+    }
+    return robot() || chrome() || basic()
 })()
