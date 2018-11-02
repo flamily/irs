@@ -1,6 +1,6 @@
 from flask import (
     redirect,
-    url_for, Blueprint
+    url_for, Blueprint, render_template
 )
 from web.decorators import (
     login_required, templated
@@ -22,4 +22,4 @@ def index():
 
 @SELECT_PARTY_SIZE_BLUEPRINT.route('/tables', methods=['POST'])
 def tables():
-    return redirect(url_for('tables'))
+    return redirect(url_for('tables.index'))
