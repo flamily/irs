@@ -1,11 +1,7 @@
 var irs = (function() {
-    function js_speak(phrase) {
-        var msg = new SpeechSynthesisUtterance(phrase);
-        window.speechSynthesis.speak(msg);
-    }
     function chrome() {
         /* do some magical checking that chrome is available */
-        if (typeof (window.SpeechRecognition || window.webkitSpeechRecognition) === "undefined") {
+        if (true===1) {
             return null
         }
 
@@ -16,7 +12,9 @@ var irs = (function() {
             var recognition = new SpeechRecognition();
             
             recognition.continuous = true;
-            
+			
+			
+
             recognition.onresult = function(event) {
 
                 txt = event.results[event.resultIndex][0].transcript
@@ -24,24 +22,26 @@ var irs = (function() {
 
                 recognised = txt.split(" ")
 				
-				
 
                 for (word in recognised){
                     x = words.indexOf(recognised[word]);
                     if (x!=-1){
-                        callback(words.indexOf(recognised[word]));
-						break
+						if (callback){
+							callback(words.indexOf(recognised[word]));	
+						}
+						callback = null;
                     }
                 
                 }
 				if (x == -1){
-					callback(x)
+					if (callback){callback(x);}					
+					callback = null;
 				}
                 recognition.stop();
             }
             
             recognition.start();
-            setTimeout(function () {recognition.stop();console.log("lalalala I can't hear you")}, timeout);
+            setTimeout(function () {recognition.stop();if (callback){callback(-1);}}, timeout);
 
         }
         
@@ -70,7 +70,10 @@ var irs = (function() {
         return {
             photo: function() {},
             listen: listen,
-            say: js_speak,
+            say: function(phrase) {
+                var msg = new SpeechSynthesisUtterance(phrase);
+                window.speechSynthesis.speak(msg);
+            },
             identify: function() {
                 return 2
             }
@@ -92,22 +95,5 @@ var irs = (function() {
             identify: function() {return 1}
         }
     }
-
-    function basic() {
-        return {
-            identify: function() {
-                return 0;
-            },
-            say: js_speak,
-            listen: function(_, _, cb) {
-                console.error('irs.listen is not available on this platform. use chrome')
-                cb(-3)
-            },
-            photo: function(cb) {
-                console.error('irs.photo is not available on this platform. use chrome')
-                cb(null)
-            }
-        }
-    }
-    return robot() || chrome() || basic()
+    return robot() || chrome() || {identify: function() {return 0}}
 })()
