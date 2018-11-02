@@ -41,7 +41,13 @@ var irs = (function() {
             }
             
             recognition.start();
-            setTimeout(function () {recognition.stop();if (callback){callback(-1);}}, timeout);
+            setTimeout(function () {
+                recognition.stop();
+                if (callback){
+                    callback(-1);
+                    callback = null;
+                }
+            }, timeout);
 
         }
         
