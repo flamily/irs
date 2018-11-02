@@ -76,7 +76,7 @@ var irs = (function() {
         .catch(error => console.error('getUserMedia() error:', error));
 
         return {
-            photo: function() {},
+            photo: takePhoto,
             listen: listen,
             say: js_speak,
             identify: function() {
