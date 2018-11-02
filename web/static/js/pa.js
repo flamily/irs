@@ -86,7 +86,7 @@ var irs = (function() {
 			imageCapture.grabFrame()
 			  .then(imageBitmap => {
 				drawCanvas(htmlCanvas, imageBitmap);
-				console.log(htmlCanvas.toDataURL())
+				callback(htmlCanvas.toDataURL())
 			  })
         .catch(error => console.log(error));
         }
