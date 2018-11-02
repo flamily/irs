@@ -5,11 +5,13 @@ import os
 
 class SatisfactionScore:
     def __init__(self):
-        self._base_url = os.environ['EMOTION_API_BASE_URL']
-        KEY = os.environ['EMOTION_API_KEY']
+        #self._base_url = os.environ['EMOTION_API_BASE_URL']
+        #KEY = os.environ['EMOTION_API_KEY']
+        KEY = 'fcef05be3b9f440f9e38dfb675b07de6'
+        BASE_URL = 'https://westcentralus.api.cognitive.microsoft.com/face/v1.0'
         self._cognitive_face = CF
         self._cognitive_face.Key.set(KEY)
-        self._cognitive_face.BaseUrl.set(self._base_url)
+        self._cognitive_face.BaseUrl.set(BASE_URL)
 
     def detect_from_url(self, url):
         return self.detect(url)
