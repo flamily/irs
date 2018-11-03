@@ -111,7 +111,7 @@ def test_pay_after_reserved(client):
         '/tables/pay/', data=__make_params(tid), follow_redirects=True
     )
     assert result.status_code == 200
-    expect = 'pay'.format(tid)
+    expect = 'pay'
     assert expect in str(result.data).replace(' ', '')
 
 
@@ -127,7 +127,7 @@ def test_ready_after_pay(client):
         '/tables/ready/', data=__make_params(tid), follow_redirects=True
     )
     assert result.status_code == 200
-    expect = 'ready'.format(tid)
+    expect = 'ready'
     assert expect in str(result.data).replace(' ', '')
 
 
@@ -146,5 +146,5 @@ def test_maintain_after_ready(client):
         '/tables/maintain/', data=__make_params(tid), follow_redirects=True
     )
     assert result.status_code == 200
-    expect = 'maintain'.format(tid)
+    expect = 'maintain'
     assert expect in str(result.data).replace(' ', '')
