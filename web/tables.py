@@ -5,7 +5,7 @@ Author: Andrew Pope
 Date: 22/10/2018
 """
 from flask import (
-    redirect, url_for, Blueprint, request, session, jsonify
+    Blueprint, request, session, jsonify
 )
 from web.db import db
 from web.decorators import (
@@ -79,4 +79,3 @@ def ready():
     mr.ready(db, table_id, staff_id)
 
     return jsonify(method='ready')
-
