@@ -38,7 +38,7 @@ def redirect_back(endpoint, **values):
 @LOGIN_BLUEPRINT.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        session['username'] = request.form['email']
+        session['username'] = request.form['username']
         return redirect_back('index.index')
     next_url = get_redirect_target()
     print(next_url)
