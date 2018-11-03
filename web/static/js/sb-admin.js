@@ -76,7 +76,7 @@
       default:
         className='ready';
     }
-    $($('#table-layout').find('button')[$('#tableId').val($(this).data('tableid'))]).addClass(className);
+    $($('#table-layout').find('button')[$('#tableId').val()]).addClass(className);
   }
   
 })(jQuery); // End of use strict
