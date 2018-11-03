@@ -1,6 +1,4 @@
-{% with page_title = page_title %}
-  {% include 'header.html' %}
-{% endwith %}
+{% include 'header.html' %}
   <body id="page-top">
 
     {% include 'nav.html' %}
@@ -52,31 +50,11 @@
               <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
             </div>
 
-            <!-- TODO: Make pretty -->
             <!-- TODO: Somehow we need to call Jason's code on submit to take the picture -->
-            <div class="card card-login mx-auto mt-5">
-              <div class="card-header">Update Table Availability</div>
-              <div class="card-body">
-                <form method="post">
-                  <div class="form-group">
-                    <div class="form-label-group">
-                      <input name="tableId" type="int" id="tableId" class="form-control" placeholder="Table ID" required="required" autofocus="autofocus">
-                      <label for="tableId">Table ID</label>
-                    </div>
-                  </div>
-                  <!-- TODO: The below form group is simply a place holder, we need to take a picture instead (and only when we pay)! -->
-                  <div class="form-group">
-                    <div class="form-label-group">
-                      <input name="customerImg" type="int" id="customerImg" class="form-control" placeholder="Customer Image" autofocus="autofocus">
-                      <label for="customerImg">Customer Image</label>
-                    </div>
-                  </div>
-                  <input type=submit formaction="/tables/pay/" value="Pay" class="btn btn-primary btn-block">
-                  <input type=submit formaction="/tables/ready/" value="Ready" class="btn btn-primary btn-block">
-                  <input type=submit formaction="/tables/maintain/" value="Maintain" class="btn btn-primary btn-block">
-                </form>
-              </div>
-            </div>
+            <form method="post" id="tableInfo" class="invisible">
+              <input name="tableId" type="int" id="tableId" class="form-control" placeholder="Table ID" required="required">
+              <input name="customerImg" type="int" id="customerImg" class="form-control" placeholder="Customer Image" >
+            </form>
 
 
             <div id="table-layout" class="container text-center container-space">
@@ -119,7 +97,7 @@
                     </button>
                   </div>
                   <div class="modal-body">
-                    <form method="post">
+                    <form id="updateTable" method="post">
                       <input type=submit formaction="/tables/pay/" value="Pay" class="btn btn-primary btn-block">
                       <input type=submit formaction="/tables/ready/" value="Ready" class="btn btn-primary btn-block">
                       <input type=submit formaction="/tables/maintain/" value="Maintain" class="btn btn-primary btn-block">

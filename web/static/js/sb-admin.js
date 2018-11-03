@@ -42,4 +42,41 @@
     $('#modalTableNumber').text($(this).data('tableid'));
     $('#tableId').val($(this).data('tableid'));
   });
+
+  $('#updateTable').find('input').click(function(event){
+    event.preventDefault();
+    $.ajax({
+      url: $(this)[0].getAttribute('formaction'),
+      data: $('#tableInfo').serialize(),
+      type: 'POST',
+      success: function(response) {
+        updateTableStatuses(response) 
+      },
+      error: function(error) {
+        console.log('Something went wrong');
+      }
+    });
+  });
+
+  function updateTableStatuses(response){
+    var className;
+    switch(response.method){
+      case 'pay':
+        className='pay';
+        break;
+
+      case 'maintain':
+        className='maintain';
+        break;
+
+      case 'ready':
+        className='ready';
+        break;
+
+      default:
+        className='ready';
+    }
+    $($('#table-layout').find('button')[$('#tableId').val($(this).data('tableid'))]).addClass(className);
+  }
+  
 })(jQuery); // End of use strict

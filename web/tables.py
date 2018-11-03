@@ -5,7 +5,7 @@ Author: Andrew Pope
 Date: 22/10/2018
 """
 from flask import (
-    redirect, url_for, Blueprint, request, session
+    redirect, url_for, Blueprint, request, session, jsonify
 )
 from web.db import db
 from web.decorators import (
@@ -13,7 +13,6 @@ from web.decorators import (
 )
 import biz.manage_restaurant as mr
 import biz.manage_staff as ms
-
 
 TABLES_BLUEPRINT = Blueprint('tables', __name__, template_folder='templates')
 
@@ -57,7 +56,7 @@ def pay():
     customer_img = request.form['customerImg']
     __mock_bucket_send(customer_img, event_id, reservation_id)
 
-    return redirect(url_for('tables.index'))
+    return jsonify(method='pay')
 
 
 @TABLES_BLUEPRINT.route("/tables/maintain/", methods=['POST'])
@@ -68,7 +67,7 @@ def maintain():
     table_id = int(request.form['tableId'])
     mr.maintain(db, table_id, staff_id)
 
-    return redirect(url_for('tables.index'))
+    return jsonify(method='maintain')
 
 
 @TABLES_BLUEPRINT.route("/tables/ready/", methods=['POST'])
@@ -79,4 +78,5 @@ def ready():
     table_id = int(request.form['tableId'])
     mr.ready(db, table_id, staff_id)
 
-    return redirect(url_for('tables.index'))
+    return jsonify(method='ready')
+
