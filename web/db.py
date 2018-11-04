@@ -52,7 +52,8 @@ def __teardown_db_conn(exception=None):
     #  might need to close the connection and make a new one
     db_conn = g.pop('db_conn', None)
     if db_conn is not None:
-        if exception is not None:
+        if exception is not None:  # pragma: no cover
+            # Currently, being rolled back in the global error handler
             print('exception, rolling back transaction')
             db_conn.rollback()
         db_conn.commit()
