@@ -17,7 +17,7 @@ def index():
     return dict(page_title='Robot - Welcome')
 
 
-@ROBOT_BLUEPRINT.route('/robot/party', methods=['GET', 'POST'])
+@ROBOT_BLUEPRINT.route('/robot/party-size', methods=['GET', 'POST'])
 @templated(template='select-party-size.html')
 @login_required()
 def party():
