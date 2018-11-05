@@ -8,7 +8,7 @@
         "s3_bucket": "irs-zappa",
         "environment_variables": {"route_prefix": "dev"},
         "events": [{
-            "function": "events.image_handler.process_image",
+            "function": "events.satisfaction_lambda.customer_satisfaction",
             "event_source": {
                 "arn": "arn:aws:s3:::irs-images",
                 "events": [
