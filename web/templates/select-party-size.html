@@ -77,7 +77,7 @@
             <div class="modal-body"></div>
             <div class="modal-footer">
               <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-              <form action="/tables" method="post">
+              <form action="{{url_for('tables.index', partySize=partySize)}}" method="post">
                 <input type=submit value="Find available tables" class="btn btn-primary">
               </form>
             </div>
