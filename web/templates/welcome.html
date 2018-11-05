@@ -7,12 +7,14 @@
     </div>
     <div class="container-fluid">
         <div class="row justify-content-center">
-          <div id="trigger_listen">
-              <button class="btn start-btn">
-                  <a class="justify-content-center" onClick="location.href='/';">Tap to start</a>
+              <button class="btn start-btn" id='trigger_listen'>
+                  <a class="justify-content-center">Tap to start</a>
               </button>
-          </div>
+              <script>
+                document.getElementById("trigger_listen").addEventListener("click", function(){irs().photo()});
+              </script>
         </div>
     </div>
   </body>
+  {% include 'footer.html' %}
 </html>
