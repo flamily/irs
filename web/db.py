@@ -48,13 +48,8 @@ db = LocalProxy(get_db_conn)
 
 
 def __teardown_db_conn(exception=None):
-    # if the request has an error,
-    #  might need to close the connection and make a new one
+    # pylint: disable=unused-argument
     db_conn = g.pop('db_conn', None)
     if db_conn is not None:
-        if exception is not None:  # pragma: no cover
-            # Currently, being rolled back in the global error handler
-            print('exception, rolling back transaction')
-            db_conn.rollback()
         db_conn.commit()
         __pool_facade().putconn(db_conn)
