@@ -8,8 +8,8 @@ from web.decorators import templated, login_required
 ROBOT_BLUEPRINT = Blueprint('robot', __name__, template_folder='templates')
 
 
-@ROBOT_BLUEPRINT.route('/robot/party')
+@ROBOT_BLUEPRINT.route('/robot/tables')
 @templated(template='robot-tables.html')
 @login_required()
-def index():
+def tables():
     return dict(page_title='Robot- Select Tables')
