@@ -1,3 +1,9 @@
+"""
+Authentication for IRS access.
+
+Author: Robin Wohlers-Reichel, Andrew Pope
+Date: 06/11/2018
+"""
 from urllib.parse import urlparse, urljoin
 from flask import (
     redirect,
@@ -6,7 +12,6 @@ from flask import (
 )
 
 from biz import manage_staff as ms
-from biz.staff import Staff
 from web.db import db
 
 
@@ -44,12 +49,17 @@ def index():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if len(username) < Staff.minimum_username_length() or len(password) < Staff.minimum_password_length():
-            return render_template('login.html', next=None) # TODO: print error message
-        if not ms.verify_password(db, username, password):
-            return render_template('login.html', next=None) # TODO: print error message
+
+        is_okay, login_error = __check_login_parameters(username, password)
+
+        if not is_okay:
+            return render_template(
+                'login.html', next=None, error=login_error
+            ), 401
+
         session['username'] = username
         return redirect_back('index.index')
+
     next_url = get_redirect_target()
     return render_template('login.html', next=next_url)
 
@@ -60,8 +70,14 @@ def logout():
     return redirect(url_for('index.index'))
 
 
-def check_login_parameters(username, password) -> (bool, str):
-    if len(username) < Staff.minimum_username_length():
-        return (False, 'Username must be at least {Staff.minimum_username_length()} letters')
-    if len(password) < Staff.minimum_password_length():
-        return (False, 'Must supply a')
+def __check_login_parameters(username, password):
+    if not username:
+        return (False, 'Username cannot be empty')
+    if not password:
+        return (False, 'Password cannot be empty')
+    if not ms.lookup_id(db, username):
+        return (False, 'User does not exist')
+    if not ms.verify_password(db, username, password):
+        return (False, 'Invalid password for username')
+
+    return (True, 'okay')

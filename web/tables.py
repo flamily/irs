@@ -5,7 +5,7 @@ Author: Andrew Pope
 Date: 22/10/2018
 """
 from flask import (
-    redirect, url_for, Blueprint, request, session
+    redirect, url_for, Blueprint, request
 )
 from web.db import db
 from web.decorators import (
@@ -17,9 +17,6 @@ import biz.manage_restaurant as mr
 TABLES_BLUEPRINT = Blueprint('tables', __name__, template_folder='templates')
 
 # NB: List of tasks that need to be considered
-#  - Handling exceptions (at the moment the generic html pages are displayed),
-#    no message is shown. Perhaps we should change from default error codes
-#    (e.g. if resource is missing)
 #  - In '/tables/pay' we need to get an image from the form request and send
 #    it to the 'bucket' for later CSS processing.
 #  - In the template 'tables.html' we need to:

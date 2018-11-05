@@ -18,12 +18,9 @@
                 <label for="inputPassword">Password</label>
               </div>
             </div>
-            <div class="form-group">
-              <div class="checkbox">
-                <label>
-                  <input type="checkbox" value="remember-me">
-                  Remember Password
-                </label>
+            <div class="container my-auto" type={% if error == blank %}hidden{% else %}text{% endif %}>
+              <div class="copyright text-center my-auto">
+                <span><font color="red">{{error}}</font></span>
               </div>
             </div>
             <input type=hidden value="{{ next or '' }}" name=next>
@@ -31,7 +28,7 @@
           </form>
         </div>
       </div>
-    </div>
+      </div>
   </body>
   {% include 'footer.html' %}
 </html>

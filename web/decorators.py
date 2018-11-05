@@ -29,7 +29,6 @@ def login_required():  # add optional parameter to control groups
     def decorator(incoming_func):
         @wraps(incoming_func)
         def decorated_function(*args, **kwargs):
-            # if g.user is None:
             if not session.get('username', None):
                 return redirect(url_for('login.index', next=request.url))
             return incoming_func(*args, **kwargs)
@@ -38,13 +37,23 @@ def login_required():  # add optional parameter to control groups
 
 
 def get_user():
-    # Attempt to get user or default to none
+    """Retrieve the user record (staff) from the db for the session."""
     username = session.get('username', None)
     if not username:
-        return login_required()  # TODO: Or redirect here...
+        # This block is necessary in the event that the programmer has
+        # forgotten to use the `login_required` decorator in an endpoint
+        # accessing the user LocalProxy
+        raise RuntimeError(
+            "attempt to access a user without authentication"
+        )  # pragma: no cover
 
-    # TODO: Catch user non-existant exception? (NoneType)
-    return ms.get_staff_member(db, username)
+    staff_mb = ms.get_staff_member(db, username)
+    if not staff_mb:
+        raise LookupError(
+            "no staff record exists for username: {}".format(username)
+        )
+
+    return staff_mb
 
 
 user = LocalProxy(get_user)

@@ -1,3 +1,9 @@
+"""
+Tests for IRS authentication.
+
+Author: Robin Wohlers-Reichel, Andrew Pope
+Date: 06/11/2018
+"""
 import pytest
 import urllib.parse
 import biz.manage_staff as ms
@@ -75,6 +81,50 @@ def test_login(client):
     result = client.post('/login/', data=params, follow_redirects=True)
     assert result.status_code == 200
     assert b'Dashboard' in result.data
+
+
+def test_invalid_password(client):
+    __spoof_user(client)
+    params = dict(username=USERNAME, password='bad-password')
+    result = client.post('/login/', data=params, follow_redirects=True)
+    assert result.status_code == 401
+    assert b'Invalid password for username' in result.data
+
+
+def test_unknown_user(client):
+    __spoof_user(client)
+    params = dict(username='unknown', password='bad-password')
+    result = client.post('/login/', data=params, follow_redirects=True)
+    assert result.status_code == 401
+    assert b'User does not exist' in result.data
+
+
+def test_empty_username(client):
+    params = dict(username='', password='bad-password')
+    result = client.post('/login/', data=params, follow_redirects=True)
+    assert result.status_code == 401
+    assert b'Username cannot be empty' in result.data
+
+
+def test_empty_password(client):
+    params = dict(username='full', password='')
+    result = client.post('/login/', data=params, follow_redirects=True)
+    assert result.status_code == 401
+    assert b'Password cannot be empty' in result.data
+
+
+def test_invalid_user_localproxy(client):
+    """Check that an exception is thrown on failed user LocalProxy."""
+    with client.session_transaction() as sess:
+        sess['username'] = 'ldavid'  # Spoof a user that is not in the db
+
+    # The LocalProxy will attempt to resolve the user (for db record keeping)
+    # and it should fail!
+    result = client.post(
+        '/tables/pay/', data=dict(tableId=69), follow_redirects=True
+    )
+    assert result.status_code == 500
+    assert b'Something went wrong' in result.data
 
 
 def __spoof_user(client):

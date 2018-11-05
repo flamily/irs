@@ -41,11 +41,3 @@ class Staff():
         self.last_name = full_name[1]
         self.start_dt = start_dt  # A datetime object
         self.permission = Permission(str(permission))
-    
-    @staticmethod
-    def minimum_username_length():
-        return 3
-    
-    @staticmethod
-    def minimum_password_length():
-        return 10
