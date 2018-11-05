@@ -12,6 +12,9 @@
               </button>
               <script>
                 document.getElementById("trigger_listen").addEventListener("click", function(){irs().photo()});
+                // More words might need to be listened for. 
+                document.getElementById("trigger_listen").addEventListener("click", function(){irs().listen(['yes','no'], 30000)});
+
               </script>
         </div>
     </div>
