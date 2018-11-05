@@ -5,7 +5,6 @@ Author: Andrew Pope
 Date: 09/10/2018
 """
 import datetime
-import pytest
 import psycopg2
 from passlib.hash import sha256_crypt
 import biz.manage_staff as ms
@@ -50,6 +49,11 @@ def test_lookup_member_id(database_snapshot):
         assert ms.lookup_id(conn, 'gcostanza') == s3
 
 
+def test_get_missing_staff_member(db_connection):
+    """Assert that a non-existing staff member is returned as None."""
+    assert ms.get_staff_member(db_connection, 'ldavid') is None
+
+
 def test_lookup_missing_member(database_snapshot):
     """Attempt to lookup id for missing member."""
     with database_snapshot.getconn() as conn:
@@ -57,8 +61,8 @@ def test_lookup_missing_member(database_snapshot):
             conn, 'ldavid', 'prettygood', ('Larry', 'David'),
             Permission.wait_staff
         )
-        with pytest.raises(TypeError):
-            ms.lookup_id(conn, 'spagetti')
+
+        assert ms.lookup_id(conn, 'spagetti') is None
 
 
 def test_create_member_with_date(database_snapshot):
@@ -85,6 +89,11 @@ def test_verify_password(database_snapshot):
             Permission.wait_staff
         )
         assert ms.verify_password(conn, 'ldavid', 'prettygood')
+
+
+def test_verify_password_no_user(db_connection):
+    """Verify that false is returned for no user."""
+    assert ms.verify_password(db_connection, 'ldavid', 'prettygood') is False
 
 
 def test_bad_password(database_snapshot):
