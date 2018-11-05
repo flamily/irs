@@ -60,23 +60,18 @@
 
   function updateTableStatuses(response){
     var className;
-    switch(response.method){
-      case 'pay':
-        className='pay';
+    var element = $("[data-tableId=" + $('#tableId').val() +"]")[0];
+    switch(response.status){
+      case 'available':
+        $(element).removeClass('unavailable-table');
+        $(element).addClass('available-table');
         break;
 
-      case 'maintain':
-        className='maintain';
+      case 'unavailable':
+        $(element).removeClass('available-table');
+        $(element).addClass('unavailable-table');
         break;
-
-      case 'ready':
-        className='ready';
-        break;
-
-      default:
-        className='ready';
     }
-    $($('#table-layout').find('button')[$('#tableId').val()]).addClass(className);
   }
   
 })(jQuery); // End of use strict

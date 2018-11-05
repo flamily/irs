@@ -56,7 +56,7 @@ def pay():
     customer_img = request.form['customerImg']
     __mock_bucket_send(customer_img, event_id, reservation_id)
 
-    return jsonify(method='pay')
+    return jsonify(status='unavailable')
 
 
 @TABLES_BLUEPRINT.route("/tables/maintain/", methods=['POST'])
@@ -67,7 +67,7 @@ def maintain():
     table_id = int(request.form['tableId'])
     mr.maintain(db, table_id, staff_id)
 
-    return jsonify(method='maintain')
+    return jsonify(status='unavailable')
 
 
 @TABLES_BLUEPRINT.route("/tables/ready/", methods=['POST'])
@@ -78,4 +78,4 @@ def ready():
     table_id = int(request.form['tableId'])
     mr.ready(db, table_id, staff_id)
 
-    return jsonify(method='ready')
+    return jsonify(status='available')

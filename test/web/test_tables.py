@@ -85,7 +85,7 @@ def test_list_available_tables(client):
     result = client.get('/tables')
     assert result.status_code == 200
     for table in tables:
-        expect = '<td>{}</td>\\n<td>available</td>'.format(table)
+        expect = 'data-tableId="{}"'.format(table)
         assert expect in str(result.data).replace(' ', '')
 
 
@@ -98,7 +98,7 @@ def test_list_reserved_tables(client):
     result = client.get('/tables')
     assert result.status_code == 200
     for table in tables:
-        expect = '<td>{}</td>\\n<td>occupied</td>'.format(table)
+        expect = 'data-tableId="{}"\\nclass="occupied-table'.format(table)
         assert expect in str(result.data).replace(' ', '')
 
 
@@ -111,7 +111,7 @@ def test_pay_after_reserved(client):
         '/tables/pay/', data=__make_params(tid), follow_redirects=True
     )
     assert result.status_code == 200
-    expect = 'pay'
+    expect = 'unavailable'
     assert expect in str(result.data).replace(' ', '')
 
 
@@ -127,7 +127,7 @@ def test_ready_after_pay(client):
         '/tables/ready/', data=__make_params(tid), follow_redirects=True
     )
     assert result.status_code == 200
-    expect = 'ready'
+    expect = 'available'
     assert expect in str(result.data).replace(' ', '')
 
 
@@ -146,5 +146,5 @@ def test_maintain_after_ready(client):
         '/tables/maintain/', data=__make_params(tid), follow_redirects=True
     )
     assert result.status_code == 200
-    expect = 'maintain'
+    expect = 'unavailable'
     assert expect in str(result.data).replace(' ', '')
