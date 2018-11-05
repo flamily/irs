@@ -6,7 +6,6 @@
         "project_name": "irs",
         "runtime": "python3.6",
         "s3_bucket": "irs-zappa",
-        "environment_variables": {"route_prefix": "dev"},
         "events": [{
             "function": "events.satisfaction_lambda.customer_satisfaction",
             "event_source": {
