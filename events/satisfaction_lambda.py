@@ -7,7 +7,8 @@ print('Loading function')
 s3 = boto3.client('s3')
 
 
-def customer_satisfaction(event, context):
+# second parameter is the context, but currently unused
+def customer_satisfaction(event, _):
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(
         event['Records'][0]['s3']['object']['key'],
