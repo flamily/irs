@@ -1,13 +1,12 @@
-{% include 'header.html' %}
-  <body class="bg-dark">
+{% with page_title = page_title %}
+  {% include 'header.html' %}
+{% endwith %}
+  <body id="page-top" class="bg-dark">
     <script type="text/javascript">
       function addNum(key){
         var partySize = document.forms[0].partySize;
         if(partySize.value.length < 2){
           partySize.value = partySize.value + key;
-        }
-        if(partySize.value.length == 2){
-          setTimeout(submitForm,1000);
         }
       }
       function delNum(){
@@ -15,15 +14,13 @@
         if(partySize.value.length > 0){
           partySize.value = partySize.value.slice(0, partySize.value.length-1);
         }
-        if(partySize.value.length <= 0){
-          setTimeout(submitForm,1000);
-        }
       }
     </script>
     <div class="container">
       <div class="text-center">
         <h1>Welcome to Avalon Smart Restaurant</h1>
         <p style="color:white; font-size: 24px;">Please enter how many people you wish to seat:<p>
+        <p style="color:white;">Max number of people our Restaurant can seat is 10.</p>
       </div>
       <div id="num-pad" class="container text-center">
         <form action="partySize.htm" method="get">
@@ -61,10 +58,32 @@
           </div>
           <div class="row justify-content-center">
             <div class="col-sm-4">
-                <input type=submit value="Confirm" class="btn btn-block confirm-button">
+              <button id="confirmPartySize" type="button" class="btn btn-block confirm-button" data-toggle="modal" data-target="#confirmModal">
+                Confirm
+              </button>
             </div>
           </div>
         </form>
+      </div>
+      <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title justify-content-center" id="exampleModalLabel">Are you sure?</h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+              <!-- ROUTING HERE WILL NEED TO BE UPDATED -->
+              <form action="{{url_for('robot.tables')}}">
+                <input type=submit value="Find available tables" class="btn btn-primary">
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>

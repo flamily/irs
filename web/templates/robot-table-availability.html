@@ -1,3 +1,4 @@
+<!-- HTML DESIGN IS NOT FINAL. -->
 {% include 'header.html' %}
   <body class="bg-dark">
     <div class="container">
@@ -7,12 +8,13 @@
     </div>
     <div class="container-fluid">
         <div class="row justify-content-center">
-          <div id="trigger_listen">
-              <button class="btn start-btn">
-                  <a class="justify-content-center" onClick="location.href='/robot/listen';">Tap to start</a>
-              </button>
+          <div id="trigger_listen">                
+                <button class="btn btn-default" id='confirm-table'>
+                        <a class="justify-content-center" onClick="location.href='/robot/party';">Tap to Confirm Table</a>
+                </button>
           </div>
         </div>
     </div>
   </body>
+  {% include 'footer.html' %}
 </html>
