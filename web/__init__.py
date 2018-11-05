@@ -18,3 +18,13 @@ APP.register_blueprint(LOGIN_BLUEPRINT, url_prefix="/login")
 APP.register_blueprint(INDEX_BLUEPRINT)
 APP.register_blueprint(TABLES_BLUEPRINT)
 APP.register_blueprint(ROBOT_BLUEPRINT)
+
+@APP.errorhandler(Exception)
+def generic_error(e):
+    """Gotta catch em all."""
+    # teardown_appcontext does not recieve error objects if an exception
+    # handler for a specific exception is setup, as such, we need to do the
+    # rollback here.
+    print('something went wrong: {}'.format(e))
+    db.rollback()
+    return render_template('500.html'), 500
