@@ -1,6 +1,7 @@
 import urllib.parse
 import boto3
-from emotion_recognition import SatisfactionScore
+from biz.css import SatisfactionScore
+from biz.css.reduction import apply_reduction
 
 print('Loading function')
 s3 = boto3.client('s3')
@@ -25,6 +26,8 @@ def customer_satisfaction(event, context):
 
         css = SatisfactionScore.detect_from_url(url)
         print(css)
+        reduced = apply_reduction(css)
+        print(reduced)
 
         return css
     except Exception as e:
