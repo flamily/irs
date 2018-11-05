@@ -37,6 +37,6 @@ class SatisfactionScore:
 if __name__ == "__main__":
     css = SatisfactionScore()
 
-    # print(css.detect_from_url('https://raw.githubusercontent.com/Microsoft/Cognitive-Face-Windows/master/Data/detection1.jpg'))
+    print(css.detect_from_url('https://raw.githubusercontent.com/Microsoft/Cognitive-Face-Windows/master/Data/detection1.jpg'))
 
-    print(css.detect_from_local_file("face.jpg"))
+    # print(css.detect_from_local_file("face.jpg"))

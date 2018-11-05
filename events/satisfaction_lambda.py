@@ -1,6 +1,6 @@
 import urllib.parse
 import boto3
-from biz.css import SatisfactionScore
+from biz.css.emotion_recognition import SatisfactionScore
 from biz.css.reduction import apply_reduction
 
 print('Loading function')
@@ -17,14 +17,15 @@ def customer_satisfaction(event, context):
 
         url = s3.generate_presigned_url(
             ClientMethod='get_object',
-            ExpiresIn='10',
+            ExpiresIn='600',
             Params={
                 'Bucket': bucket,
                 'Key': key
             }
         )
 
-        css = SatisfactionScore.detect_from_url(url)
+        print('detecting from url:{}.'.format(url))
+        css = SatisfactionScore().detect_from_url(url)
         print(css)
         reduced = apply_reduction(css)
         print(reduced)

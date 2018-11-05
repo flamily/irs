@@ -1,7 +1,3 @@
-from satisfaction_lambda import customer_satisfaction
-from emotion_recognition import SatisfactionScore
-
-
 #IMAGES WHICH THE FACE API WORKS WITH
 #url = 'https://raw.githubusercontent.com/Microsoft/Cognitive-Face-Windows/master/Data/detection1.jpg'
 #url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/David_Schwimmer_2011.jpg/800px-David_Schwimmer_2011.jpg'
