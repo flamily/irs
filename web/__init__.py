@@ -19,6 +19,7 @@ APP.register_blueprint(INDEX_BLUEPRINT)
 APP.register_blueprint(TABLES_BLUEPRINT)
 APP.register_blueprint(ROBOT_BLUEPRINT)
 
+
 @APP.errorhandler(Exception)
 def generic_error(e):
     """Gotta catch em all."""
