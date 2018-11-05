@@ -16,13 +16,14 @@ def lookup_id(db_conn, username):
 
     :param db_conn: A psycopg2 connection to the database.
     :param username: The username of the staff member.
-    :return: staff_id.
-    :note: Will throw exception if staff member does not exist.
+    :return: staff_id or None if record does not exist.
     """
     with db_conn.cursor() as curs:
         curs.execute(
             "SELECT staff_id FROM staff WHERE username = %s", (username,)
         )
+        if curs.rowcount != 1:
+            return None
         s_id = curs.fetchone()[0]
     return s_id
 
@@ -34,7 +35,6 @@ def verify_password(db_conn, username, password):
     :param username: The username of the staff member.
     :param password: The password to verify against the database.
     :return: True if the user exists and the password is correct.
-    :note: Will throw exception if staff member does not exist.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -52,13 +52,14 @@ def get_staff_member(db_conn, username):
 
     :param db_conn: A psycopg2 connection to the database.
     :param username: The username of the staff member.
-    :return: A Staff object.
-    :note: Will throw exception if staff member does not exist.
+    :return: A Staff object or None if record does not exist.
     """
     with db_conn.cursor() as curs:
         curs.execute(
             "SELECT * FROM staff WHERE username = %s", (username,)
         )
+        if curs.rowcount != 1:
+            return None
         member = curs.fetchone()
         return Staff(
             s_id=member[0],

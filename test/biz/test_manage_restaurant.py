@@ -75,8 +75,7 @@ def test_lookup_missing_order(database_snapshot):
         t, staff = __spoof_tables(conn, 1)
         conn.commit()
         (_, r1) = mg.create_reservation(conn, t[0], staff, 5)
-        with pytest.raises(TypeError):
-            mg.lookup_order(conn, r1)
+        assert mg.lookup_order(conn, r1) is None
 
 
 def test_lookup_order(database_snapshot):
@@ -88,6 +87,18 @@ def test_lookup_order(database_snapshot):
         (_, _, o1) = mg.order(conn, [], t[0], staff)
         lookedup = mg.lookup_order(conn, r1)
         assert o1 == lookedup
+
+
+def test_no_reservation_for_order(database_snapshot):
+    """Attempt to order for a table with no reservation."""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn, 1)
+        conn.commit()
+
+        msg = 'no active reservation exists for table id: {}'.format(t[0])
+        with pytest.raises(LookupError) as excinfo:
+            mg.order(conn, [], t[0], staff)
+        assert msg in str(excinfo.value)
 
 
 def test_new_order(database_snapshot):
@@ -216,8 +227,10 @@ def test_cant_pay(database_snapshot):
         t, staff = __spoof_tables(conn, 2)
         conn.commit()
 
-        with pytest.raises(TypeError):
-            mg.paid(conn, t[0], staff)  # Fails to lookup a reservation id
+        msg = 'no active reservation exists for table id: {}'.format(t[0])
+        with pytest.raises(LookupError) as excinfo:
+            mg.paid(conn, t[0], staff)
+        assert msg in str(excinfo.value)
 
 
 def test_paid(database_snapshot):
@@ -314,10 +327,7 @@ def test_get_table(db_connection):
 
 def test_get_missing_table(db_connection):
     """Manager attempts to get non-existant table."""
-    msg = "'NoneType' object is not subscriptable"
-    with pytest.raises(TypeError) as excinfo:
-        mg.get_table(db_connection, 69)  # Table 69 does not exist!
-    assert msg in str(excinfo.value)
+    assert mg.get_table(db_connection, 69) is None
 
 
 def test_overview(database_snapshot):
