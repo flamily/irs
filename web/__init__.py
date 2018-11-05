@@ -9,7 +9,6 @@ from web.login import LOGIN_BLUEPRINT
 from web.index import INDEX_BLUEPRINT
 from web.tables import TABLES_BLUEPRINT
 
-from flask import render_template
 
 APP = Flask(__name__)
 APP.secret_key = os.urandom(16)
@@ -21,7 +20,9 @@ APP.register_blueprint(TABLES_BLUEPRINT)
 
 @APP.errorhandler(404)
 def not_found(e):
+    print('attempt to access missing: {}'.format(e))
     return render_template('404.html'), 404
+
 
 @APP.errorhandler(Exception)
 def generic_error(e):
