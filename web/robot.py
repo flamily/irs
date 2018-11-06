@@ -62,3 +62,4 @@ def tableFull():
 @login_required()
 def confirmation():
     return dict(page_title='Robot - Tables Full')
+    
