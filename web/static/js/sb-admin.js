@@ -40,7 +40,7 @@
   // Build query string
   $(document).find('#findAvailableTables').click(function() {
     var size = document.getElementsByName('partySize')[0].value;
-    $('#findAvailableTables').attr('action', "/robot/tableselect?people=" + size).submit();
+    $('#findAvailableTables').attr('action', "/robot/table?people=" + size).submit();
   });
 
   $('#table-layout').find('button').click(function(){
