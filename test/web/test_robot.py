@@ -2,7 +2,7 @@ import biz.manage_staff as ms
 from biz.staff import Permission
 
 
- def __spoof_user(client):
+def __spoof_user(client):
     """A user must be present and 'logged in'.
 
     :param client: The client running the flask app.
