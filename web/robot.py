@@ -32,8 +32,22 @@ def party():
     return dict(page_title='Robot - Select Party Size')
 
 
-@ROBOT_BLUEPRINT.route('/robot/tables', methods=['GET'])
+@ROBOT_BLUEPRINT.route('/robot/tableselect', methods=['GET'])
 @templated(template='robot-table-availability.html')
 @login_required()
 def tableAvailability():
     return dict(page_title='Robot - Select Table')
+
+
+@ROBOT_BLUEPRINT.route('/robot/party/full', methods=['GET'])
+@templated(template='robot-table-full.html')
+@login_required()
+def tableFull():
+    return dict(page_title='Robot - Tables Full')
+
+
+@ROBOT_BLUEPRINT.route('/robot/confirmation', methods=['GET'])
+@templated(template='robot-table-confirmation.html')
+@login_required()
+def confirmation():
+    return dict(page_title='Robot - Tables Full')

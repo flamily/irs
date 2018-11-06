@@ -78,7 +78,7 @@
             <div class="modal-footer">
               <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
               <!-- ROUTING HERE WILL NEED TO BE UPDATED -->
-              <form action="{{url_for('robot.tables')}}">
+              <form action="{{ url_for('robot.tableAvailability') }}" method="get">
                 <input type=submit value="Find available tables" class="btn btn-primary">
               </form>
             </div>
