@@ -8,7 +8,6 @@ from web.tables import TABLES_BLUEPRINT
 from web.robot import ROBOT_BLUEPRINT
 
 
-
 APP = Flask(__name__)
 APP.secret_key = os.urandom(16)
 register_db(APP)
