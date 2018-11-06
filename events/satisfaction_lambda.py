@@ -3,7 +3,6 @@ import boto3
 from biz.css.emotion_recognition import SatisfactionScore
 from biz.css.reduction import apply_reduction
 
-
 print('Loading function')
 s3 = boto3.client('s3')
 
