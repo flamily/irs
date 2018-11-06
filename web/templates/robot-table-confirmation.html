@@ -1,5 +1,6 @@
-<!-- HTML DESIGN IS NOT FINAL. -->
-{% include 'header.html' %}
+{% with page_title = page_title %}
+  {% include 'header.html' %}
+{% endwith %}
   <body class="bg-dark">
     <div class="container">
         <div class="row justify-content-center">
