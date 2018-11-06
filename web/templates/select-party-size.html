@@ -8,12 +8,18 @@
         if(partySize.value.length < 2){
           partySize.value = partySize.value + key;
         }
+        buildQuery(partySize.value);
       }
       function delNum(){
         var partySize = document.forms[0].partySize;
         if(partySize.value.length > 0){
           partySize.value = partySize.value.slice(0, partySize.value.length-1);
         }
+      }
+      function buildQuery(party){
+        var params = { people: party};
+        var query = $.param(params);
+        return query;
       }
     </script>
     <div class="container">
@@ -78,9 +84,14 @@
             <div class="modal-footer">
               <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
               <!-- ROUTING HERE WILL NEED TO BE UPDATED -->
-              <form action="{{ url_for('robot.tableAvailability') }}" method="get">
-                <input type=submit value="Find available tables" class="btn btn-primary">
-              </form>
+              <div id=party-size>
+                <form action="{{ url_for('robot.tableAvailability') }}" method="get">
+                  <input type=submit value="Find available tables" class="btn btn-primary">
+                </form>
+              </div>
+              <script>
+                document.getElementById('party-size').action = "{{ url_for('robot.tableAvailability'),  }}"
+              </script>
             </div>
           </div>
         </div>
