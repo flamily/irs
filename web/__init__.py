@@ -1,8 +1,5 @@
 import os
-from flask import (
-    Flask, render_template
-)
-
+from flask import Flask, render_template
 from web.db import register as register_db
 from web.login import LOGIN_BLUEPRINT
 from web.index import INDEX_BLUEPRINT
