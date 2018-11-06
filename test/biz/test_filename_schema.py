@@ -5,7 +5,7 @@ Author: Andrew Pope
 Date: 06/11/2018
 """
 import pytest
-import events.satisfaction_lambda as sl
+import biz.css.file_storage as fs
 
 
 @pytest.mark.parametrize('event_id, reservation_id, expect', [
@@ -14,7 +14,7 @@ import events.satisfaction_lambda as sl
     (100000, 20000, '100000-20000.img'),
 ])
 def test_construct_filename(event_id, reservation_id, expect):
-    fn = sl.construct_filename(event_id, reservation_id)
+    fn = fs.construct_filename(event_id, reservation_id)
     assert expect in fn
 
 
@@ -25,7 +25,7 @@ def test_construct_filename(event_id, reservation_id, expect):
     (100000, 20000, '100000-20000.img'),
 ])
 def test_deconstruct_filename(event_id, reservation_id, filename):
-    eid, rid = sl.deconstruct_filename(filename)
+    eid, rid = fs.deconstruct_filename(filename)
     assert eid == event_id
     assert rid == reservation_id
 
@@ -38,7 +38,7 @@ def test_deconstruct_filename(event_id, reservation_id, filename):
 ])
 def test_bad_input(event_id, reservation_id):
     with pytest.raises(TypeError):
-        sl.construct_filename(event_id, reservation_id)
+        fs.construct_filename(event_id, reservation_id)
 
 
 @pytest.mark.parametrize('filename', [
@@ -48,4 +48,4 @@ def test_bad_input(event_id, reservation_id):
 ])
 def test_bad_filename(filename):
     with pytest.raises(ValueError):
-        sl.deconstruct_filename(filename)
+        fs.deconstruct_filename(filename)
