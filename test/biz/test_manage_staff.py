@@ -106,8 +106,8 @@ def test_bad_password(database_snapshot):
         assert not ms.verify_password(conn, 'ldavid', 'prettybad')
 
 
-def test_unknown_user(database_snapshot):
-    """Verify that the supplied password is incorrect."""
+def test_check_password_on_unknown_user(database_snapshot):
+    """Verify that checking a password on an unknown user fails."""
     with database_snapshot.getconn() as conn:
         ms.create_staff_member(
             conn, 'ldavid', 'prettygood', ('Larry', 'David'),
