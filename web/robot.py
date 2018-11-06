@@ -25,14 +25,14 @@ def listen():
     return dict(page_title='Robot - Welcome')
 
 
-@ROBOT_BLUEPRINT.route('/robot/party', methods=['GET', 'POST'])
+@ROBOT_BLUEPRINT.route('/robot/party', methods=['GET'])
 @templated(template='select-party-size.html')
 @login_required()
 def party():
     return dict(page_title='Robot - Select Party Size')
 
 
-@ROBOT_BLUEPRINT.route('/robot/tableselect', methods=['GET'])
+@ROBOT_BLUEPRINT.route('/robot/tableselect', methods=['POST'])
 @templated(template='robot-table-availability.html')
 @login_required()
 def tableAvailability():

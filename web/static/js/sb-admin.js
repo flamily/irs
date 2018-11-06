@@ -37,6 +37,12 @@
     event.preventDefault();
   });
 
+  // Build query string
+  $(document).find('#findAvailableTables').click(function() {
+    var size = document.getElementsByName('partySize')[0].value;
+    $('#findAvailableTables').attr('action', "/robot/tableselect?people=" + size).submit();
+  });
+
   $('#table-layout').find('button').click(function(){
     $('#statusModal').modal('show');
     $('#modalTableNumber').text($(this).data('tableid'));
