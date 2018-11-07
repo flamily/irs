@@ -10,13 +10,20 @@ from web.index import INDEX_BLUEPRINT
 from web.robot import ROBOT_BLUEPRINT
 from web.tables import TABLES_BLUEPRINT
 
+
 APP = Flask(__name__)
-APP.secret_key = os.urandom(16)
+APP.secret_key = os.environ.get("SECRET", os.urandom(16))
 register_db(APP)
 APP.register_blueprint(LOGIN_BLUEPRINT, url_prefix="/login")
 APP.register_blueprint(INDEX_BLUEPRINT)
 APP.register_blueprint(ROBOT_BLUEPRINT)
 APP.register_blueprint(TABLES_BLUEPRINT)
+
+
+@APP.errorhandler(404)
+def not_found(e):
+    print('attempt to access missing: {}'.format(e))
+    return render_template('404.html'), 404
 
 
 @APP.errorhandler(Exception)
