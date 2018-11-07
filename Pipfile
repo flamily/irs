@@ -41,7 +41,7 @@ gunicorn = "*"
 zappa = "*"
 cognitive-face = "*"
 pandas = "*"
-sklearn = "*'
+sklearn = "*"
 
 [requires]
 python_version = "3.6"
