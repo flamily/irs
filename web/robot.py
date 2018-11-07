@@ -1,11 +1,10 @@
 from flask import (
-    Blueprint, request
+    Blueprint
 )
 
 from web.decorators import (
     login_required, templated
 )
-
 
 
 # Reference for blueprints here:
