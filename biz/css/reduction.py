@@ -2,6 +2,7 @@ from random_forest import load_RF_File
 
 negative_emotions = ['anger', 'contempt', 'disgust', 'fear', 'sadness']
 
+
 def apply_reduction(raw_results):
     emotions = raw_results[0]["faceAttributes"]["emotion"]
     emotion_weight_key = max(emotions, key=emotions.get)
