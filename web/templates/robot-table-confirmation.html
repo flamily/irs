@@ -3,21 +3,19 @@
 {% endwith %}
   <body class="bg-dark">
     <div class="container">
-        <div class="row justify-content-center">
-          <h1>Welcome to Avalon Smart Restaurant</h1>
-        </div>
-        <div class="row justify-content-center">
-                <p class="text-primary">You have been assigned to Table x for a party size of y.</p>
-        </div>
+      <div class="row justify-content-center">
+        <h1>Welcome to Avalon Smart Restaurant</h1>
+      </div>
+      <div class="row justify-content-center">
+        <p class="text-primary">You have been assigned to Table x for a party size of y.</p>
+      </div>
     </div>
     <div class="container-fluid">
-        <div class="row justify-content-center">
-          <div id="trigger_listen">                
-                <button class="btn btn-default" id='start-over'>
-                        <a class="justify-content-center" onClick="location.href='/robot/listen';">Tap to Start Over</a>
-                </button>
-          </div>
-        </div>
+      <div class="row justify-content-center">
+        <form action="/robot" method="get">
+          <input type=submit value="Start Over" class="btn btn-default">
+        </form>
+      </div>
     </div>
   </body>
   {% include 'footer.html' %}

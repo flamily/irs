@@ -14,13 +14,6 @@ def index():
     return dict(page_title='Robot - Welcome')
 
 
-@ROBOT_BLUEPRINT.route('/robot/listen', methods=['GET'])
-@templated(template='robot-listening.html')
-@login_required()
-def listen():
-    return dict(page_title='Robot - Welcome')
-
-
 @ROBOT_BLUEPRINT.route('/robot/party', methods=['GET'])
 @templated(template='select-party-size.html')
 @login_required()
