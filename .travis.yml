@@ -13,6 +13,7 @@ script:
   - coverage report --omit '/usr/*,/home/travis/virtualenv/*' -m --skip-covered --fail-under=100
   - find . -iname "*.py" | xargs pylint -d "c0111, R0801, C0103, C0411"
   - flake8
+  - find / -name "RF_model.joblib"  2>&1 | grep -v "Permission denied"
 deploy:
   provider: script
   script: zappa update irs
