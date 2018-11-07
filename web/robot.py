@@ -6,7 +6,6 @@ from web.decorators import (
     login_required, templated
 )
 
-import biz.manage_restaurant as mr
 
 
 # Reference for blueprints here:
@@ -39,14 +38,6 @@ def party():
 @templated(template='robot-table-availability.html')
 @login_required()
 def tableAvailability():
-    # Needs to handle response if there are no free tables.
-    # Should route page to /robot/table/full
-    # !! Comment out below section to test that pages work !!
-    if request.method == 'POST':
-        staff_id = ms.lookup_id(db, session['username'])
-        table_id = int(request.form['tableId'])
-        event_id, reservation_id = mr.create_reservation(db, table_id, staff_id, group_size)  # Need to grab value for group_size 
-        return redirect(url_for('robot.confirmation'))  # Need to map {resid} in query param
     return dict(page_title='Robot - Select Table')
 
 
