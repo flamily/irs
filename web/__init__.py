@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template
-from web.db import db
 from web.db import register as register_db
+from web.db import db
 from web.login import LOGIN_BLUEPRINT
 from web.index import INDEX_BLUEPRINT
 from web.robot import ROBOT_BLUEPRINT
