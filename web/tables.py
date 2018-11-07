@@ -5,7 +5,7 @@ Author: Andrew Pope
 Date: 22/10/2018
 """
 from flask import (
-    Blueprint, url_for, redirect, request, jsonify
+    Blueprint, request, jsonify
 )
 from web.db import db
 from web.decorators import (
