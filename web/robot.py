@@ -1,14 +1,12 @@
 from flask import (
     Blueprint, request, url_for, redirect
 )
-from web.decorators import (
-    login_required, templated
-)
 import biz.manage_restaurant as mr
-from biz.restaurant_table import State
-from web.db import db
-from web.decorators import user
 from biz.css import file_storage as fs
+from web.db import db
+from web.decorators import (
+    login_required, templated, user
+)
 
 
 ROBOT_BLUEPRINT = Blueprint('robot', __name__, template_folder='templates')
@@ -34,7 +32,9 @@ def party():
 def tableAvailability():
     people = int(request.args.get('people', '999'))
     tables = mr.overview(db)
-    return dict(page_title='Robot - Select Table', tables=tables, people=people)
+    return dict(page_title='Robot - Select Table',
+                tables=tables,
+                people=people)
 
 
 @ROBOT_BLUEPRINT.route('/robot/table/reserve', methods=['POST'])
