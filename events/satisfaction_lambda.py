@@ -31,7 +31,8 @@ def __generate_url(bucket, key):
 # second parameter is the context, but currently unused
 def customer_satisfaction(event, _):
     bucket, key = __get_details(event)
-    eid, rid = None
+    eid = None
+    rid = None
     try:
         eid, rid = fs.deconstruct_filename(key)
     except ValueError as e:
@@ -39,6 +40,8 @@ def customer_satisfaction(event, _):
         print('Error deconstructing filename {} into \
         event id and reservation id.'.format(key))
         return
+
+    print('eid={}, rid={}'.format(eid, rid))
 
     url = None
     try:
@@ -49,7 +52,7 @@ def customer_satisfaction(event, _):
          Make sure they exist and your bucket is in the \
          same region as this function.'.format(key, bucket))
         raise e
-    
+
     print('detecting from url:{}.'.format(url))
     css = SatisfactionScore().detect_from_url(url)
     print(css)
