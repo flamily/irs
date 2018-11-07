@@ -38,6 +38,8 @@ configparser = "*"
 scandir = "*"
 passlib = "*"
 gunicorn = "*"
+zappa = "*"
+cognitive-face = "*"
 
 [requires]
 python_version = "3.6"
