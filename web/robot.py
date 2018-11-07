@@ -8,7 +8,7 @@ ROBOT_BLUEPRINT = Blueprint('robot', __name__, template_folder='templates')
 
 
 @ROBOT_BLUEPRINT.route('/robot')
-@templated(template='welcome.html')
+@templated(template='robot-welcome.html')
 @login_required()
 def index():
     return dict(page_title='Robot - Welcome')
