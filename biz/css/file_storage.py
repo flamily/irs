@@ -1,9 +1,13 @@
 """
 Functions for accessing files in blob storage.
 
-Author: Andrew Pope
-Date: 06/11/2018
+Author: Andrew Pope, Big Rob
+Date: timeless
 """
+
+import base64
+import boto3
+import io
 
 
 def construct_filename(event_id, reservation_id, extension='img'):
@@ -30,3 +34,10 @@ def deconstruct_filename(filename):
     """
     decon = (filename.split('.')[0]).split('-')
     return (int(decon[0]), int(decon[1]))
+
+
+def upload_base64(filename, photo):
+    b64 = photo.split(',')[1]
+    decoded = io.BytesIO(base64.b64decode(b64))
+    s3 = boto3.client('s3')
+    s3.upload_fileobj(decoded, "irs-images", filename)
