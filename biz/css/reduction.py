@@ -10,5 +10,5 @@ def apply_reduction(raw_results):
         emotion_weight *= -1
     model = load_RF_File()
     to_predict = [list(emotions.values())]
-    prediction = model.prediction(to_predict) + emotion_weight
+    prediction = model.predict(to_predict) + emotion_weight
     return prediction if prediction < 10 else 10
