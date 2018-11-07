@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 
-RF_model_file = 'RF_model.joblib'
+RF_model_file = 'biz/css/RF_model.joblib'
 emotion_training_set = 'emotion_training_set.csv'
 
 
