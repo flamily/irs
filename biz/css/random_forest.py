@@ -9,7 +9,7 @@ RF_model_file = 'biz/css/RF_model.joblib'
 emotion_training_set = 'emotion_training_set.csv'
 
 
-def build_Random_Forest():
+def build_Random_Forest():  # pragma: no cover
     rfdf = pd.read_csv(emotion_training_set)
     target_column = rfdf['satisfaction']
     del rfdf['satisfaction']
@@ -26,7 +26,7 @@ def build_Random_Forest():
     return irs_rf
 
 
-def RF_To_File(model):
+def RF_To_File(model):  # pragma: no cover
     joblib.dump(model, RF_model_file)
 
 
