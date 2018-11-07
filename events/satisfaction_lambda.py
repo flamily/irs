@@ -2,10 +2,15 @@ import urllib.parse
 import boto3
 from biz.css.emotion_recognition import SatisfactionScore
 from biz.css.reduction import apply_reduction
+import biz.manage_restaurant as mr
 import biz.css.file_storage as fs
+from psycopg2 import pool
+import config
 
 print('Loading function')
 s3 = boto3.client('s3')
+conn = config.connection_string()
+pool = pool.ThreadedConnectionPool(1, 1, conn)
 
 
 def __get_details(event):
@@ -58,3 +63,9 @@ def customer_satisfaction(event, _):
     print(css)
     reduced = apply_reduction(css)
     print(reduced)
+
+    conn = pool.getconn()
+    try:
+        mr.put_satisfaction(conn, (eid, rid), reduced)
+    finally:
+        pool.putconn(conn)
