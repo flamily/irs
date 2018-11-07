@@ -1,5 +1,8 @@
 import os
-from flask import Flask, render_template
+from flask import (
+    Flask, render_template
+)
+
 from web.db import register as register_db
 from web.db import db
 from web.login import LOGIN_BLUEPRINT
@@ -14,7 +17,6 @@ APP.register_blueprint(LOGIN_BLUEPRINT, url_prefix="/login")
 APP.register_blueprint(INDEX_BLUEPRINT)
 APP.register_blueprint(ROBOT_BLUEPRINT)
 APP.register_blueprint(TABLES_BLUEPRINT)
-
 
 
 @APP.errorhandler(Exception)

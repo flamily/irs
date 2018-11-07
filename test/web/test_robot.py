@@ -20,6 +20,7 @@ def __spoof_user(client):
         sess['username'] = 'rrobot'
     return s_id
 
+
 def test_index(client):
     """Test that welcome endpoint can be hit."""
     __spoof_user(client)
@@ -27,11 +28,13 @@ def test_index(client):
     assert result.status_code == 200
     assert b'Welcome' in result.data
 
+
 def test_listen(client):
     """Test that robot_listen endpoint can be hit."""
     __spoof_user(client)
     result = client.get('/robot/listen')
     assert result.status_code == 200
+
 
 def test_party(client):
     """Test that select_party_size endpoint can be hit."""
@@ -39,17 +42,20 @@ def test_party(client):
     result = client.get('/robot/party')
     assert result.status_code == 200
 
+
 def test_table(client):
     """Test that robot_table endpoint can be hit."""
     __spoof_user(client)
     result = client.get('/robot/table')
     assert result.status_code == 200
 
+
 def test_full(client):
     """Test that robot-table-full endpoint can be hit."""
     __spoof_user(client)
     result = client.get('/robot/full')
     assert result.status_code == 200
+
 
 def test_proceed(client):
     """Test that table-confirmation endpoint can be hit."""
