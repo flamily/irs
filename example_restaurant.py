@@ -10,8 +10,9 @@ Date: 08/11/2018
 """
 import psycopg2
 import random
-import time
-from datetime import datetime, date, timedelta
+from datetime import (
+    datetime, timedelta
+)
 
 import biz.manage_staff as mgstaff
 import biz.manage_restaurant as mgrest
@@ -113,7 +114,6 @@ def __setup_staff(conn):
 def __setup_tables(conn, n):
     """Setup restaurant tables and return their (ids, capacity)."""
     tables = []
-    creation_dts = []
 
     for _ in range(0, n):
         capacity = random.randint(1, 10)
@@ -131,7 +131,7 @@ def __setup_tables(conn, n):
         )  # Lets say that the tables were created 8 weeks ago
 
     conn.commit()
-    return tables, creation_dts
+    return tables
 
 
 def __generate_reservation(conn, tid, sid, table_capacity):
@@ -164,6 +164,7 @@ def __pay_reservation(conn, tid, sid):
     return (eid, rid)
 
 
+# pylint:disable=too-many-arguments
 def __customer_experience(conn, tid, sid, table_capacity, dt,
                           pay=False, make_ready=False):
     """Generate a restaurant 'customer experience' (reserve, order, pay)."""
@@ -263,11 +264,11 @@ if __name__ == "__main__":
     print("...creating menu items...")
     __setup_menu(db_conn)
     print("...creating restaurant tables...")
-    table_ids, creation_dts = __setup_tables(db_conn, 11)
+    table_ids = __setup_tables(db_conn, 11)
     print("...spoofing restaurant history...")
-    historic_dts = __create_history(db_conn, table_ids)
+    __create_history(db_conn, table_ids)
     print("...spoofing current restaurant state...")
-    recent_dts = __recent_restaurant_state(db_conn, table_ids)
+    __recent_restaurant_state(db_conn, table_ids)
     print("...applying spoof dates for historic restaurant data...")
     __apply_spoof_dates(db_conn)
 
