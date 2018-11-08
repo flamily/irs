@@ -29,10 +29,10 @@ def test_index(client):
     assert b'Welcome' in result.data
 
 
-def test_party(client):
+def test_party_size(client):
     """Test that select_party_size endpoint can be hit."""
     __spoof_user(client)
-    result = client.get('/robot/party')
+    result = client.get('/robot/party-size')
     assert result.status_code == 200
 
 

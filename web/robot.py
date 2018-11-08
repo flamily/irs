@@ -19,10 +19,10 @@ def index():
     return dict(page_title='Robot - Welcome')
 
 
-@ROBOT_BLUEPRINT.route('/robot/party', methods=['GET'])
+@ROBOT_BLUEPRINT.route('/robot/party-size', methods=['GET'])
 @templated(template='robot-select-party-size.html')
 @login_required()
-def party():
+def party_size():
     return dict(page_title='Robot - Select Party Size')
 
 
@@ -57,7 +57,7 @@ def reserve_table():
 @ROBOT_BLUEPRINT.route('/robot/full', methods=['GET'])
 @templated(template='robot-table-full.html')
 @login_required()
-def tableFull():
+def table_full():
     return dict(page_title='Robot - Tables Full')
 
 
