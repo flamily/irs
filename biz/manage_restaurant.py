@@ -315,22 +315,3 @@ def create_restaurant_table(db_conn, capacity, coordinate, width, height,
         rt_id = curs.fetchone()[0]
         e_id = __create_event(curs, Event.ready, rt_id, staff_id)
     return (rt_id, e_id)
-
-
-def put_satisfaction(db_conn, customer_event_id, score):
-    """Create a satisfaction record for a customer event.
-
-    :param db_conn: A psycopg2 connection to the database.
-    :param customer_event_id: A tuple of (event_id, reservation_id).
-    :param score: The satisfaction score.
-    """
-    (event_id, reservation_id) = customer_event_id
-    with db_conn.cursor() as curs:
-        curs.execute(
-            "INSERT INTO satisfaction "
-            "(event_id, reservation_id, score) "
-            "VALUES (%s, %s, %s) ",
-            (
-                event_id, reservation_id, score
-            )
-        )
