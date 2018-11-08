@@ -50,6 +50,5 @@ def load_RF_File():
     """Load .joblib model file
     :return: classifier object
     """
-    # return joblib.load(RF_model_file)
-    with open('biz/css/RF_model.cloud', 'rb') as model_file:
+    with open('biz/css/RF_model.pkl', 'rb') as model_file:
         return pickle.load(model_file)
