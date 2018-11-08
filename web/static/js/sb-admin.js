@@ -48,4 +48,46 @@
     $('#modalTableNumber').text($(this).data('tableid'));
     $('#tableId').val($(this).data('tableid'));
   });
+
+  var photoCallback = function updatePhotoField(encodedImage){
+    $("#customerImg").val(encodedImage);
+  }
+
+  $('#updateTable').find('input').click(function(event){
+    event.preventDefault();
+
+    if($(this).val() == 'Pay')
+      irs.photo(photoCallback);
+
+    $.ajax({
+      url: $(this)[0].getAttribute('formaction'),
+      data: $('#tableInfo').serialize(),
+      type: 'POST',
+      success: function(response) {
+        updateTableStatuses(response);
+      },
+      error: function(error) {
+        console.log('Something went wrong');
+      }
+    });
+    // Clear out image field to prevent issues with other buttons
+    $("#customerImg").val('');
+  });
+
+  function updateTableStatuses(response){
+    var className;
+    var element = $("[data-tableId=" + $('#tableId').val() +"]")[0];
+    switch(response.status){
+      case 'available':
+        $(element).removeClass('unavailable-table');
+        $(element).addClass('available-table');
+        break;
+
+      case 'unavailable':
+        $(element).removeClass('available-table');
+        $(element).addClass('unavailable-table');
+        break;
+    }
+  }
+
 })(jQuery); // End of use strict
