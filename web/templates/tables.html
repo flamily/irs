@@ -28,7 +28,7 @@
               type="button" 
               data-status="{{ table.state }}" 
               data-tableId="{{ table.rt_id }}"
-              class="{{ table.state }}-table table-{{ table.shape }}-{% if table.capacity < 3 %}sm{% else %}lg{% endif %}">Table {{ table.rt_id }}
+              class="{{ table.state }}-table table-{{ table.shape }}-{% if table.capacity < 3 %}sm{% else %}lg{% endif %}">Table {{ table.rt_id }}<p id="tableStatus">{{ table.state }}</p>
             </button>
             {% endfor %}
           </div>

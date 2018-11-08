@@ -117,12 +117,14 @@
     switch(response.status){
       case 'available':
         $(element).addClass('available-table');
-        $(element).data('status', 'available')
+        $(element).children('p').first().text('available');
+        $(element).data('status', 'available');
         break;
 
       case 'unavailable':
         $(element).addClass('unavailable-table');
-        $(element).data('status', 'unavailable')
+        $(element).children('p').first().text('unavailable');
+        $(element).data('status', 'unavailable');
         break;
     }
   }
