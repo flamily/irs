@@ -6,9 +6,6 @@
       <div class="row justify-content-center">
         <h1>Welcome to Avalon Smart Restaurant</h1>
       </div>
-      <form method="post" id="robotTableInfo" class="d-none">
-        <input name="customerPhoto" type="int" id="photo" class="form-control" placeholder="Customer Image" >
-      </form>
     </div>
     <div class="container">
       <div class="row">
@@ -17,7 +14,7 @@
             {% for table in tables %}
             <div class="col-md-3">
               <div class="well">
-                <form action="/robot/table/reserve" method="post">
+                <form action="/robot/table/reserve" id="robotTableReserve" method="post">
                   <input type=submit
                   value="Table {{ table.rt_id }}"
                   class="btn btn-default"
@@ -26,7 +23,7 @@
                   {% endif %}>
                   <input type=hidden value="{{ table.rt_id }}" name=table_id>
                   <input type=hidden value="{{ people }}" name=group_size>
-                  <input type=hidden value="{% include 'photo.txt' %}" name=customerPhoto>
+                  <input type=hidden value="{{ customerPhoto }}" name=customerPhoto>
                 </form>
                 <h4 class="text-light">Table {{ table.rt_id }}</h4>
               </div>
