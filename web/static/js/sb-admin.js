@@ -43,6 +43,7 @@
     document.location = "/robot/table?people=" + size
   });
 
+  // Start Exit Interface
   function disableModalButtons(){
     $('#updateTable').find('input').each(function(){
      $(this).prop("disabled", true);
@@ -71,11 +72,6 @@
     $('#statusModal').modal('show');
     $('#modalTableNumber').text($(this).data('tableid'));
     $('#tableId').val($(this).data('tableid'));
-  });
-
-  $(document).find('#confirmPartySize').click(function() {
-    var size = document.getElementsByName('partySize')[0].value
-    $('.modal-body').text('You are confirming a table for ' + size + ' people. Please select confirm to continue or cancel to enter again.')
   });
 
   var photoCallback = function updatePhotoField(encodedImage){
@@ -126,4 +122,24 @@
         break;
     }
   }
+  // End Exit Interface
+
+  $(document).find('#confirmPartySize').click(function() {
+    var size = document.getElementsByName('partySize')[0].value
+    $('.modal-body').text('You are confirming a table for ' + size + ' people. Please select confirm to continue or cancel to enter again.')
+  });
+
+  // Robot Photo
+  var photoCallback = function updatePhotoField(encodedImage){
+    $("#customerPhoto").val(encodedImage);
+  }
+
+  $('#robotTableReserve').find('input').click(function(event){
+    event.preventDefault();
+    irs.photo(photoCallback);
+
+    // Clear out image field to prevent issues with other buttons
+    $("#customerImg").val('');
+  });
+  // Robot Photo
 })(jQuery); // End of use strict

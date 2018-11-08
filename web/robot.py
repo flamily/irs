@@ -44,9 +44,9 @@ def reserve_table():
     # if any of the parameters are incorrect, we redirect back to start
     table_id = request.form['table_id']
     group_size = request.form['group_size']
-    photo = request.form['photo']
+    customerPhoto = request.form['customerPhoto']
     eid, rid = mr.create_reservation(db, table_id, user.s_id, group_size)
-    bucket_upload(photo, eid, rid)
+    bucket_upload(customerPhoto, eid, rid)
     return redirect(url_for('robot.confirmation', rid=rid, tid=table_id))
 
 
