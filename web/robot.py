@@ -16,9 +16,9 @@ def index():
 
 
 @ROBOT_BLUEPRINT.route('/robot/party-size', methods=['GET'])
-@templated(template='select-party-size.html')
+@templated(template='robot-select-party-size.html')
 @login_required()
-def party():
+def party_size():
     return dict(page_title='Robot - Select Party Size')
 
 
