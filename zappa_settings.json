@@ -1,15 +1,18 @@
 {
-    "irs": {
+    "web": {
         "app_function": "web.__init__.APP",
         "aws_region": "ap-southeast-2",
         "profile_name": null,
         "project_name": "irs",
         "runtime": "python3.6",
         "manage_roles": false,
-        "slim_handler": true,
         "role_name": "irs-irs-ZappaLambdaExecutionRole",
         "role_arn": "arn:aws:iam::647081355413:role/irs-irs-ZappaLambdaExecutionRole",
-        "s3_bucket": "irs-zappa"
+        "domain": "www.bigmeme.com.au",
+        "certificate_arn": "arn:aws:acm:us-east-1:647081355413:certificate/e07a960a-b094-48a8-ba75-bbf3c4b7806b",
+        "s3_bucket": "irs-zappa",
+        "exclude": ["*numpy*", "scipy/*", "sklearn"],
+        "delete_local_zip": false
     },
     "css": {
         "app_function": "web.__init__.APP",
@@ -20,8 +23,6 @@
         "manage_roles": false,
         "slim_handler": true,
         "role_name": "irs-irs-ZappaLambdaExecutionRole",
-        "role_arn": "arn:aws:iam::647081355413:role/irs-irs-ZappaLambdaExecutionRole",
-        "domain": "www.bigmeme.com.au",
         "certificate_arn": "arn:aws:acm:us-east-1:647081355413:certificate/e07a960a-b094-48a8-ba75-bbf3c4b7806b",
         "s3_bucket": "irs-zappa",
         "events": [{
