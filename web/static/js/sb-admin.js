@@ -73,6 +73,11 @@
     $('#tableId').val($(this).data('tableid'));
   });
 
+  $(document).find('#confirmPartySize').click(function() {
+    var size = document.getElementsByName('partySize')[0].value
+    $('.modal-body').text('You are confirming a table for ' + size + ' people. Please select confirm to continue or cancel to enter again.')
+  });
+
   var photoCallback = function updatePhotoField(encodedImage){
     $("#customerImg").val(encodedImage);
   }
@@ -121,5 +126,4 @@
         break;
     }
   }
-
 })(jQuery); // End of use strict
