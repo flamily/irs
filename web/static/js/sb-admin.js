@@ -45,8 +45,8 @@
 
   $('#table-layout').find('button').click(function(){
     $('#statusModal').modal('show');
-    $('#modalTableNumber').text($(this).data('tableId'));
-    $('#tableId').val($(this).data('tableId'));
+    $('#modalTableNumber').text($(this).data('tableid'));
+    $('#tableId').val($(this).data('tableid'));
   });
 
   var photoCallback = function updatePhotoField(encodedImage){
@@ -65,13 +65,13 @@
       type: 'POST',
       success: function(response) {
         updateTableStatuses(response);
-        // Clear out image field to prevent issues with other buttons
-        $("#customerImg").val('');
       },
       error: function(error) {
         console.log('Something went wrong');
       }
     });
+    // Clear out image field to prevent issues with other buttons
+    $("#customerImg").val('');
   });
 
   function updateTableStatuses(response){
