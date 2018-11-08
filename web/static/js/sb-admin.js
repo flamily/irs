@@ -43,7 +43,31 @@
     document.location = "/robot/table?people=" + size
   });
 
+  function disableModalButtons(){
+    $('#updateTable').find('input').each(function(){
+     $(this).prop("disabled", true);
+    });
+  }
+
+  function enableAppropriateModalButtons(tableStatus){
+    switch(tableStatus){
+      case 'occupied':
+        $("[value='Pay']").first().prop("disabled", false);
+        break;
+
+      case 'available':
+        $("[value='Maintain']").first().prop("disabled", false);
+        break;
+
+      case 'unavailable':
+        $("[value='Ready']").first().prop("disabled", false);
+        break;
+    }
+  }
+
   $('#table-layout').find('button').click(function(){
+    disableModalButtons();
+    enableAppropriateModalButtons($(this).data('status'));
     $('#statusModal').modal('show');
     $('#modalTableNumber').text($(this).data('tableid'));
     $('#tableId').val($(this).data('tableid'));
@@ -70,27 +94,35 @@
       type: 'POST',
       success: function(response) {
         updateTableStatuses(response);
+        $('#statusModal').modal('hide');
       },
       error: function(error) {
-        console.log('Something went wrong');
+        console.log(error.statusText);
       }
     });
     // Clear out image field to prevent issues with other buttons
     $("#customerImg").val('');
   });
 
+  function removeTableStatusClasses(element){
+    $(element).removeClass('available-table');
+    $(element).removeClass('unavailable-table');
+    $(element).removeClass('occupied-table');
+  }
+
   function updateTableStatuses(response){
     var className;
     var element = $("[data-tableId=" + $('#tableId').val() +"]")[0];
+    removeTableStatusClasses(element);
     switch(response.status){
       case 'available':
-        $(element).removeClass('unavailable-table');
         $(element).addClass('available-table');
+        $(element).data('status', 'available')
         break;
 
       case 'unavailable':
-        $(element).removeClass('available-table');
         $(element).addClass('unavailable-table');
+        $(element).data('status', 'unavailable')
         break;
     }
   }
