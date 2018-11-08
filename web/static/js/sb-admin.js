@@ -45,8 +45,8 @@
 
   $('#table-layout').find('button').click(function(){
     $('#statusModal').modal('show');
-    $('#modalTableNumber').text($(this).data('tableid'));
-    $('#tableId').val($(this).data('tableid'));
+    $('#modalTableNumber').text($(this).data('tableId'));
+    $('#tableId').val($(this).data('tableId'));
   });
 
   var photoCallback = function updatePhotoField(encodedImage){
