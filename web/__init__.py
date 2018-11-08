@@ -23,6 +23,13 @@ def not_found(e):
     return render_template('404.html'), 404
 
 
+@APP.errorhandler(KeyError)
+def key_error(e):
+    print('KeyError: {}'.format(e))
+    db.rollback()
+    return render_template('500.html'), 400
+
+
 @APP.errorhandler(Exception)
 def generic_error(e):
     """Gotta catch em all."""
