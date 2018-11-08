@@ -116,7 +116,7 @@ def __setup_tables(conn, n):
     tables = []
 
     for _ in range(0, n):
-        capacity = random.randint(1, 10)
+        capacity = random.randint(2, 10)
         location = Coordinate(x=random.randint(0, 20), y=random.randint(0, 20))
         width = random.randint(1, capacity)
         height = random.randint(1, capacity)
