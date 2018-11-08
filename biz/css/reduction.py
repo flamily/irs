@@ -1,9 +1,21 @@
+"""
+Author: Joshua De los Santos
+Modified: 1:17PM - 8/11/2018
+
+Description:
+    Methods to reduce azure data into a single satisfaction number.
+"""
 from biz.css.random_forest import load_RF_File
 
 negative_emotions = ['anger', 'contempt', 'disgust', 'fear', 'sadness']
 
 
 def apply_reduction(raw_results):
+    """Apply Random Forest prediction to azure json data
+
+    :param raw_results: azure json data
+    :return: satisfaction percentage between 0 and 100
+    """
     try:
         raw_results[0]["faceAttributes"]["emotion"]
     except (ValueError, IndexError, TypeError):

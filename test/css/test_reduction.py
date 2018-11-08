@@ -1,5 +1,9 @@
 """
-Tests for valid json inputs and arbitrary non-json inputs
+Author: Joshua De los Santos
+Modified: 5:55PM - 7/11/18
+
+Description:
+    Tests for valid json inputs and arbitrary non-json inputs.
 """
 import pytest
 from biz.css.reduction import apply_reduction
