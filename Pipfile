@@ -41,7 +41,6 @@ passlib = "*"
 gunicorn = "*"
 zappa = "*"
 cognitive-face = "*"
-sklearn = "*"
 
 [requires]
 python_version = "3.6"
