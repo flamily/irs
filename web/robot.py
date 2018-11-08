@@ -2,11 +2,12 @@ from flask import (
     Blueprint, request, url_for, redirect
 )
 import biz.manage_restaurant as mr
-from biz.css import file_storage as fs
+from biz.css.file_storage import bucket_upload
 from web.db import db
 from web.decorators import (
     login_required, templated, user
 )
+from http import HTTPStatus
 
 
 ROBOT_BLUEPRINT = Blueprint('robot', __name__, template_folder='templates')
@@ -29,7 +30,7 @@ def party_size():
 @ROBOT_BLUEPRINT.route('/robot/table', methods=['GET'])
 @templated(template='robot-table-availability.html')
 @login_required()
-def tableAvailability():
+def table():
     people = int(request.args.get('people', '999'))
     tables = mr.overview(db)
     return dict(page_title='Robot - Select Table',
@@ -46,11 +47,7 @@ def reserve_table():
     group_size = request.form['group_size']
     photo = request.form['photo']
     eid, rid = mr.create_reservation(db, table_id, user.s_id, group_size)
-    filename = fs.construct_filename(eid, rid)
-    fs.upload_base64(filename, photo)
-    print(filename)
-
-    # upload the photo to s3
+    bucket_upload(photo, eid, rid)
     return redirect(url_for('robot.confirmation', rid=rid, tid=table_id))
 
 

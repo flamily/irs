@@ -8,6 +8,7 @@ Date: timeless
 import base64
 import boto3
 import io
+import config
 
 
 def construct_filename(event_id, reservation_id, extension='img'):
@@ -36,8 +37,14 @@ def deconstruct_filename(filename):
     return (int(decon[0]), int(decon[1]))
 
 
-def upload_base64(filename, photo):
-    b64 = photo.split(',')[1]
-    decoded = io.BytesIO(base64.b64decode(b64))
-    s3 = boto3.client('s3')
-    s3.upload_fileobj(decoded, "irs-images", filename)
+def bucket_upload(img, event_id, reservation_id):  # pragma: no cover
+    filename = construct_filename(event_id, reservation_id)
+    if config.is_running_on_lambda():
+        b64 = img.split(',')[1]
+        decoded = io.BytesIO(base64.b64decode(b64))
+        s3 = boto3.client('s3')
+        s3.upload_fileobj(decoded, "irs-images", filename)
+    else:
+        print("Not running on lambda. \
+        Mocking sent image event={}, reservation={}, \
+        encoded img len={}".format(event_id, reservation_id, len(img)))
