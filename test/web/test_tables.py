@@ -47,7 +47,7 @@ def __spoof_tables(client, n, staff_id, reserve=False):
             mg.create_restaurant_table(
                 conn, 3, Coordinate(x=0, y=3), 1,
                 5, Shape.rectangle, staff_id
-            )
+            )[0]
         )
     conn.commit()
 

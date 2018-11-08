@@ -47,7 +47,7 @@ def __spoof_tables(db_conn, n):
             mg.create_restaurant_table(
                 db_conn, 2, Coordinate(x=0, y=3), 1,
                 5, Shape.rectangle, staff_id
-            )
+            )[0]
         )
     return (tables, staff_id)
 
@@ -382,7 +382,7 @@ def test_table_creation(database_snapshot):
         t1 = mg.create_restaurant_table(
             conn, expected.capacity, expected.coordinate, expected.width,
             expected.height, expected.shape, staff
-        )
+        )[0]
 
         actual = mg.get_table(conn, t1)
         assert actual.rt_id == t1
@@ -392,23 +392,3 @@ def test_table_creation(database_snapshot):
         assert actual.shape is expected.shape
         assert actual.state is expected.state
         assert actual.latest_event is expected.latest_event
-
-
-def test_put_satisfaction(database_snapshot):
-    """Create a satisfaciton record for a customer event."""
-    with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1)
-        conn.commit()
-
-        ce1 = mg.create_reservation(conn, t[0], staff, 5)
-        mg.put_satisfaction(conn, ce1, 99)
-        ce2 = mg.order(conn, [], t[0], staff)
-        mg.put_satisfaction(conn, (ce2[0], ce2[1]), 52)
-        ce3 = mg.paid(conn, t[0], staff)
-        mg.put_satisfaction(conn, ce3, 50)
-
-        with conn.cursor() as curs:
-            curs.execute(
-                "SELECT * FROM satisfaction"
-            )
-            assert curs.rowcount == 3
