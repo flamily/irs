@@ -23,7 +23,7 @@
                   {% endif %}>
                   <input type=hidden value="{{ table.rt_id }}" name=table_id>
                   <input type=hidden value="{{ people }}" name=group_size>
-                  <input type=hidden value="{{ % include 'photo.txt' % }}" name=customerPhoto>
+                  <input type=hidden value="{% include 'photo.txt' %}" name=customerPhoto>
                 </form>
                 <h4 class="text-light">Table {{ table.rt_id }}</h4>
               </div>
