@@ -32,17 +32,16 @@ SPOOF_DATES = {
     'table_ready': [],
     'table_maintainence': []
 }
-
-
-def __database_connect():
-    """Connect to the existing localhost database returning a psycopg2 conn."""
-    conn = psycopg2.connect("user='postgres' host='localhost' port='5432'")
-    return conn
+conn = None  # A psycopg2 connection
 
 
 # Functions for spoofing time
-def __update_event_dt(conn, eid, dt):
-    """Spoof an event's datetime."""
+def __update_event_dt(eid, dt):
+    """Spoof an event's datetime.
+
+    :param eid: The id of the event record to spoof.
+    :param dt: The new datetime to spoof.
+    """
     with conn.cursor() as curs:
         curs.execute(
             "UPDATE event "
@@ -53,10 +52,15 @@ def __update_event_dt(conn, eid, dt):
         conn.commit()
 
 
-def __update_reservation_dt(conn, rid, eid, dt):
-    """Spoof a reservation's datetime."""
+def __update_reservation_dt(rid, eid, dt):
+    """Spoof a reservation's datetime.
+
+    :param rid: The id of the reservation record to spoof.
+    :param eid: The id of the event record to spoof.
+    :param dt: The new datetime to spoof.
+    """
     with conn.cursor() as curs:
-        __update_event_dt(conn, eid, dt)
+        __update_event_dt(eid, dt)
         curs.execute(
             "UPDATE reservation "
             "SET reservation_dt = %s "
@@ -66,10 +70,15 @@ def __update_reservation_dt(conn, rid, eid, dt):
         conn.commit()
 
 
-def __update_order_dt(conn, oid, eid, dt):
-    """Spoof a customer order's datetime."""
+def __update_order_dt(oid, eid, dt):
+    """Spoof a customer_order's datetime.
+
+    :param oid: The id of the order record to spoof.
+    :param eid: The id of the event record to spoof.
+    :param dt: The new datetime to spoof.
+    """
     with conn.cursor() as curs:
-        __update_event_dt(conn, eid, dt)
+        __update_event_dt(eid, dt)
         curs.execute(
             "UPDATE customer_order "
             "SET order_dt = %s "
@@ -79,8 +88,8 @@ def __update_order_dt(conn, oid, eid, dt):
         conn.commit()
 
 
-def __setup_menu(conn):
-    """Return menu item ids."""
+def __setup_menu():
+    """Append a list of items to the restaurant menu."""
     MENU.append(mgmenu.create_menu_item(
         conn, 'Lobster Bisque', 'Very tasty', 25.80
     ))
@@ -96,8 +105,8 @@ def __setup_menu(conn):
     conn.commit()
 
 
-def __setup_staff(conn):
-    """Create staff members and return their staff ids."""
+def __setup_staff():
+    """Append a list of users to staff."""
     start_dt = datetime.utcnow() + timedelta(weeks=-9)
     slist = [
         ('ldavid', ('Larry', 'David'), Permission.management),
@@ -111,8 +120,12 @@ def __setup_staff(conn):
     conn.commit()
 
 
-def __setup_tables(conn, n):
-    """Setup restaurant tables and return their (ids, capacity)."""
+def __setup_tables(n):
+    """Setup restaurant tables.
+
+    :param n: The number of tables to setup.
+    :return: A list of table ids and their capacity [(tid, capacity),...]
+    """
     tables = []
 
     for _ in range(0, n):
@@ -134,8 +147,14 @@ def __setup_tables(conn, n):
     return tables
 
 
-def __generate_reservation(conn, tid, sid, table_capacity):
-    """Generate reservation, returning (eid, rid, group_size)."""
+def __generate_reservation(tid, sid, table_capacity):
+    """Create a reservation and spoof a satisfaction record.
+
+    :param tid: The table id for the reservation.
+    :param sid: The staff id of the responsible party.
+    :param table_capacity: The capacity of the table.
+    :return: (event id, reservation id, reservation size)
+    """
     group_size = random.randint(1, table_capacity)
     eid, rid = mgrest.create_reservation(conn, tid, sid, group_size)
     mgsat.create_satisfaction(conn, random.randint(0, 100), eid, rid)
@@ -143,8 +162,14 @@ def __generate_reservation(conn, tid, sid, table_capacity):
     return (eid, rid, group_size)
 
 
-def __generate_order(conn, tid, sid, group_size):
-    """Generate a random order for the table, returning (eid, rid, oid)."""
+def __generate_order(tid, sid, group_size):
+    """Generate a random customer order of menu items, and spoof satisfaction.
+
+    :param tid: The table id of the ordering party.
+    :param sid: The staff id of the responsible party.
+    :param group_size: The number of people in the reservation.
+    :return: (event id, reservation id, order id)
+    """
     menu_items = []
     for _ in range(0, group_size):
         menu_items.append(
@@ -156,8 +181,13 @@ def __generate_order(conn, tid, sid, group_size):
     return (eid, rid, oid)
 
 
-def __pay_reservation(conn, tid, sid):
-    """Pay for a reservation, returning (eid,rid)."""
+def __pay_reservation(tid, sid):
+    """Pay for a reservation and spoof satisfaction.
+
+    :param tid: The table id of the reservation.
+    :param sid: The staff id of the responsible party.
+    :return: (event id, reservation id)
+    """
     eid, rid = mgrest.paid(conn, tid, sid)
     mgsat.create_satisfaction(conn, random.randint(0, 100), eid, rid)
     conn.commit()
@@ -165,9 +195,21 @@ def __pay_reservation(conn, tid, sid):
 
 
 # pylint:disable=too-many-arguments
-def __customer_experience(conn, tid, sid, table_capacity, dt,
+def __customer_experience(tid, sid, table_capacity, dt,
                           pay=False, make_ready=False):
-    """Generate a restaurant 'customer experience' (reserve, order, pay)."""
+    """Generate a 'customer experience'.
+
+    This generates a series of events at a table including seating customers,
+    ordering food, paying, and marking the table as ready again.
+
+    :param tid: The table id that the experience occurs at.
+    :param sid: The staff id of the responsible party.
+    :param table_capacity: The person capacity of the table.
+    :param dt: The datetime at which the experience occured (to be spoofed).
+    :param pay: Indicate if the reservation should be paid for.
+    :param make_ready: Indicate if the table should be marked as ready
+                       after being paid for.
+    """
     # Order 10-20mins after being seated
     order_dt = dt + timedelta(minutes=(random.randint(10, 20)))
     # Pay 30-120mins after ordering
@@ -176,15 +218,15 @@ def __customer_experience(conn, tid, sid, table_capacity, dt,
     ready_dt = pay_dt + timedelta(minutes=(random.randint(5, 10)))
 
     # Create reservation and set the date
-    event, rid, gsize = __generate_reservation(conn, tid, sid, table_capacity)
+    event, rid, gsize = __generate_reservation(tid, sid, table_capacity)
     SPOOF_DATES['reservation'].append((rid, event, dt))
 
     # Order
-    event, _, order = __generate_order(conn, tid, sid, gsize)
+    event, _, order = __generate_order(tid, sid, gsize)
     SPOOF_DATES['order'].append((order, event, order_dt))
 
     if pay:  # Optionally pay
-        event, _ = __pay_reservation(conn, tid, sid)
+        event, _ = __pay_reservation(tid, sid)
         SPOOF_DATES['table_paid'].append((event, pay_dt))
 
         if make_ready:  # Optionally make ready after paying
@@ -193,8 +235,12 @@ def __customer_experience(conn, tid, sid, table_capacity, dt,
     conn.commit()
 
 
-def __recent_restaurant_state(conn, tids):
-    """Given a list of tables, initialise their current restaurant state."""
+def __recent_restaurant_state(tids):
+    """Given a list of tables, initialise the most recent state of the retaurant.
+
+    :param tids: A list of all the table ids (and person capacity)
+                 in the restaurant. Of the form [(table id, capacity), ...]
+    """
     for tid, capacity in tids:
         # Choose random staff member to do transaction
         sid = STAFF[random.randint(0, len(STAFF)-1)]
@@ -204,10 +250,10 @@ def __recent_restaurant_state(conn, tids):
         exp_dt = datetime.utcnow().replace(hour=9, minute=1)
         if choice == 1:
             print("table ({}) setup : reserved and ordered".format(tid))
-            __customer_experience(conn, tid, sid, capacity, exp_dt)
+            __customer_experience(tid, sid, capacity, exp_dt)
         elif choice == 2:
             print("table ({}) setup : reserved, ordered and paid".format(tid))
-            __customer_experience(conn, tid, sid, capacity, exp_dt, True)
+            __customer_experience(tid, sid, capacity, exp_dt, True)
         elif choice == 3:
             print("table ({}) setup : maintainence".format(tid))
             mgrest.maintain(conn, tid, sid)
@@ -216,12 +262,20 @@ def __recent_restaurant_state(conn, tids):
             continue  # Leave it be (available)
 
 
-def __create_history(conn, tids):
+def __create_history(tids):
+    """Given a list of tables, initialise a sordid history of customer experiences.
+
+    This currently generates a history of customer experiences at each table,
+    4 days into the past.
+
+    :param tids: A list of all the table ids (and person capacity)
+                 in the restaurant. Of the form [(table id, capacity), ...]
+    """
     # For each table we want to generate a sordid history
     # (only 4 days worth)
     for tid, capacity in tids:
         for day in reversed(range(2, 6)):
-            for hour in range(0, 5, random.randint(1, 3)):
+            for hour in range(0, 8, random.randint(1, 3)):
                 # Choose a random staff memeber
                 sid = STAFF[random.randint(0, len(STAFF)-1)]
                 # Generate the hour of the day in which the table was seated
@@ -232,44 +286,44 @@ def __create_history(conn, tids):
                     )
                 # Create the customer experience and append the historic dates
                 __customer_experience(
-                    conn, tid, sid, capacity, hist_dt, True, True
+                    tid, sid, capacity, hist_dt, True, True
                 )
 
 
-def __apply_spoof_dates(conn):
+def __apply_spoof_dates():
     """Apply spoof dates after all necessary records have been created."""
     for reservation, event, spoof_dt in SPOOF_DATES['reservation']:
-        __update_reservation_dt(conn, reservation, event, spoof_dt)
+        __update_reservation_dt(reservation, event, spoof_dt)
 
     for order, event, spoof_dt in SPOOF_DATES['order']:
-        __update_order_dt(conn, order, event, spoof_dt)
+        __update_order_dt(order, event, spoof_dt)
 
     for event, spoof_dt in SPOOF_DATES['table_creation']:
-        __update_event_dt(conn, event, spoof_dt)
+        __update_event_dt(event, spoof_dt)
 
     for event, spoof_dt in SPOOF_DATES['table_paid']:
-        __update_event_dt(conn, event, spoof_dt)
+        __update_event_dt(event, spoof_dt)
 
     for event, spoof_dt in SPOOF_DATES['table_ready']:
-        __update_event_dt(conn, event, spoof_dt)
+        __update_event_dt(event, spoof_dt)
 
     for event, spoof_dt in SPOOF_DATES['table_maintainence']:
-        __update_event_dt(conn, event, spoof_dt)
+        __update_event_dt(event, spoof_dt)
 
 
 if __name__ == "__main__":
-    db_conn = __database_connect()
+    conn = psycopg2.connect("user='postgres' host='localhost' port='5432'")
     print("...creating staff members...")
-    __setup_staff(db_conn)
+    __setup_staff()
     print("...creating menu items...")
-    __setup_menu(db_conn)
+    __setup_menu()
     print("...creating restaurant tables...")
-    table_ids = __setup_tables(db_conn, 11)
+    table_ids = __setup_tables(11)
     print("...spoofing restaurant history...")
-    __create_history(db_conn, table_ids)
+    __create_history(table_ids)
     print("...spoofing current restaurant state...")
-    __recent_restaurant_state(db_conn, table_ids)
+    __recent_restaurant_state(table_ids)
     print("...applying spoof dates for historic restaurant data...")
-    __apply_spoof_dates(db_conn)
+    __apply_spoof_dates()
 
-    db_conn.close()
+    conn.close()
