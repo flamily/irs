@@ -43,7 +43,31 @@
     document.location = "/robot/table?people=" + size
   });
 
+  function disableModalButtons(){
+    $('#updateTable').find('input').each(function(){
+     $(this).prop("disabled", true);
+    });
+  }
+
+  function enableAppropriateModalButtons(tableStatus){
+    switch(tableStatus){
+      case 'occupied':
+        $("[value='Pay']").first().prop("disabled", false);
+        break;
+
+      case 'available':
+        $("[value='Maintain']").first().prop("disabled", false);
+        break;
+
+      case 'unavailable':
+        $("[value='Ready']").first().prop("disabled", false);
+        break;
+    }
+  }
+
   $('#table-layout').find('button').click(function(){
+    disableModalButtons();
+    enableAppropriateModalButtons($(this).data('status'));
     $('#statusModal').modal('show');
     $('#modalTableNumber').text($(this).data('tableid'));
     $('#tableId').val($(this).data('tableid'));
@@ -88,10 +112,12 @@
     switch(response.status){
       case 'available':
         $(element).addClass('available-table');
+        $(element).data('status', 'available')
         break;
 
       case 'unavailable':
         $(element).addClass('unavailable-table');
+        $(element).data('status', 'unavailable')
         break;
     }
   }
