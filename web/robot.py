@@ -7,7 +7,6 @@ from web.db import db
 from web.decorators import (
     login_required, templated, user
 )
-from http import HTTPStatus
 
 
 ROBOT_BLUEPRINT = Blueprint('robot', __name__, template_folder='templates')
@@ -62,6 +61,6 @@ def table_full():
 @templated(template='robot-table-confirmation.html')
 @login_required()
 def confirmation():
-    table = request.args.get('tid', 'NO_TABLE_ID')
+    tid = request.args.get('tid', 'NO_TABLE_ID')
     rid = request.args.get('rid', 'NO_RESERVATION_ID')
-    return dict(page_title='Robot - Tables Full', table=table, rid=rid)
+    return dict(page_title='Robot - Tables Full', table=tid, rid=rid)
