@@ -55,8 +55,7 @@ def lookup_order(db_conn, reservation_id):
 
     :param db_conn: A psycopg2 connection to the database.
     :param reservation_id: The reservation id to lookup.
-    :return: customer_order_id
-    :note: Will throw exception if no customer order exists for reservation.
+    :return: customer_order_id or None if record does not exist.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -65,7 +64,8 @@ def lookup_order(db_conn, reservation_id):
             "WHERE co.reservation_id = %s",
             (reservation_id,)
         )
-
+        if curs.rowcount != 1:
+            return None
         return curs.fetchone()[0]
 
 
@@ -80,13 +80,15 @@ def order(db_conn, menu_items, table_id, staff_id):
     """
     reservation_id = lookup_reservation(db_conn, table_id)
 
-    try:
-        order_id = lookup_order(db_conn, reservation_id)
-    except TypeError:
-        order_id = None  # The order has yet to exist
+    if reservation_id is None:
+        raise LookupError(
+            "no active reservation exists for table id: {}".format(table_id)
+        )
+
+    order_id = lookup_order(db_conn, reservation_id)
 
     with db_conn.cursor() as curs:
-        if order_id is None:
+        if order_id is None:  # The order has yet to exist
             curs.execute(
                 "INSERT INTO customer_order "
                 "(reservation_id) "
@@ -151,6 +153,11 @@ def paid(db_conn, table_id, staff_id):
     """
     reservation_id = lookup_reservation(db_conn, table_id)
 
+    if reservation_id is None:
+        raise LookupError(
+            "no active reservation exists for table id: {}".format(table_id)
+        )
+
     with db_conn.cursor() as curs:
         event_id = __create_event(curs, Event.paid, table_id, staff_id)
         __create_customer_event(curs, event_id, reservation_id)
@@ -162,8 +169,7 @@ def lookup_reservation(db_conn, table_id):
 
     :param db_conn: A psycopg2 connection to the database.
     :param table_id: The table id to lookup.
-    :return: reservation_id.
-    :note: Will throw exception if no reservation exists for table.
+    :return: reservation_id or None if no reservation for table exists.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -178,6 +184,8 @@ def lookup_reservation(db_conn, table_id):
             "AND et.description in ('seated', 'attending')",
             (table_id,)
         )
+        if curs.rowcount < 1:
+            return None
         return curs.fetchone()[0]
 
 
@@ -246,7 +254,7 @@ def get_table(db_conn, table_id):
 
     :param db_conn: A psycopg2 connection to the database.
     :param table_id: Id of table to find.
-    :return: A RestaurantTable or None.
+    :return: A RestaurantTable or None if record does not exist.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -261,7 +269,8 @@ def get_table(db_conn, table_id):
             "AND rt.restaurant_table_id = %s",
             (table_id,)
         )
-
+        if curs.rowcount != 1:
+            return None
         table = curs.fetchone()
         return RestaurantTable(
             rt_id=table[0],
@@ -286,7 +295,7 @@ def create_restaurant_table(db_conn, capacity, coordinate, width, height,
     :param height: The height of the table.
     :param shape: An instance of the Shape enum.
     :param staff_id: The id of the staff member creating the table.
-    :return: The id of the created table.
+    :return: The id of the created table and event id of its first event.
     :note: This will start the table in the 'ready' state.
     """
     with db_conn.cursor() as curs:
@@ -304,24 +313,5 @@ def create_restaurant_table(db_conn, capacity, coordinate, width, height,
             )
         )
         rt_id = curs.fetchone()[0]
-        __create_event(curs, Event.ready, rt_id, staff_id)  # Default event
-    return rt_id
-
-
-def put_satisfaction(db_conn, customer_event_id, score):
-    """Create a satisfaction record for a customer event.
-
-    :param db_conn: A psycopg2 connection to the database.
-    :param customer_event_id: A tuple of (event_id, reservation_id).
-    :param score: The satisfaction score.
-    """
-    (event_id, reservation_id) = customer_event_id
-    with db_conn.cursor() as curs:
-        curs.execute(
-            "INSERT INTO satisfaction "
-            "(event_id, reservation_id, score) "
-            "VALUES (%s, %s, %s) ",
-            (
-                event_id, reservation_id, score
-            )
-        )
+        e_id = __create_event(curs, Event.ready, rt_id, staff_id)
+    return (rt_id, e_id)

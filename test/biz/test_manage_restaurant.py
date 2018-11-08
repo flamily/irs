@@ -47,7 +47,7 @@ def __spoof_tables(db_conn, n):
             mg.create_restaurant_table(
                 db_conn, 2, Coordinate(x=0, y=3), 1,
                 5, Shape.rectangle, staff_id
-            )
+            )[0]
         )
     return (tables, staff_id)
 
@@ -75,8 +75,7 @@ def test_lookup_missing_order(database_snapshot):
         t, staff = __spoof_tables(conn, 1)
         conn.commit()
         (_, r1) = mg.create_reservation(conn, t[0], staff, 5)
-        with pytest.raises(TypeError):
-            mg.lookup_order(conn, r1)
+        assert mg.lookup_order(conn, r1) is None
 
 
 def test_lookup_order(database_snapshot):
@@ -88,6 +87,18 @@ def test_lookup_order(database_snapshot):
         (_, _, o1) = mg.order(conn, [], t[0], staff)
         lookedup = mg.lookup_order(conn, r1)
         assert o1 == lookedup
+
+
+def test_no_reservation_for_order(database_snapshot):
+    """Attempt to order for a table with no reservation."""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn, 1)
+        conn.commit()
+
+        msg = 'no active reservation exists for table id: {}'.format(t[0])
+        with pytest.raises(LookupError) as excinfo:
+            mg.order(conn, [], t[0], staff)
+        assert msg in str(excinfo.value)
 
 
 def test_new_order(database_snapshot):
@@ -216,8 +227,10 @@ def test_cant_pay(database_snapshot):
         t, staff = __spoof_tables(conn, 2)
         conn.commit()
 
-        with pytest.raises(TypeError):
-            mg.paid(conn, t[0], staff)  # Fails to lookup a reservation id
+        msg = 'no active reservation exists for table id: {}'.format(t[0])
+        with pytest.raises(LookupError) as excinfo:
+            mg.paid(conn, t[0], staff)
+        assert msg in str(excinfo.value)
 
 
 def test_paid(database_snapshot):
@@ -314,10 +327,7 @@ def test_get_table(db_connection):
 
 def test_get_missing_table(db_connection):
     """Manager attempts to get non-existant table."""
-    msg = "'NoneType' object is not subscriptable"
-    with pytest.raises(TypeError) as excinfo:
-        mg.get_table(db_connection, 69)  # Table 69 does not exist!
-    assert msg in str(excinfo.value)
+    assert mg.get_table(db_connection, 69) is None
 
 
 def test_overview(database_snapshot):
@@ -372,7 +382,7 @@ def test_table_creation(database_snapshot):
         t1 = mg.create_restaurant_table(
             conn, expected.capacity, expected.coordinate, expected.width,
             expected.height, expected.shape, staff
-        )
+        )[0]
 
         actual = mg.get_table(conn, t1)
         assert actual.rt_id == t1
@@ -382,23 +392,3 @@ def test_table_creation(database_snapshot):
         assert actual.shape is expected.shape
         assert actual.state is expected.state
         assert actual.latest_event is expected.latest_event
-
-
-def test_put_satisfaction(database_snapshot):
-    """Create a satisfaciton record for a customer event."""
-    with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1)
-        conn.commit()
-
-        ce1 = mg.create_reservation(conn, t[0], staff, 5)
-        mg.put_satisfaction(conn, ce1, 99)
-        ce2 = mg.order(conn, [], t[0], staff)
-        mg.put_satisfaction(conn, (ce2[0], ce2[1]), 52)
-        ce3 = mg.paid(conn, t[0], staff)
-        mg.put_satisfaction(conn, ce3, 50)
-
-        with conn.cursor() as curs:
-            curs.execute(
-                "SELECT * FROM satisfaction"
-            )
-            assert curs.rowcount == 3
