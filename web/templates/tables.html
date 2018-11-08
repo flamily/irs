@@ -1,6 +1,4 @@
-{% with page_title = page_title %}
-  {% include 'header.html' %}
-{% endwith %}
+{% include 'header.html' %}
   <body id="page-top">
 
     {% include 'nav.html' %}
@@ -13,121 +11,44 @@
 
         <div class="container-fluid">
 
-        {% include 'breadcrumb.html' %}
+          {% include 'breadcrumb.html' %}
 
-          <!-- DataTables Example -->
-          <div class="card mb-3">
-              <div class="card-header">
-                <i class="fas fa-table"></i>
-                Restaurant Tables</div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Status</th>
-                        <th>Capacity</th>
-                      </tr>
-                    </thead>
-                    <tfoot>
-                      <tr>
-                        <th>ID</th>
-                        <th>Status</th>
-                        <th>Capacity</th>
-                      </tr>
-                    </tfoot>
-                    <tbody>
-                      {% for table in tables %}
-                          <tr>
-                            <td>{{ table.rt_id }}</td>
-                            <td>{{ table.state }}</td>
-                            <td>{{ table.capacity }}</td>
-                          </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
-            </div>
+          <h1 class="restuarant-table-heading">Restaurant Tables</h1>
 
-            <!-- TODO: Make pretty -->
-            <!-- TODO: Somehow we need to call Jason's code on submit to take the picture -->
-            <div class="card card-login mx-auto mt-5">
-              <div class="card-header">Update Table Availability</div>
-              <div class="card-body">
-                <form method="post">
-                  <div class="form-group">
-                    <div class="form-label-group">
-                      <input name="tableId" type="int" id="tableId" class="form-control" placeholder="Table ID" required="required" autofocus="autofocus">
-                      <label for="tableId">Table ID</label>
-                    </div>
-                  </div>
-                  <!-- TODO: The below form group is simply a place holder, we need to take a picture instead (and only when we pay)! -->
-                  <div class="form-group">
-                    <div class="form-label-group">
-                      <input name="customerImg" type="int" id="customerImg" class="form-control" placeholder="Customer Image" autofocus="autofocus">
-                      <label for="customerImg">Customer Image</label>
-                    </div>
-                  </div>
-                  <input type=submit formaction="/tables/pay/" value="Pay" class="btn btn-primary btn-block">
-                  <input type=submit formaction="/tables/ready/" value="Ready" class="btn btn-primary btn-block">
-                  <input type=submit formaction="/tables/maintain/" value="Maintain" class="btn btn-primary btn-block">
-                </form>
-              </div>
-            </div>
+          <!-- TODO: Somehow we need to call Jason's code on submit to take the picture -->
+          <form method="post" id="tableInfo" class="d-none">
+            <input name="tableId" type="int" id="tableId" class="form-control" placeholder="Table ID" required="required">
+            <input name="customerImg" type="int" id="customerImg" class="form-control" placeholder="Customer Image" >
+          </form>
 
 
-            <div id="table-layout" class="container text-center container-space">
-              <div class="row">
-                <div class="col">
-                  <button type="button" data-tableId=1 class="btn-sm-left unavailable-table">Table 1</button>
-                  <button type="button" data-tableId=2 class="btn-space btn-sm-right">Table 2</button>
+          <div id="table-layout" class="container table-layout">
+            {% for table in tables %}
+            <button type="button" data-tableId="{{ table.rt_id }}"
+                    class="{{ table.state }}-table {% if table.capacity < 3 %}table-sm{% else %}table-lg{% endif %}">Table {{ table.rt_id }}</button>
+            {% endfor %}
+          </div>
+
+          <!-- Modal -->
+          <div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalLabel">Set status of table <span id="modalTableNumber" style="content=''"></span></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                 </div>
-                <div class="col">
-                  <button type="button" data-tableId=3 class="btn-lg">Table 3</button>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <button type="button" data-tableId=4 class="btn-lg">Table 4</button>
-                </div>
-                <div class="col">
-                  <button type="button" data-tableId=5 class="btn-lg">Table 5</button>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <button type="button" data-tableId=6 class="btn-lg">Table 6</button>
-                </div>
-                <div class="col">
-                  <button type="button" data-tableId=7 class="btn-sm-left">Table 7</button>
-                  <button type="button" data-tableId=8 class="btn-sm-right">Table 8</button>
+                <div class="modal-body">
+                  <form id="updateTable" method="post">
+                    <input type=submit formaction="{{ url_for('tables.pay') }} " value="Pay" class="btn btn-primary btn-block">
+                    <input type=submit formaction="{{ url_for('tables.ready') }} " value="Ready" class="btn btn-primary btn-block">
+                    <input type=submit formaction="{{ url_for('tables.maintain') }} " value="Maintain" class="btn btn-primary btn-block">
+                  </form>
                 </div>
               </div>
             </div>
-
-            <!-- Modal -->
-            <div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Set status of table <span id="modalTableNumber" style="content=''"></span></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form method="post">
-                      <input type=submit formaction="/tables/pay/" value="Pay" class="btn btn-primary btn-block">
-                      <input type=submit formaction="/tables/ready/" value="Ready" class="btn btn-primary btn-block">
-                      <input type=submit formaction="/tables/maintain/" value="Maintain" class="btn btn-primary btn-block">
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
+          </div>
 
         </div>
         <!-- /.container-fluid -->

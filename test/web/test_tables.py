@@ -47,7 +47,7 @@ def __spoof_tables(client, n, staff_id, reserve=False):
             mg.create_restaurant_table(
                 conn, 3, Coordinate(x=0, y=3), 1,
                 5, Shape.rectangle, staff_id
-            )
+            )[0]
         )
     conn.commit()
 
@@ -85,7 +85,7 @@ def test_list_available_tables(client):
     result = client.get('/tables')
     assert result.status_code == 200
     for table in tables:
-        expect = '<td>{}</td>\\n<td>available</td>'.format(table)
+        expect = 'data-tableId="{}"'.format(table)
         assert expect in str(result.data).replace(' ', '')
 
 
@@ -98,7 +98,7 @@ def test_list_reserved_tables(client):
     result = client.get('/tables')
     assert result.status_code == 200
     for table in tables:
-        expect = '<td>{}</td>\\n<td>occupied</td>'.format(table)
+        expect = 'data-tableId="{}"\\nclass="occupied-table'.format(table)
         assert expect in str(result.data).replace(' ', '')
 
 
@@ -111,7 +111,7 @@ def test_pay_after_reserved(client):
         '/tables/pay/', data=__make_params(tid), follow_redirects=True
     )
     assert result.status_code == 200
-    expect = '<td>{}</td>\\n<td>unavailable</td>'.format(tid)
+    expect = 'unavailable'
     assert expect in str(result.data).replace(' ', '')
 
 
@@ -127,7 +127,7 @@ def test_ready_after_pay(client):
         '/tables/ready/', data=__make_params(tid), follow_redirects=True
     )
     assert result.status_code == 200
-    expect = '<td>{}</td>\\n<td>available</td>'.format(tid)
+    expect = 'available'
     assert expect in str(result.data).replace(' ', '')
 
 
@@ -146,5 +146,5 @@ def test_maintain_after_ready(client):
         '/tables/maintain/', data=__make_params(tid), follow_redirects=True
     )
     assert result.status_code == 200
-    expect = '<td>{}</td>\\n<td>unavailable</td>'.format(tid)
+    expect = 'unavailable'
     assert expect in str(result.data).replace(' ', '')

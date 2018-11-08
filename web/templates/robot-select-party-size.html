@@ -19,6 +19,9 @@
     <div class="container">
       <div class="text-center">
         <h1>Welcome to Avalon Smart Restaurant</h1>
+        <div class="row justify-content-center">
+            <p class="text-primary">You may speak to the Robot or press the button below for manual entry.</p>
+        </div>
         <p style="color:white; font-size: 24px;">Please enter how many people you wish to seat:<p>
         <p style="color:white;">Max number of people our Restaurant can seat is 10.</p>
       </div>
@@ -77,9 +80,13 @@
             <div class="modal-body"></div>
             <div class="modal-footer">
               <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+<<<<<<< HEAD:web/templates/select-party-size.html
               <form action="{{url_for('robot.party')}}" method="post">
                 <input type=submit value="Find available tables" class="btn btn-primary">
               </form>
+=======
+              <button class="btn btn-primary" type="button" id='findAvailableTables'>Find available tables</button>
+>>>>>>> master:web/templates/robot-select-party-size.html
             </div>
           </div>
         </div>
