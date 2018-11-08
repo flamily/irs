@@ -47,7 +47,7 @@ def __spoof_tables(db_conn, n):
             mg.create_restaurant_table(
                 db_conn, 2, Coordinate(x=0, y=3), 1,
                 5, Shape.rectangle, staff_id
-            )
+            )[0]
         )
     return (tables, staff_id)
 
@@ -382,7 +382,7 @@ def test_table_creation(database_snapshot):
         t1 = mg.create_restaurant_table(
             conn, expected.capacity, expected.coordinate, expected.width,
             expected.height, expected.shape, staff
-        )
+        )[0]
 
         actual = mg.get_table(conn, t1)
         assert actual.rt_id == t1

@@ -295,7 +295,7 @@ def create_restaurant_table(db_conn, capacity, coordinate, width, height,
     :param height: The height of the table.
     :param shape: An instance of the Shape enum.
     :param staff_id: The id of the staff member creating the table.
-    :return: The id of the created table.
+    :return: The id of the created table and event id of it's first event.
     :note: This will start the table in the 'ready' state.
     """
     with db_conn.cursor() as curs:
@@ -313,8 +313,8 @@ def create_restaurant_table(db_conn, capacity, coordinate, width, height,
             )
         )
         rt_id = curs.fetchone()[0]
-        __create_event(curs, Event.ready, rt_id, staff_id)  # Default event
-    return rt_id
+        e_id = __create_event(curs, Event.ready, rt_id, staff_id)
+    return (rt_id, e_id)
 
 
 def put_satisfaction(db_conn, customer_event_id, score):

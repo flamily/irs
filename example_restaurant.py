@@ -10,6 +10,9 @@ Date: 08/11/2018
 """
 import psycopg2
 import random
+import time
+from datetime import datetime, date, timedelta
+
 import biz.manage_staff as mgstaff
 import biz.manage_restaurant as mgrest
 import biz.manage_menu as mgmenu
@@ -26,6 +29,45 @@ def __database_connect():
     """Connect to the existing localhost database returning a psycopg2 conn."""
     conn = psycopg2.connect("user='postgres' host='localhost' port='5432'")
     return conn
+
+
+# Functions for spoofing time
+def __update_event_dt(conn, eid, dt):
+    """Spoof an event's datetime."""
+    with conn.cursor() as curs:
+        curs.execute(
+            "UPDATE event "
+            "SET event_dt = %s "
+            "WHERE event_id = %s",
+            (dt, eid)
+        )
+        conn.commit()
+
+
+def __update_reservation_dt(conn, rid, eid, dt):
+    """Spoof a reservation's datetime."""
+    with conn.cursor() as curs:
+        __update_event_dt(conn, eid, dt)
+        curs.execute(
+            "UPDATE reservation "
+            "SET reservation_dt = %s "
+            "WHERE reservation_id = %s",
+            (dt, rid)
+        )
+        conn.commit()
+
+
+def __update_order_dt(conn, oid, eid, dt):
+    """Spoof a customer order's datetime."""
+    with conn.cursor() as curs:
+        __update_event_dt(conn, eid, dt)
+        curs.execute(
+            "UPDATE customer_order "
+            "SET order_dt = %s "
+            "WHERE customer_order_id = %s",
+            (dt, oid)
+        )
+        conn.commit()
 
 
 def __setup_menu(conn):
@@ -68,33 +110,67 @@ def __setup_tables(conn, n):
         width = random.randint(1, capacity)
         height = random.randint(1, capacity)
         shape = random.choice(list(Shape))
-        tid = mgrest.create_restaurant_table(
+        tid, eid = mgrest.create_restaurant_table(
             conn, capacity, location, width, height, shape, STAFF[0]
         )  # By default all tables are marked as 'ready'
+
+        __update_event_dt(  # Make sure this occurs within buisness hours
+            conn, eid, dt=datetime.utcnow().replace(hour=9, minute=0)
+        )
+
         tables.append((tid, capacity))
     conn.commit()
     return tables
 
 
-def __seat_customers(conn, tid, sid, table_capacity, pay=False):
-    """Create a reservation for table and order some food!."""
+def __generate_reservation(conn, tid, sid, table_capacity):
+    """Generate reservation, returning (eid, rid, group_size)."""
     group_size = random.randint(1, table_capacity)
     eid, rid = mgrest.create_reservation(conn, tid, sid, group_size)
     mgsat.create_satisfaction(conn, random.randint(0, 100), eid, rid)
+    conn.commit()
+    return (eid, rid, group_size)
 
+
+def __generate_order(conn, tid, sid, group_size):
+    """Generate a random order for the table, returning (eid, rid, oid)."""
     menu_items = []
     for _ in range(0, group_size):
         menu_items.append(
             (MENU[random.randint(0, len(MENU)-1)], random.randint(1, 3))
         )
-    eid, rid, _ = mgrest.order(conn, menu_items, tid, sid)
+    eid, rid, oid = mgrest.order(conn, menu_items, tid, sid)
     mgsat.create_satisfaction(conn, random.randint(0, 100), eid, rid)
     conn.commit()
+    return (eid, rid, oid)
 
-    if pay:
-        eid, rid = mgrest.paid(conn, tid, sid)
-        mgsat.create_satisfaction(conn, random.randint(0, 100), eid, rid)
-        conn.commit()
+
+def __pay_reservation(conn, tid, sid):
+    """Pay for a reservation, returning (eid,rid)."""
+    eid, rid = mgrest.paid(conn, tid, sid)
+    mgsat.create_satisfaction(conn, random.randint(0, 100), eid, rid)
+    conn.commit()
+    return (eid, rid)
+
+
+def __customer_experience(conn, tid, sid, table_capacity, dt, pay=False):
+    """Generate a restaurant 'customer experience' (reserve, order, pay)."""
+    # Order 10-20mins after being seated
+    order_dt = dt + timedelta(minutes=(random.randint(10, 20)))
+    # Pay 30-120mins after ordering
+    pay_dt = order_dt + timedelta(minutes=(random.randint(30, 120)))
+
+    # Create reservation and set the date
+    e1, rid, gsize = __generate_reservation(conn, tid, sid, table_capacity)
+    __update_reservation_dt(conn, rid, e1, dt)
+
+    # Order
+    e2, _, oid = __generate_order(conn, tid, sid, gsize)
+    __update_order_dt(conn, oid, e2, order_dt)
+
+    if pay:  # Optionally pay
+        e3, _ = __pay_reservation(conn, tid, sid)
+        __update_event_dt(conn, e3, pay_dt)
 
 
 def __setup_current_table_states(conn, tids):
@@ -103,30 +179,40 @@ def __setup_current_table_states(conn, tids):
         # Choose random staff member to do transaction
         sid = STAFF[random.randint(0, len(STAFF)-1)]
 
-        # Choose a random action to apply to the table
+        # Choose a random action to apply to the table - start at 9am of today
         choice = random.randint(0, 3)
+        exp_dt = datetime.utcnow().replace(hour=9, minute=1)
         if choice == 1:
-            # Table is currently reserved and occupied
-            __seat_customers(conn, tid, sid, capacity)
-            print("active setup tid={} : reserved and ordered".format(tid))
+            print("table ({}) setup : reserved and ordered".format(tid))
+            __customer_experience(conn, tid, sid, capacity, exp_dt)
         elif choice == 2:
-            # Table has been reserved, occupied and then paid for
-            __seat_customers(conn, tid, sid, capacity, True)
-            print("active setup tid={} : ordered and paid".format(tid))
+            print("table ({}) setup : reserved, ordered and paid".format(tid))
+            __customer_experience(conn, tid, sid, capacity, exp_dt, True)
         elif choice == 3:
-            # Table has been moved to maintainence mode
-            mgrest.maintain(conn, tid, sid)
-            print("active setup tid={} : maintainence".format(tid))
+            print("table ({}) setup : maintainence".format(tid))
+            __update_event_dt(conn, mgrest.maintain(conn, tid, sid), exp_dt)
         else:
-            print("active setup tid={} : ready".format(tid))
+            print("table ({}) setup : ready".format(tid))
             continue  # Leave it be (available)
 
 
-if __name__ == "__main__":
-    conn = __database_connect()
-    __setup_staff(conn)
-    __setup_menu(conn)
-    tids = __setup_tables(conn, 11)
-    __setup_current_table_states(conn, tids)
+def __create_history(conn, tids):
+    for tid, capacity in tids:
+        for day in reversed(range(2, 6)):
+            sid = STAFF[random.randint(0, len(STAFF)-1)]
+            temp = datetime.utcnow().replace(hour=9, minute=0) + timedelta(days=-day)
+            spoof_dt = temp.replace(
+                hour=random.randint(9, 17), minute=random.randint(0, 59)
+            )
+            __customer_experience(conn, tid, sid, capacity, True, spoof_dt)
 
-    conn.close()
+
+if __name__ == "__main__":
+    db_conn = __database_connect()
+    __setup_staff(db_conn)
+    __setup_menu(db_conn)
+    table_ids = __setup_tables(db_conn, 11)
+    #__create_history(db_conn, table_ids)
+    __setup_current_table_states(db_conn, table_ids)
+
+    db_conn.close()

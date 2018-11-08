@@ -29,7 +29,7 @@ def __spoof_tables(db_conn, n):
             mr.create_restaurant_table(
                 db_conn, 2, Coordinate(x=0, y=3), 1,
                 5, Shape.rectangle, staff_id
-            )
+            )[0]
         )
     return (tables, staff_id)
 
