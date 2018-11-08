@@ -11,7 +11,6 @@
         "domain": "www.bigmeme.com.au",
         "certificate_arn": "arn:aws:acm:us-east-1:647081355413:certificate/e07a960a-b094-48a8-ba75-bbf3c4b7806b",
         "s3_bucket": "irs-zappa",
-        "exclude": ["*numpy*", "scipy/*", "sklearn"],
         "delete_local_zip": false
     },
     "css": {

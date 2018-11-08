@@ -4,8 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [dev-packages]
-pandas = "*"
-sklearn = "*"
 
 [packages]
 astroid = "*"

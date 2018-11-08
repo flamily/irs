@@ -5,7 +5,7 @@ cache:
   - pip
 install:
   - 'pip install pipenv'
-  - 'pipenv install --dev --deploy --ignore-pipfile'
+  - 'pipenv install --deploy --ignore-pipfile'
 services:
   - postgres
 script:

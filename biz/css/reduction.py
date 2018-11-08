@@ -5,7 +5,7 @@ Modified: 1:17PM - 8/11/2018
 Description:
     Methods to reduce azure data into a single satisfaction number.
 """
-from biz.css.random_forest import load_RF_File
+import pickle
 
 negative_emotions = ['anger', 'contempt', 'disgust', 'fear', 'sadness']
 
@@ -44,3 +44,12 @@ def apply_reduction(raw_results):
     to_predict = [list(emotions.values())]
     prediction = (model.predict(to_predict) + emotion_weight) * 10
     return prediction if prediction < 100 else 100
+
+
+def load_RF_File():
+    """Load .joblib model file
+    :return: classifier object
+    """
+    # return joblib.load(RF_model_file)
+    with open('biz/css/RF_model.joblib', 'rb') as model_file:
+        return pickle.load(model_file)
