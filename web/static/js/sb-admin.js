@@ -65,26 +65,32 @@
       type: 'POST',
       success: function(response) {
         updateTableStatuses(response);
+        $('#statusModal').modal('hide');
       },
       error: function(error) {
-        console.log('Something went wrong');
+        console.log(error.statusText);
       }
     });
     // Clear out image field to prevent issues with other buttons
     $("#customerImg").val('');
   });
 
+  function removeTableStatusClasses(element){
+    $(element).removeClass('available-table');
+    $(element).removeClass('unavailable-table');
+    $(element).removeClass('occupied-table');
+  }
+
   function updateTableStatuses(response){
     var className;
     var element = $("[data-tableId=" + $('#tableId').val() +"]")[0];
+    removeTableStatusClasses(element);
     switch(response.status){
       case 'available':
-        $(element).removeClass('unavailable-table');
         $(element).addClass('available-table');
         break;
 
       case 'unavailable':
-        $(element).removeClass('available-table');
         $(element).addClass('unavailable-table');
         break;
     }
