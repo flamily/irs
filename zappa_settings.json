@@ -1,5 +1,5 @@
 {
-    "web": {
+    "irs": {
         "app_function": "web.__init__.APP",
         "aws_region": "ap-southeast-2",
         "profile_name": null,
