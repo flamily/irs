@@ -18,13 +18,7 @@ def __spoof_user(client):
     pool.putconn(conn)
     with client.session_transaction() as sess:
         sess['username'] = 'rrobot'
-
-
-<< << << < HEAD
-
-== == == =
->>>>>> > master
-return s_id
+    return s_id
 
 
 def test_index(client):
@@ -38,13 +32,8 @@ def test_index(client):
 def test_party(client):
     """Test that select_party_size endpoint can be hit."""
     __spoof_user(client)
-
-
-<< << << < HEAD
-result = client.get('/robot/party-size')
-== == == =
-result = client.get('/robot/party')
-assert result.status_code == 200
+    result = client.get('/robot/party-size')
+    assert result.status_code == 200
 
 
 def test_table(client):
@@ -65,7 +54,4 @@ def test_proceed(client):
     """Test that table-confirmation endpoint can be hit."""
     __spoof_user(client)
     result = client.get('/robot/proceed')
-
-
->>>>>> > master
-assert result.status_code == 200
+    assert result.status_code == 200
