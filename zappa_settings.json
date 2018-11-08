@@ -6,6 +6,7 @@
         "project_name": "irs",
         "runtime": "python3.6",
         "manage_roles": false,
+        "slim_handler": true,
         "role_name": "irs-irs-ZappaLambdaExecutionRole",
         "role_arn": "arn:aws:iam::647081355413:role/irs-irs-ZappaLambdaExecutionRole",
         "s3_bucket": "irs-zappa",
