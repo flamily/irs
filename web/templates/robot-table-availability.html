@@ -7,7 +7,7 @@
         <h1>Welcome to Avalon Smart Restaurant</h1>
       </div>
       <form method="post" id="robotTableInfo" class="d-none">
-        <input name="photo" type="int" id="photo" class="form-control" placeholder="Customer Image" >
+        <input name="customerPhoto" type="int" id="photo" class="form-control" placeholder="Customer Image" >
       </form>
     </div>
     <div class="container">
@@ -26,7 +26,7 @@
                   {% endif %}>
                   <input type=hidden value="{{ table.rt_id }}" name=table_id>
                   <input type=hidden value="{{ people }}" name=group_size>
-                  <input type=hidden value="{% include 'photo.txt' %}" name=photo>
+                  <input type=hidden value="{% include 'photo.txt' %}" name=customerPhoto>
                 </form>
                 <h4 class="text-light">Table {{ table.rt_id }}</h4>
               </div>
@@ -44,7 +44,7 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="btn-toolbar">
-          <form action="{{ url_for('robot.reserve_table') }} " id="confirmTable" method="post">
+          <form action="{{ url_for('robot.proceed') }} " method="get">
             <input type=submit value="Confirm Table" id="confirm-table-option" class="btn btn-default">
           </form>
           <form action="/robot" method="get">
