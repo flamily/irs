@@ -10,7 +10,8 @@
         "role_arn": "arn:aws:iam::647081355413:role/irs-irs-ZappaLambdaExecutionRole",
         "domain": "www.bigmeme.com.au",
         "certificate_arn": "arn:aws:acm:us-east-1:647081355413:certificate/e07a960a-b094-48a8-ba75-bbf3c4b7806b",
-        "s3_bucket": "irs-zappa"
+        "s3_bucket": "irs-zappa",
+        "keep_warm": false
     },
     "css": {
         "app_function": "web.__init__.APP",
@@ -23,6 +24,7 @@
         "role_name": "irs-irs-ZappaLambdaExecutionRole",
         "certificate_arn": "arn:aws:acm:us-east-1:647081355413:certificate/e07a960a-b094-48a8-ba75-bbf3c4b7806b",
         "s3_bucket": "irs-zappa",
+        "keep_warm": false,
         "events": [{
             "function": "events.satisfaction_lambda.customer_satisfaction",
             "event_source": {
