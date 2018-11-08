@@ -90,18 +90,15 @@ def __update_order_dt(oid, eid, dt):
 
 def __setup_menu():
     """Append a list of items to the restaurant menu."""
-    MENU.append(mgmenu.create_menu_item(
-        conn, 'Lobster Bisque', 'Very tasty', 25.80
-    ))
-    MENU.append(mgmenu.create_menu_item(
-        conn, 'Cheese toastie', 'Yummy!', 5.80
-    ))
-    MENU.append(mgmenu.create_menu_item(
-        conn, 'Big Nut Latte', 'Wow much taste', 2.80
-    ))
-    MENU.append(mgmenu.create_menu_item(
-        conn, 'Buger & Chips', 'Surf n Turf baby', 10.80
-    ))
+    milist = [
+        ('Lobster Bisque', 'Very tasty', 25.80),
+        ('Cheese toastie', 'Yummy!', 5.80),
+        ('Big Nut Latte', 'Wow much taste', 2.80),
+        ('Buger & Chips', 'Surf n Turf baby', 10.80)
+    ]
+    for mi in milist:
+        MENU.append(mgmenu.create_menu_item(conn, mi[0], mi[1], mi[2]))
+        print('menu item ({}) : ${}'.format(mi[0], mi[2]))
     conn.commit()
 
 
@@ -116,6 +113,9 @@ def __setup_staff():
     for s in slist:
         STAFF.append(mgstaff.create_staff_member(
             conn, s[0], s[0], s[1], s[2], start_dt
+        ))
+        print('user ({}) : password = {} , permission = {}'.format(
+            s[0], s[0], s[2]
         ))
     conn.commit()
 
@@ -137,8 +137,8 @@ def __setup_tables(n):
         tid, eid = mgrest.create_restaurant_table(
             conn, capacity, location, width, height, shape, STAFF[0]
         )  # By default all tables are marked as 'ready'
+        print('table ({}) : {} person capacity'.format(tid, capacity))
         tables.append((tid, capacity))
-
         SPOOF_DATES['table_creation'].append(
             (eid, datetime.utcnow() + timedelta(weeks=-8))
         )  # Lets say that the tables were created 8 weeks ago
