@@ -295,7 +295,7 @@ def create_restaurant_table(db_conn, capacity, coordinate, width, height,
     :param height: The height of the table.
     :param shape: An instance of the Shape enum.
     :param staff_id: The id of the staff member creating the table.
-    :return: The id of the created table and event id of it's first event.
+    :return: The id of the created table and event id of its first event.
     :note: This will start the table in the 'ready' state.
     """
     with db_conn.cursor() as curs:
