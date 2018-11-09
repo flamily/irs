@@ -123,7 +123,6 @@
     }
   }
   // End Exit Interface
-  //
   
 
   $(document).find('#confirmPartySize').click(function() {
@@ -131,6 +130,7 @@
     $('.modal-body').text('You are confirming a table for ' + size + ' people. Please select confirm to continue or cancel to enter again.')
   });
 
+  //Robot Photo
   var robotInputElement;
 
   $('.robotTableReserve').children('input:submit').click(function(event){
