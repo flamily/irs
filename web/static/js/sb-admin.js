@@ -131,10 +131,17 @@
     $('.modal-body').text('You are confirming a table for ' + size + ' people. Please select confirm to continue or cancel to enter again.')
   });
 
+  var robotInputElement;
+
   $('.robotTableReserve').children('input:submit').click(function(event){
     event.preventDefault();
-    irs.photo(photoCallback);
-    $(this).parent().submit();
+    robotInputElement = $(this);
+    irs.photo(robotPhotoCallback);
   });
+
+  var robotPhotoCallback = function updatePhotoField(encodedImage){
+    robotInputElement.siblings('.customerImg').val(encodedImage);
+    robotInputElement.parent().submit();
+  }
   // Robot Photo
 })(jQuery); // End of use strict

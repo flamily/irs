@@ -6,7 +6,7 @@ def connection_string():  # pragma: no cover
         return "user='postgres' host='localhost'"
     if os.environ.get("DATABASE_URL", False):
         return os.environ["DATABASE_URL"]
-    return "user='postgres' host='localhost'"
+    return "user='postgres' host='localhost' dbname='irs'"
 
 
 def is_running_on_lambda():
