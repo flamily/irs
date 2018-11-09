@@ -70,7 +70,7 @@ def css_per_period(db_conn, datetime_start, datetime_end):
         )
         if curs.rowcount != 1:
             return None
-        avg_score = curs.fetchone()[0]
+        avg_score = int(curs.fetchone()[0])
     return avg_score
 
 
@@ -94,5 +94,5 @@ def css_per_staff(db_conn, staff_id):
         )
         if curs.rowcount != 1:
             return None
-        avg_score = curs.fetchone()[0]
+        avg_score = int(curs.fetchone()[0])
     return avg_score
