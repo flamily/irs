@@ -295,7 +295,7 @@ def create_restaurant_table(db_conn, capacity, coordinate, width, height,
     :param height: The height of the table.
     :param shape: An instance of the Shape enum.
     :param staff_id: The id of the staff member creating the table.
-    :return: The id of the created table.
+    :return: The id of the created table and event id of its first event.
     :note: This will start the table in the 'ready' state.
     """
     with db_conn.cursor() as curs:
@@ -313,24 +313,5 @@ def create_restaurant_table(db_conn, capacity, coordinate, width, height,
             )
         )
         rt_id = curs.fetchone()[0]
-        __create_event(curs, Event.ready, rt_id, staff_id)  # Default event
-    return rt_id
-
-
-def put_satisfaction(db_conn, customer_event_id, score):
-    """Create a satisfaction record for a customer event.
-
-    :param db_conn: A psycopg2 connection to the database.
-    :param customer_event_id: A tuple of (event_id, reservation_id).
-    :param score: The satisfaction score.
-    """
-    (event_id, reservation_id) = customer_event_id
-    with db_conn.cursor() as curs:
-        curs.execute(
-            "INSERT INTO satisfaction "
-            "(event_id, reservation_id, score) "
-            "VALUES (%s, %s, %s) ",
-            (
-                event_id, reservation_id, score
-            )
-        )
+        e_id = __create_event(curs, Event.ready, rt_id, staff_id)
+    return (rt_id, e_id)

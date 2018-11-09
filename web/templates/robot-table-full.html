@@ -1,0 +1,24 @@
+{% with page_title = page_title %}
+  {% include 'header.html' %}
+{% endwith %}
+  <body class="bg-dark">
+    <div class="container">
+      <div class="row justify-content-center">
+        <h1>Welcome to Avalon Smart Restaurant</h1>
+      </div>
+      <div class="row justify-content-center">
+        <p class="text-primary">Sorry, there are no available tables for your specified party size.</p>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div id="trigger_listen">
+          <button class="btn start-btn">
+            <a class="justify-content-center" onClick="location.href='/robot/listen';">Tap to start again</a>
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+  {% include 'footer.html' %}
+</html>
