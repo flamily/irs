@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, request
+    Blueprint, request, jsonify
 )
 import biz.manage_restaurant as mr
 import biz.manage_menu as mm
@@ -37,13 +37,13 @@ def create_order():
             if request.form[value]:
                 menu_item = tuple([int(value), int(request.form[value])])
                 menu_items.append(menu_item)
-    eid, rid, oid = mr.order(db, menu_items, table_id, user.s_id)
-    return str(rid)
+    response = mr.order(db, menu_items, table_id, user.s_id)
+    return jsonify(response)
 
 
 @ORDERS_BLUEPRINT.route('/order/get', methods=['POST'])
 @login_required()
 def get_order():
     rid = request.form['rid']
-    coid = mr.lookup_order(db, rid)
-    return str(coid)
+    response = mr.lookup_order(db, rid)
+    return jsonify(response)
