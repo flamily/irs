@@ -90,18 +90,15 @@ def __update_order_dt(oid, eid, dt):
 
 def __setup_menu():
     """Append a list of items to the restaurant menu."""
-    MENU.append(mgmenu.create_menu_item(
-        conn, 'Lobster Bisque', 'Very tasty', 25.80
-    ))
-    MENU.append(mgmenu.create_menu_item(
-        conn, 'Cheese toastie', 'Yummy!', 5.80
-    ))
-    MENU.append(mgmenu.create_menu_item(
-        conn, 'Big Nut Latte', 'Wow much taste', 2.80
-    ))
-    MENU.append(mgmenu.create_menu_item(
-        conn, 'Buger & Chips', 'Surf n Turf baby', 10.80
-    ))
+    milist = [
+        ('Lobster Bisque', 'Very tasty', 25.80),
+        ('Cheese toastie', 'Yummy!', 5.80),
+        ('Big Nut Latte', 'Wow much taste', 2.80),
+        ('Buger & Chips', 'Surf n Turf baby', 10.80)
+    ]
+    for mi in milist:
+        MENU.append(mgmenu.create_menu_item(conn, mi[0], mi[1], mi[2]))
+        print('menu item ({}) : ${}'.format(mi[0], mi[2]))
     conn.commit()
 
 
@@ -116,6 +113,9 @@ def __setup_staff():
     for s in slist:
         STAFF.append(mgstaff.create_staff_member(
             conn, s[0], s[0], s[1], s[2], start_dt
+        ))
+        print('user ({}) : password = {} , permission = {}'.format(
+            s[0], s[0], s[2]
         ))
     conn.commit()
 
@@ -137,8 +137,8 @@ def __setup_tables(n):
         tid, eid = mgrest.create_restaurant_table(
             conn, capacity, location, width, height, shape, STAFF[0]
         )  # By default all tables are marked as 'ready'
+        print('table ({}) : {} person capacity'.format(tid, capacity))
         tables.append((tid, capacity))
-
         SPOOF_DATES['table_creation'].append(
             (eid, datetime.utcnow() + timedelta(weeks=-8))
         )  # Lets say that the tables were created 8 weeks ago
@@ -245,18 +245,22 @@ def __recent_restaurant_state(tids):
         # Choose random staff member to do transaction
         sid = STAFF[random.randint(0, len(STAFF)-1)]
 
-        # Choose a random action to apply to the table - start at 9am of today
+        # Choose a random action to apply to the table
         choice = random.randint(0, 3)
-        exp_dt = datetime.utcnow().replace(hour=9, minute=1)
+        now = datetime.utcnow()
         if choice == 1:
+            start_dt = now + timedelta(hours=-1)
             print("table ({}) setup : reserved and ordered".format(tid))
-            __customer_experience(tid, sid, capacity, exp_dt)
+            __customer_experience(tid, sid, capacity, start_dt)
         elif choice == 2:
+            start_dt = now + timedelta(hours=-3)
             print("table ({}) setup : reserved, ordered and paid".format(tid))
-            __customer_experience(tid, sid, capacity, exp_dt, True)
+            __customer_experience(tid, sid, capacity, start_dt, True)
         elif choice == 3:
+            start_dt = now + timedelta(minutes=-30)
             print("table ({}) setup : maintainence".format(tid))
-            mgrest.maintain(conn, tid, sid)
+            event = mgrest.maintain(conn, tid, sid)
+            SPOOF_DATES['table_maintainence'].append((event, start_dt))
         else:
             print("table ({}) setup : ready".format(tid))
             continue  # Leave it be (available)
@@ -274,7 +278,7 @@ def __create_history(tids):
     # For each table we want to generate a sordid history
     # (only 4 days worth)
     for tid, capacity in tids:
-        for day in reversed(range(2, 6)):
+        for day in reversed(range(1, 6)):
             for hour in range(0, 8, random.randint(1, 3)):
                 # Choose a random staff memeber
                 sid = STAFF[random.randint(0, len(STAFF)-1)]
