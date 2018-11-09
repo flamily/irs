@@ -29,3 +29,14 @@ def key_error(e):
     print('KeyError: {}'.format(e))
     db.rollback()
     return render_template('500.html'), 400
+
+
+@APP.errorhandler(Exception)
+def generic_error(e):
+    """Gotta catch em all."""
+    # teardown_appcontext does not recieve error objects if an exception
+    # handler for a specific exception is setup, as such, we need to do the
+    # rollback here.
+    print('something went wrong: {}'.format(e))
+    db.rollback()
+    return render_template('500.html'), 500
