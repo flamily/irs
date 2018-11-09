@@ -3,7 +3,11 @@ These tests check the satisfaction manager.
 
 Author: Andrew Pope
 Date: 06/11/2018
+
+Modified: Andy Go
+Date: 10/11/2018
 """
+import datetime
 import biz.css.manage_satisfaction as ms
 import biz.manage_restaurant as mr
 import biz.manage_staff as mgs
@@ -71,3 +75,39 @@ def test_create_multiple_satisfaction(database_snapshot):
                 "SELECT * FROM satisfaction"
             )
             assert curs.rowcount == 3
+
+
+def test_css_per_period(database_snapshot):
+    """Retrieve average css from __ to __"""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn, 1)
+        conn.commit()
+
+        ce1 = mr.create_reservation(conn, t[0], staff, 5)
+        ms.create_satisfaction(conn, 40, ce1[0], ce1[1])
+        ce2 = mr.order(conn, [], t[0], staff)
+        ms.create_satisfaction(conn, 80, ce2[0], ce2[1])
+        ce3 = mr.paid(conn, t[0], staff)
+        ms.create_satisfaction(conn, 60, ce3[0], ce3[1])
+
+        datetime_start = datetime.datetime(2018, 1, 1)
+        datetime_end = datetime.datetime(2018, 12, 31)
+
+        assert ms.css_per_period(
+            conn, datetime_start.date(), datetime_end.date()) == 60
+
+
+def test_css_per_staff(database_snapshot):
+    """Retrieve average css for staff"""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn, 1)
+        conn.commit()
+
+        ce1 = mr.create_reservation(conn, t[0], staff, 5)
+        ms.create_satisfaction(conn, 80, ce1[0], ce1[1])
+        ce2 = mr.order(conn, [], t[0], staff)
+        ms.create_satisfaction(conn, 20, ce2[0], ce2[1])
+        ce3 = mr.paid(conn, t[0], staff)
+        ms.create_satisfaction(conn, 50, ce3[0], ce3[1])
+
+        assert ms.css_per_staff(conn, staff) == 50
