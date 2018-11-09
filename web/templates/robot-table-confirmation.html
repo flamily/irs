@@ -1,0 +1,22 @@
+{% with page_title = page_title %}
+  {% include 'header.html' %}
+{% endwith %}
+  <body class="bg-dark">
+    <div class="container">
+      <div class="row justify-content-center">
+        <h1>Welcome to Avalon Smart Restaurant</h1>
+      </div>
+      <div class="row justify-content-center">
+        <p class="text-primary">You have been assigned to Table {{ table }} for a party size of {{ rid }}.</p>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <form action="/robot" method="get">
+          <input type=submit value="Start Over" class="btn btn-default">
+        </form>
+      </div>
+    </div>
+  </body>
+  {% include 'footer.html' %}
+</html>

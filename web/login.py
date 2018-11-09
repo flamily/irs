@@ -1,9 +1,18 @@
+"""
+Authentication for IRS access.
+
+Author: Robin Wohlers-Reichel, Andrew Pope
+Date: 06/11/2018
+"""
 from urllib.parse import urlparse, urljoin
 from flask import (
     redirect,
     url_for, Blueprint, render_template,
     request, session
 )
+
+from biz import manage_staff as ms
+from web.db import db
 
 
 # Reference for blueprints here:
@@ -38,10 +47,20 @@ def redirect_back(endpoint, **values):
 @LOGIN_BLUEPRINT.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        session['username'] = request.form['username']
+        username = request.form['username']
+        password = request.form['password']
+
+        is_okay, login_error = __check_login_parameters(username, password)
+
+        if not is_okay:
+            return render_template(
+                'login.html', next=None, error=login_error
+            ), 401
+
+        session['username'] = username
         return redirect_back('index.index')
+
     next_url = get_redirect_target()
-    print(next_url)
     return render_template('login.html', next=next_url)
 
 
@@ -49,3 +68,16 @@ def index():
 def logout():
     session.pop('username', None)
     return redirect(url_for('index.index'))
+
+
+def __check_login_parameters(username, password):
+    if not username:
+        return (False, 'Username cannot be empty')
+    if not password:
+        return (False, 'Password cannot be empty')
+    if not ms.lookup_id(db, username):
+        return (False, 'User does not exist')
+    if not ms.verify_password(db, username, password):
+        return (False, 'Invalid password for username')
+
+    return (True, 'okay')

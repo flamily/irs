@@ -106,6 +106,16 @@ def test_bad_password(database_snapshot):
         assert not ms.verify_password(conn, 'ldavid', 'prettybad')
 
 
+def test_check_password_on_unknown_user(database_snapshot):
+    """Verify that checking a password on an unknown user fails."""
+    with database_snapshot.getconn() as conn:
+        ms.create_staff_member(
+            conn, 'ldavid', 'prettygood', ('Larry', 'David'),
+            Permission.wait_staff
+        )
+        assert not ms.verify_password(conn, 'mr_bean', 'teddy69')
+
+
 def test_list_members(database_snapshot):
     """Test to list all the staff members."""
     expected = [

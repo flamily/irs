@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [dev-packages]
+sklearn = "*"
 
 [packages]
 astroid = "*"
@@ -38,6 +39,8 @@ configparser = "*"
 scandir = "*"
 passlib = "*"
 gunicorn = "*"
+zappa = "*"
+cognitive-face = "*"
 
 [requires]
 python_version = "3.6"
