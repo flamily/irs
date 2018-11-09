@@ -11,16 +11,16 @@
       <div class="row">
         <div class="col-sm-12">
           <div class="row">
-            {% for table in tables %}
+            {% for menu_item in menu_items %}
             <div class="col-md-3">
               <div class="well">
                 <form action="/order/new" method="post">
                   <input type=submit
-                  value="Table {{ table.rt_id }}"
+                  value="Menu Item {{ menu_item.mi_id }}"
                   class="btn btn-default">
-                  <input type=hidden value="1" name=table_id>
+                  <input type=hidden value="{{ menu_item.name }}" name=table_id>
                 </form>
-                <h4 class="text-light">Table {{ table.rt_id }}</h4>
+                <h4 class="text-light">{{ menu_item.name }}</h4>
               </div>
             </div>
             <!-- <tr>
@@ -30,6 +30,18 @@
             </tr> -->
             {% endfor %}
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="btn-toolbar">
+          <form action="/robot/proceed" method="get">
+            <input type=submit value="Confirm Table" class="btn btn-default">
+          </form>
+          <form action="/robot" method="get">
+            <input type=submit value="Start Over" class="btn btn-default">
+          </form>
         </div>
       </div>
     </div>
