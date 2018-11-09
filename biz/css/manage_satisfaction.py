@@ -47,6 +47,11 @@ def lookup_satisfaction(db_conn, event_id, reservation_id):
         score = curs.fetchone()[0]
     return score
 
+    # * CSS values across time (daily, weekly, monthly) entry vs exit
+    # * Dropdown for specific timing per filter
+    # * Graph historic CSS values for staff member and show on graph.
+    # * Trend of selected meals from group (nice to have)
+
 
 def css_per_period(db_conn, datetime_start, datetime_end):
     """Average CSS for specified time period
