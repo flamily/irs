@@ -17,8 +17,8 @@ def get_occupied_tables():
     tables = mr.overview(db)
     occupied_tables = list()
     for table in tables:
-        table.latest_event == "seated"  # placeholder
-        occupied_tables.append(table.rt_id)
+        if mr.lookup_reservation(db, table.rt_id):
+            occupied_tables.append(table.rt_id)
     return dict(page_title='Order - Select Table',
                 tables=occupied_tables)
 
