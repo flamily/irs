@@ -129,11 +129,6 @@
     $('.modal-body').text('You are confirming a table for ' + size + ' people. Please select confirm to continue or cancel to enter again.')
   });
 
-  // Robot Photo
-  var photoCallback = function updatePhotoField(encodedImage){
-    $("#customerPhoto").val(encodedImage);
-  }
-
   $('#robotTableReserve').find('input').click(function(event){
     event.preventDefault();
     irs.photo(photoCallback);
