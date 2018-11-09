@@ -14,7 +14,7 @@
             {% for table in tables %}
             <div class="col-md-3">
               <div class="well">
-                <form action="/robot/table/reserve" id="robotTableReserve" method="post">
+                <form action="/robot/table/reserve" class="robotTableReserve" method="post">
                   <input type=submit
                   value="Table {{ table.rt_id }}"
                   class="btn btn-default"

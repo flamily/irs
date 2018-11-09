@@ -123,18 +123,18 @@
     }
   }
   // End Exit Interface
+  //
+  
 
   $(document).find('#confirmPartySize').click(function() {
     var size = document.getElementsByName('partySize')[0].value
     $('.modal-body').text('You are confirming a table for ' + size + ' people. Please select confirm to continue or cancel to enter again.')
   });
 
-  $('#robotTableReserve').find('input').click(function(event){
+  $('.robotTableReserve').children('input:submit').click(function(event){
     event.preventDefault();
     irs.photo(photoCallback);
-
-    // Clear out image field to prevent issues with other buttons
-    $("#customerImg").val('');
+    $(this).parent().submit();
   });
   // Robot Photo
 })(jQuery); // End of use strict
