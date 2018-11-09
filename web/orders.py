@@ -11,32 +11,39 @@ from web.decorators import (
 ORDERS_BLUEPRINT = Blueprint('order', __name__, template_folder='templates')
 
 
-@ORDERS_BLUEPRINT.route('/order/tables', methods=['GET'])
+@ORDERS_BLUEPRINT.route('/order/new', methods=['GET'])
 @login_required()
-@templated(template='order-table.html')
+@templated(template='order-new.html')
 def get_occupied_tables():
+    menu_items = mm.list_menu(db)
     tables = mr.overview(db)
     occupied_tables = list()
     for table in tables:
         if mr.lookup_reservation(db, table.rt_id):
             occupied_tables.append(table)
     return dict(page_title='Order - Select Table',
-                tables=occupied_tables)
-
-
-@ORDERS_BLUEPRINT.route('/order/new', methods=['GET'])
-@login_required()
-def get_order():
-    table_id = request.json['table_id']
-    rid = mr.lookup_reservation(db, table_id)
-    if not rid:
-        return "No reservation found for table: " + table_id
-
-    return str(user.s_id)
+                tables=occupied_tables,
+                menu_items=menu_items)
 
 
 @ORDERS_BLUEPRINT.route('/order/new', methods=['POST'])
 @login_required()
 def create_order():
-    
-    return str(request.json)
+    menu_items = list()
+    for value in request.form:
+        if value == "table_id":
+            table_id = request.form[value]
+        else:
+            if request.form[value]:
+                menu_item = tuple([int(value), int(request.form[value])])
+                menu_items.append(menu_item)
+    eid, rid, oid = mr.order(db, menu_items, table_id, user.s_id)
+    return str(rid)
+
+
+@ORDERS_BLUEPRINT.route('/order/get', methods=['POST'])
+@login_required()
+def get_order():
+    rid = request.form['rid']
+    coid = mr.lookup_order(db, rid)
+    return str(coid)

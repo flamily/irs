@@ -10,38 +10,46 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-12">
-          <div class="row">
-            {% for menu_item in menu_items %}
-            <div class="col-md-3">
-              <div class="well">
-                <form action="/order/new" method="post">
-                  <input type=submit
-                  value="Menu Item {{ menu_item.mi_id }}"
-                  class="btn btn-default">
-                  <input type=hidden value="{{ menu_item.name }}" name=table_id>
-                </form>
-                <h4 class="text-light">{{ menu_item.name }}</h4>
+          <form action="/order/new" method="post">
+            <div class="row">
+              {% for table in tables %}
+              <div class="col-md-3">
+                  <div class="well">
+                    <input type=radio value="{{ table.rt_id }}" name=table_id required>
+                    <h4 class="text-light">Table {{ table.rt_id }}</h4>
+                </div>
               </div>
+              {% endfor %}
             </div>
-            <!-- <tr>
-              <td>{{ table.rt_id }}</td>
-              <td>{{ table.state }}</td>
-              <td>{{ table.capacity }}</td>
-            </tr> -->
-            {% endfor %}
+            <div class="row">
+              <div class="col-md-6">
+                <table style="width:100%">
+                    <tr>
+                      <th>Item</th>
+                      <th>Description</th> 
+                      <th>Price</th>
+                      <th>Quantity</th>
+                    </tr>
+                    {% for menu_item in menu_items %}
+                    <tr>
+                      <td>{{ menu_item.name }}</td>
+                      <td>{{ menu_item.description }}</td> 
+                      <td>{{ menu_item.price }}</td>
+                      <td><input type="number" name="{{ menu_item.mi_id }}" min="1" max="99"></td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+              </div>
+              <input type=submit class="btn btn-default">
+            </form>
+            <div class="col-md-6">
+              <form action="/order/get" method="post">
+                <h4>Find an existing order</h4>
+                Reservation Number:<input type="number" name="rid" min="1" max="999">
+                <input type=submit class="btn btn-default">
+              </form>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="btn-toolbar">
-          <form action="/robot/proceed" method="get">
-            <input type=submit value="Confirm Table" class="btn btn-default">
-          </form>
-          <form action="/robot" method="get">
-            <input type=submit value="Start Over" class="btn btn-default">
-          </form>
         </div>
       </div>
     </div>
