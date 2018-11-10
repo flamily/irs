@@ -13,7 +13,7 @@ Please make sure:
 To view the templates in your browser, you can run a local flask server. To see your changes, refresh the page.
 ```
  export FLASK_APP=web flask run
- export FLASK_DEBUG=1
+ export FLASK_DEBUG=0
  python -m flask run
 ```
 Then you can view it on `http://127.0.0.1:5000/`
