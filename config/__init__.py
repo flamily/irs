@@ -7,3 +7,8 @@ def connection_string():  # pragma: no cover
     if os.environ.get("DATABASE_URL", False):
         return os.environ["DATABASE_URL"]
     return "user='postgres' host='localhost'"
+
+
+def is_running_on_lambda():
+    root = os.environ.get("LAMBDA_TASK_ROOT", '')
+    return len(root) > 0
