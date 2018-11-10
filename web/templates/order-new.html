@@ -23,30 +23,30 @@
             </div>
             <div class="row">
               <div class="col-md-6">
-                <table style="width:100%">
+                <table style="width:100%" class="table-dark">
                     <tr>
                       <th>Item</th>
-                      <th>Description</th> 
+                      <th>Description</th>
                       <th>Price</th>
                       <th>Quantity</th>
                     </tr>
                     {% for menu_item in menu_items %}
                     <tr>
                       <td>{{ menu_item.name }}</td>
-                      <td>{{ menu_item.description }}</td> 
+                      <td>{{ menu_item.description }}</td>
                       <td>{{ menu_item.price }}</td>
                       <td><input type="number" name="{{ menu_item.mi_id }}" min="1" max="99"></td>
                     </tr>
                     {% endfor %}
                   </table>
+                  <input type=submit class="btn btn-default" value="Create Order">
               </div>
-              <input type=submit class="btn btn-default">
             </form>
-            <div class="col-md-6">
+            <div class="col-md-6 justify-content-center">
               <form action="/order/get" method="post">
                 <h4>Find an existing order</h4>
                 Reservation Number:<input type="number" name="rid" min="1" max="999">
-                <input type=submit class="btn btn-default">
+                <input type=submit class="btn btn-default" value="Find Order">
               </form>
             </div>
           </div>

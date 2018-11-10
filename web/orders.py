@@ -28,6 +28,7 @@ def get_occupied_tables():
 
 @ORDERS_BLUEPRINT.route('/order/new', methods=['POST'])
 @login_required()
+@templated(template='order-created.html')
 def create_order():
     menu_items = list()
     for value in request.form:
@@ -37,8 +38,11 @@ def create_order():
             if request.form[value]:
                 menu_item = tuple([int(value), int(request.form[value])])
                 menu_items.append(menu_item)
-    response = mr.order(db, menu_items, table_id, user.s_id)
-    return jsonify(response)
+    eid, rid, oid = mr.order(db, menu_items, table_id, user.s_id)
+    return dict(page_title='Order - Created',
+                eid=eid,
+                rid=rid,
+                oid=oid)
 
 
 @ORDERS_BLUEPRINT.route('/order/get', methods=['POST'])

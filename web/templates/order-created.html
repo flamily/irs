@@ -1,0 +1,28 @@
+{% with page_title = page_title %}
+  {% include 'header.html' %}
+{% endwith %}
+  <body class="bg-dark">
+    <div class="container">
+      <div class="row justify-content-center">
+        <h1>Welcome to Avalon Smart Restaurant</h1>
+      </div>
+      <div class="row justify-content-center">
+        <p class="text-primary">Your order has been placed</p>
+      </div>
+      <div class="row justify-content-center">
+        <p class="text-secondary">Order ID: {{ oid }}</p>
+      </div>
+      <div class="row justify-content-center">
+        <p class="text-secondary">Reservation ID: {{ rid }}</p>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <form action="/order/new" method="get">
+          <input type=submit value="New Order" class="btn btn-default">
+        </form>
+      </div>
+    </div>
+  </body>
+  {% include 'footer.html' %}
+</html>
