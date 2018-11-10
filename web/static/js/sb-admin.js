@@ -43,6 +43,7 @@
     document.location = "/robot/table?people=" + size
   });
 
+  // Start Exit Interface
   function disableModalButtons(){
     $('#updateTable').find('input').each(function(){
      $(this).prop("disabled", true);
@@ -71,11 +72,6 @@
     $('#statusModal').modal('show');
     $('#modalTableNumber').text($(this).data('tableid'));
     $('#tableId').val($(this).data('tableid'));
-  });
-
-  $(document).find('#confirmPartySize').click(function() {
-    var size = document.getElementsByName('partySize')[0].value
-    $('.modal-body').text('You are confirming a table for ' + size + ' people. Please select confirm to continue or cancel to enter again.')
   });
 
   var pageElement;
@@ -148,4 +144,26 @@
         break;
     }
   }
+  // End Exit Interface
+  
+
+  $(document).find('#confirmPartySize').click(function() {
+    var size = document.getElementsByName('partySize')[0].value
+    $('.modal-body').text('You are confirming a table for ' + size + ' people. Please select confirm to continue or cancel to enter again.')
+  });
+
+  //Robot Photo
+  var robotInputElement;
+
+  $('.robotTableReserve').children('input:submit').click(function(event){
+    event.preventDefault();
+    robotInputElement = $(this);
+    irs.photo(robotPhotoCallback);
+  });
+
+  var robotPhotoCallback = function updatePhotoField(encodedImage){
+    robotInputElement.siblings('.customerImg').val(encodedImage);
+    robotInputElement.parent().submit();
+  }
+  // Robot Photo
 })(jQuery); // End of use strict
