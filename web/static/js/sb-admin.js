@@ -74,18 +74,13 @@
     $('#tableId').val($(this).data('tableid'));
   });
 
+  var pageElement;
+
   var photoCallback = function updatePhotoField(encodedImage){
     $("#customerImg").val(encodedImage);
-  }
-
-  $('#updateTable').find('input').click(function(event){
-    event.preventDefault();
-
-    if($(this).val() == 'Pay')
-      irs.photo(photoCallback);
 
     $.ajax({
-      url: $(this)[0].getAttribute('formaction'),
+      url: pageElement[0].getAttribute('formaction'),
       data: $('#tableInfo').serialize(),
       type: 'POST',
       success: function(response) {
@@ -96,6 +91,31 @@
         console.log(error.statusText);
       }
     });
+
+  }
+
+  $('#updateTable').find('input').click(function(event){
+    event.preventDefault();
+
+    if($(this).val() == 'Pay'){
+      pageElement = $(this);
+      irs.photo(photoCallback);
+    }
+    else{
+      $.ajax({
+        url: $(this)[0].getAttribute('formaction'),
+        data: $('#tableInfo').serialize(),
+        type: 'POST',
+        success: function(response) {
+          updateTableStatuses(response);
+          $('#statusModal').modal('hide');
+        },
+        error: function(error) {
+          console.log(error.statusText);
+        }
+      });
+    }
+
     // Clear out image field to prevent issues with other buttons
     $("#customerImg").val('');
   });
@@ -113,12 +133,14 @@
     switch(response.status){
       case 'available':
         $(element).addClass('available-table');
-        $(element).data('status', 'available')
+        $(element).children('p').first().text('available');
+        $(element).data('status', 'available');
         break;
 
       case 'unavailable':
         $(element).addClass('unavailable-table');
-        $(element).data('status', 'unavailable')
+        $(element).children('p').first().text('unavailable');
+        $(element).data('status', 'unavailable');
         break;
     }
   }
