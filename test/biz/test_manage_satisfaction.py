@@ -154,6 +154,23 @@ def test_avg_css_per_staff(database_snapshot):
         assert ms.avg_css_per_staff(conn, staff) == 50
 
 
+def test_avg_css_all_staff(database_snapshot):
+    """Retrieve average css for staff"""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn, 1)
+        conn.commit()
+
+        ce1 = mr.create_reservation(conn, t[0], staff, 5)
+        ms.create_satisfaction(conn, 80, ce1[0], ce1[1])
+        ce2 = mr.order(conn, [], t[0], staff)
+        ms.create_satisfaction(conn, 20, ce2[0], ce2[1])
+        ce3 = mr.paid(conn, t[0], staff)
+        ms.create_satisfaction(conn, 50, ce3[0], ce3[1])
+
+        avg_css = ms.avg_css_all_staff(conn)
+        assert avg_css[0] == (1, 50)
+
+
 def test_avg_css_per_menu_item(database_snapshot):
     """Retrieve average css for staff menu item"""
     with database_snapshot.getconn() as conn:
