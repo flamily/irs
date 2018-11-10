@@ -53,14 +53,14 @@ class CSS():
         self.ev_id = int(ev_id)
         self.rv_id = int(rv_id)
         self.score = int(score)
+        self.st_id = int(st_id)
         self.description = str(description)
         self.ev_dt = ev_dt
         self.rt_id = int(rt_id)
-        self.st_id = int(st_id)
 
 
 def css_historic_time(db_conn, datetime_start, datetime_end):
-    """Average CSS for specified time period
+    """Historic CSS and related data for specified time period.
 
     :param db_conn: A psycopg2 connection to the database.
     :param datetime_start: The starting datetime.date for the time period.
@@ -68,11 +68,12 @@ def css_historic_time(db_conn, datetime_start, datetime_end):
     :return: Object containing columns from satisfaction and events table.
     """
     with db_conn.cursor() as curs:
-        curs.execute("SELECT s.event_id, s.reservation_id, score,"
-                     "description, event_dt, restaurant_table_id, staff_id "
+        curs.execute("SELECT s.event_id, s.reservation_id, s.score, staff_id, "
+                     "e.description, e.event_dt, e.restaurant_table_id "
                      "FROM satisfaction s "
                      "JOIN event e ON e.event_id = s.event_id "
-                     "WHERE e.event_dt BETWEEN %s AND %s",
+                     "WHERE e.event_dt BETWEEN %s AND %s "
+                     "ORDER BY e.event_dt ASC",
                      (datetime_start, datetime_end)
                      )
         css = []
@@ -81,15 +82,15 @@ def css_historic_time(db_conn, datetime_start, datetime_end):
                 ev_id=row[0],
                 rv_id=row[1],
                 score=row[2],
-                description=row[3],
-                ev_dt=row[4],
-                rt_id=row[5],
-                st_id=row[6]))
+                st_id=row[3],
+                description=row[4],
+                ev_dt=row[5],
+                rt_id=row[6],))
     return css
 
 
 def avg_css_per_period(db_conn, datetime_start, datetime_end):
-    """Average CSS for specified time period.
+    """Average CSS only for specified time period.
 
     :param db_conn: A psycopg2 connection to the database.
     :param datetime_start: The starting datetime.date for the time period.
@@ -98,14 +99,10 @@ def avg_css_per_period(db_conn, datetime_start, datetime_end):
     """
     with db_conn.cursor() as curs:
         curs.execute(
-            "SELECT score "
+            "SELECT s.score "
             "FROM satisfaction s "
-            "INNER JOIN ("
-            " SELECT *"
-            " FROM reservation r"
-            " JOIN customer_event ce ON ce.reservation_id = r.reservation_id"
-            " WHERE r.reservation_dt BETWEEN %s AND %s) sub "
-            "ON s.event_id = sub.event_id",
+            "JOIN reservation r ON s.reservation_id = r.reservation_id "
+            "WHERE r.reservation_dt BETWEEN %s AND %s",
             (datetime_start, datetime_end)
         )
         scores = []
@@ -116,7 +113,7 @@ def avg_css_per_period(db_conn, datetime_start, datetime_end):
 
 
 def avg_css_per_staff(db_conn, staff_id):
-    """Average CSS for specified staff member.
+    """Average CSS only for specified staff member.
 
     :param db_conn: A psycopg2 connection to the database.
     :param staff_id: The ID of the exisiting staff record in the database.
@@ -124,14 +121,10 @@ def avg_css_per_staff(db_conn, staff_id):
     """
     with db_conn.cursor() as curs:
         curs.execute(
-            "SELECT score "
+            "SELECT s.score "
             "FROM satisfaction s "
-            "INNER JOIN ("
-            " SELECT *"
-            " FROM event e"
-            " JOIN customer_event ce ON ce.event_id = e.event_id"
-            " WHERE e.staff_id = %s) sub "
-            "ON s.reservation_id = sub.reservation_id",
+            "JOIN event e ON s.event_id = e.event_id "
+            "WHERE e.staff_id = %s",
             ([staff_id])
         )
         scores = []
@@ -149,17 +142,37 @@ def avg_css_all_staff(db_conn):
     """
     with db_conn.cursor() as curs:
         curs.execute(
-            "SELECT staff_id, AVG(score) "
+            "SELECT e.staff_id, AVG(s.score) "
             "FROM satisfaction s "
-            "INNER JOIN ("
-            " SELECT *"
-            " FROM event e"
-            " JOIN customer_event ce ON ce.event_id = e.event_id) sub "
-            "ON s.reservation_id = sub.reservation_id "
-            "GROUP BY staff_id",
+            "JOIN event e ON s.event_id = e.event_id "
+            "GROUP BY e.staff_id ORDER BY e.staff_id ASC"
         )
         avg_scores = []
         for item in curs.fetchall():
             staff_score = (item[0], item[1])
             avg_scores.append(staff_score)
     return avg_scores
+
+
+def avg_css_per_menu_item(db_conn, menu_item):
+    """Average CSS for specified menu_item.
+
+    :param db_conn: A psycopg2 connection to the database.
+    :param menu_item: The ID of the menu item.
+    :return: Average CSS for the menu item.
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "SELECT score "
+            "FROM satisfaction s "
+            "JOIN reservation r ON s.reservation_id = r.reservation_id "
+            "JOIN customer_order c ON r.reservation_id = c.reservation_id "
+            "JOIN order_item oi ON c.customer_order_id = oi.customer_order_id "
+            "WHERE s.score IS NOT NULL AND menu_item_id = %s",
+            ([menu_item])
+        )
+        scores = []
+        for score in curs.fetchall():
+            scores.extend(score)
+        avg_score = sum(scores) / len(scores)
+    return avg_score

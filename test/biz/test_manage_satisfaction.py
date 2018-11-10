@@ -11,6 +11,7 @@ import datetime
 import biz.css.manage_satisfaction as ms
 import biz.manage_restaurant as mr
 import biz.manage_staff as mgs
+import biz.manage_menu as mm
 from biz.staff import Permission
 from biz.restaurant_table import (Coordinate, Shape)
 
@@ -36,6 +37,23 @@ def __spoof_tables(db_conn, n):
             )[0]
         )
     return (tables, staff_id)
+
+
+def __spoof_menu_items(db_conn, n):
+    """Load a series of menu_items.
+
+    :param db_conn: A psycopg2 connection to the database.
+    :param n: The number of restaurant_tables to create.
+    :return: [mi1_id, mi2_id ... min_id]
+    """
+    items = []
+    for i in range(0, n):
+        items.append(
+            mm.create_menu_item(
+                db_conn, str(i), 'a description', i
+            )
+        )
+    return items
 
 
 def test_create_satisfaction(database_snapshot):
@@ -93,17 +111,11 @@ def test_css_historic_time(database_snapshot):
         datetime_start = datetime.datetime(2018, 1, 1)
         datetime_end = datetime.datetime(2018, 12, 31)
 
-        with conn.cursor() as curs:
-            curs.execute(
-                "SELECT * "
-                "FROM satisfaction AS s "
-                "JOIN event AS e ON e.event_id = s.event_id"
-            )
-            scores = ms.css_historic_time(
-                conn, datetime_start.date(), datetime_end.date())
-            assert scores[0].score == 50
-            assert scores[1].score == 60
-            assert scores[2].score == 70
+        scores = ms.css_historic_time(
+            conn, datetime_start.date(), datetime_end.date())
+        assert scores[0].score == 50
+        assert scores[1].score == 60
+        assert scores[2].score == 70
 
 
 def test_avg_css_per_period(database_snapshot):
@@ -142,18 +154,20 @@ def test_avg_css_per_staff(database_snapshot):
         assert ms.avg_css_per_staff(conn, staff) == 50
 
 
-def test_avg_css_all_staff(database_snapshot):
-    """Retrieve average css for staff"""
+def test_avg_css_per_menu_item(database_snapshot):
+    """Retrieve average css for staff menu item"""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 1)
         conn.commit()
 
+        mi = __spoof_menu_items(conn, 2)
+        expected = [(mi[0], 2), (mi[1], 3)]
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
-        ms.create_satisfaction(conn, 80, ce1[0], ce1[1])
+        (_, _, _) = mr.order(conn, expected, t[0], staff)
+        ms.create_satisfaction(conn, 70, ce1[0], ce1[1])
         ce2 = mr.order(conn, [], t[0], staff)
-        ms.create_satisfaction(conn, 20, ce2[0], ce2[1])
+        ms.create_satisfaction(conn, 100, ce2[0], ce2[1])
         ce3 = mr.paid(conn, t[0], staff)
-        ms.create_satisfaction(conn, 50, ce3[0], ce3[1])
+        ms.create_satisfaction(conn, 100, ce3[0], ce3[1])
 
-        avg_css = ms.avg_css_all_staff(conn)
-        assert avg_css[0] == (1, 50)
+        assert ms.avg_css_per_menu_item(conn, 1) == 90
