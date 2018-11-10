@@ -26,7 +26,7 @@ def party_size():
     return dict(page_title='Robot - Select Party Size')
 
 
-@ROBOT_BLUEPRINT.route('/robot/table', methods=['GET'])
+@ROBOT_BLUEPRINT.route('/robot/tables', methods=['GET'])
 @templated(template='robot-table-availability.html')
 @login_required()
 def table():
