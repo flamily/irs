@@ -1,5 +1,6 @@
 from web.db import db
 from biz import manage_reporting as mr
+import datetime
 
 __MAX_GRAPH_ENTRIES__ = 15
 
@@ -20,7 +21,24 @@ def average_out_entries(labels, data):
 
     return [tmp_labels, tmp_data]
 
+def sort_lists(labels, data):
+    tmp_list = []
+    for i in range(len(labels)):
+        tmp_list.append({'date': labels[i], 'data': data[i]})
+
+    sorted_list = tmp_list.sort(key=lambda x: datetime.datetime.strptime(x['date'], '%Y-%m-%d %H:%M:%S'))
+
+    new_label = []
+    new_data = []
+    for item in tmp_list:
+        new_label.append(item["date"])
+        new_data.append(item["data"])
+
+    return [new_label, new_data]
+
 def formatted_lists(labels, data):
+    labels, data = sort_lists(labels, data)
+
     if len(labels) > __MAX_GRAPH_ENTRIES__:
         return average_out_entries(labels, data)
 

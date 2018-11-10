@@ -29,19 +29,13 @@ var data = {
     ]
 };
 
-function adddata(){
-  var next_item_index = myLineChart.data.labels.length;
-	myLineChart.data.datasets[0].data[next_item_index] = Math.floor(Math.random() * 81);
-  myLineChart.data.labels[next_item_index] = "Newly Added";
-  myLineChart.update();
-}
-
 var option = {
 	showLines: true,
   legend: {
     display: false
   }
 };
+
 var myLineChart = Chart.Line(canvas,{
 	data:data,
   options:option

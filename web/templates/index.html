@@ -100,7 +100,7 @@
           <div class="card mb-3">
             <div class="card-header">
               <i class="fas fa-chart-area"></i>
-              Area Chart Example
+              Customer Satisfaction Graph
               <div class="btn-group" style="float: right; width: 40%">
                 <div>
                   <input value="Daily" class="btn btn-primary btn-block" onclick="changeDatePicker('date')">
@@ -140,9 +140,6 @@
                   } else {
                     document.getElementById("datepicker-container").innerHTML = "<input name='" + inputType + "' type=" + inputType + " " + decoration + ">";
                   }
-
-                  adddata();
-
                 }
 
                 function alertOnDateChange(elem){
@@ -153,12 +150,16 @@
                     myLineChart.update();
                   })
                 }
+
+                window.onload = function(e){
+                  alertOnDateChange(document.getElementById('date-picker'));
+                }
               </script>
 
           </div>
             <div class="card-body">
               <div id="datepicker-container">
-                <input name="date" type="date" id="date-picker" class="form-control form-control-sm" onchange="alertOnDateChange(this)">
+                <input name="date" type="date" value="2018-11-08" id="date-picker" class="form-control form-control-sm" onchange="alertOnDateChange(this)">
               </div>
               <!--<select style="margin-bottom: 1rem; margin-right: 5.5rem; float: right">
                 <option selected="selected">&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;</option>
