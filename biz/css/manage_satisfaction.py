@@ -1,11 +1,8 @@
 """
 Driver for managing and retreiving satisfaction records from the database.
 
-Author: Andrew Pope
-Date: 06/11/2018
-
-Modified: Andy Go
-Date: 10/11/2018
+Author: Andrew Pope, Andy GO
+Date: 010/11/2018
 """
 
 
@@ -47,11 +44,6 @@ def lookup_satisfaction(db_conn, event_id, reservation_id):
         score = curs.fetchone()[0]
     return score
 
-    # * CSS values across time (daily, weekly, monthly) entry vs exit
-    # * Dropdown for specific timing per filter
-    # * Graph historic CSS values for staff member and show on graph.
-    # * Trend of selected meals from group (nice to have)
-
 
 # pylint:disable=too-few-public-methods,too-many-arguments
 class CSS():
@@ -73,6 +65,7 @@ def css_historic_time(db_conn, datetime_start, datetime_end):
     :param db_conn: A psycopg2 connection to the database.
     :param datetime_start: The starting datetime.date for the time period.
     :param datetime_end: The ending datetime.date for the time period.
+    :return: Object containing columns from satisfaction and events table.
     """
     with db_conn.cursor() as curs:
         curs.execute("SELECT s.event_id, s.reservation_id, score,"
@@ -82,25 +75,26 @@ def css_historic_time(db_conn, datetime_start, datetime_end):
                      "WHERE e.event_dt BETWEEN %s AND %s",
                      (datetime_start, datetime_end)
                      )
-        scores = []
-        for score in curs.fetchall():
-            scores.append(CSS(
-                ev_id=score[0],
-                rv_id=score[1],
-                score=score[2],
-                description=score[3],
-                ev_dt=score[4],
-                rt_id=score[5],
-                st_id=score[6]))
-    return scores
+        css = []
+        for row in curs.fetchall():
+            css.append(CSS(
+                ev_id=row[0],
+                rv_id=row[1],
+                score=row[2],
+                description=row[3],
+                ev_dt=row[4],
+                rt_id=row[5],
+                st_id=row[6]))
+    return css
 
 
-def css_per_period(db_conn, datetime_start, datetime_end):
-    """Average CSS for specified time period
+def avg_css_per_period(db_conn, datetime_start, datetime_end):
+    """Average CSS for specified time period.
 
     :param db_conn: A psycopg2 connection to the database.
     :param datetime_start: The starting datetime.date for the time period.
     :param datetime_end: The ending datetime.date for the time period.
+    :return: Average satisfaction score for the time period.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -121,11 +115,12 @@ def css_per_period(db_conn, datetime_start, datetime_end):
     return avg_score
 
 
-def css_per_staff(db_conn, staff_id):
-    """Average CSS for specified staff member
+def avg_css_per_staff(db_conn, staff_id):
+    """Average CSS for specified staff member.
 
     :param db_conn: A psycopg2 connection to the database.
     :param staff_id: The ID of the exisiting staff record in the database.
+    :return: Average satisfaction score for the staff member.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -144,3 +139,27 @@ def css_per_staff(db_conn, staff_id):
             scores.extend(score)
         avg_score = sum(scores) / len(scores)
     return avg_score
+
+
+def avg_css_all_staff(db_conn):
+    """Average CSS for all staff members.
+
+    :param db_conn: A psycopg2 connection to the database.
+    :return: Tuple containing the staff ID and their corresponding average CSS.
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            "SELECT staff_id, AVG(score) "
+            "FROM satisfaction s "
+            "INNER JOIN ("
+            " SELECT *"
+            " FROM event e"
+            " JOIN customer_event ce ON ce.event_id = e.event_id) sub "
+            "ON s.reservation_id = sub.reservation_id "
+            "GROUP BY staff_id",
+        )
+        avg_scores = []
+        for item in curs.fetchall():
+            staff_score = (item[0], item[1])
+            avg_scores.append(staff_score)
+    return avg_scores
