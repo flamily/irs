@@ -97,7 +97,6 @@
             }
           </style>
 
-          <meta id="reporting_data" data_label="{{ chart_label }}" data_data="{{ chart_data }}">
           <div class="card mb-3">
             <div class="card-header">
               <i class="fas fa-chart-area"></i>
@@ -134,29 +133,32 @@
                 }
 
                 function changeDatePicker(inputType){
-                  var decoration = "id='date-picker' class='form-control form-control-sm' onchange='alertOnDateChange()'";
+                  var decoration = "id='date-picker' class='form-control form-control-sm' onchange='alertOnDateChange(this)'";
                   populateYearOptions();
                   if (inputType == "year"){
-                    document.getElementById("datepicker-container").innerHTML = "<select " + decoration + ">" + options + "</select>";
+                    document.getElementById("datepicker-container").innerHTML = "<select name='year'" + decoration + ">" + options + "</select>";
                   } else {
-                    document.getElementById("datepicker-container").innerHTML = "<input type=" + inputType + " " + decoration + ">";
+                    document.getElementById("datepicker-container").innerHTML = "<input name='" + inputType + "' type=" + inputType + " " + decoration + ">";
                   }
 
                   adddata();
 
                 }
 
-                function alertOnDateChange(){
-                  //alert("Changed");
-                  alert($('#reporting_data').data()[0]);
-
+                function alertOnDateChange(elem){
+                  $.getJSON('/api/reporting/' + elem.name + '?dateString=' + $("#date-picker").val(), function(data){
+                    //alert(data.labels)
+                    myLineChart.data.datasets[0].data = data.data;
+                    myLineChart.data.labels = data.labels;
+                    myLineChart.update();
+                  })
                 }
               </script>
 
           </div>
             <div class="card-body">
               <div id="datepicker-container">
-                <input type="date" id="date-picker" class="form-control form-control-sm" onchange="alertOnDateChange()">
+                <input name="date" type="date" id="date-picker" class="form-control form-control-sm" onchange="alertOnDateChange(this)">
               </div>
               <!--<select style="margin-bottom: 1rem; margin-right: 5.5rem; float: right">
                 <option selected="selected">&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;</option>

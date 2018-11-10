@@ -12,7 +12,7 @@ def average_out_entries(labels, data):
     tmp_score = 0
     for i in range(len(labels)):
         if i % averaging == 0:
-            tmp_data.append(tmp_score / averaging)
+            tmp_data.append(float(float(tmp_score) / float(averaging)))
             tmp_labels.append(labels[i])
             tmp_score = 0
 

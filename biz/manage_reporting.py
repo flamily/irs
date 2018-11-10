@@ -35,6 +35,7 @@ def get_satisfactions_by_week(db_conn, year, week):
     :param week: The the week number requested (eg 45)
     :return: [timestamps, satisfaction_scores].
     """
+    week = week.lower().replace("w", "")
 
     d = date(int(year), 1, 1)
     dlt = timedelta(days = (int(week)-1)*7)
