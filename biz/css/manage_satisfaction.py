@@ -104,7 +104,7 @@ def css_per_period(db_conn, datetime_start, datetime_end):
     """
     with db_conn.cursor() as curs:
         curs.execute(
-            "SELECT AVG(score) "
+            "SELECT score "
             "FROM satisfaction s "
             "INNER JOIN ("
             " SELECT *"
@@ -114,9 +114,10 @@ def css_per_period(db_conn, datetime_start, datetime_end):
             "ON s.event_id = sub.event_id",
             (datetime_start, datetime_end)
         )
-        if curs.rowcount != 1:
-            return None
-        avg_score = int(curs.fetchone()[0])
+        scores = []
+        for score in curs.fetchall():
+            scores.extend(score)
+        avg_score = sum(scores) / len(scores)
     return avg_score
 
 
@@ -128,7 +129,7 @@ def css_per_staff(db_conn, staff_id):
     """
     with db_conn.cursor() as curs:
         curs.execute(
-            "SELECT AVG(score) "
+            "SELECT score "
             "FROM satisfaction s "
             "INNER JOIN ("
             " SELECT *"
@@ -138,7 +139,8 @@ def css_per_staff(db_conn, staff_id):
             "ON s.reservation_id = sub.reservation_id",
             ([staff_id])
         )
-        if curs.rowcount != 1:
-            return None
-        avg_score = int(curs.fetchone()[0])
+        scores = []
+        for score in curs.fetchall():
+            scores.extend(score)
+        avg_score = sum(scores) / len(scores)
     return avg_score
