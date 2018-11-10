@@ -47,7 +47,13 @@ def reserve_table():
     photo = request.form['photo']
     eid, rid = mr.create_reservation(db, table_id, user.s_id, group_size)
     bucket_upload(photo, eid, rid)
-    return redirect(url_for('robot.confirmation', rid=rid, tid=table_id))
+    return redirect(
+        url_for(
+            'robot.confirmation',
+            rid=rid, tid=table_id,
+            group_size=group_size
+        )
+    )
 
 
 @ROBOT_BLUEPRINT.route('/robot/full', methods=['GET'])
@@ -63,4 +69,9 @@ def table_full():
 def confirmation():
     tid = request.args.get('tid', 'NO_TABLE_ID')
     rid = request.args.get('rid', 'NO_RESERVATION_ID')
-    return dict(page_title='Robot - Tables Full', table=tid, rid=rid)
+    group_size = request.args.get('group_size', 'NO_GROUP_SIZE')
+    return dict(
+        page_title='Robot - Tables Full',
+        table=tid, rid=rid,
+        group_size=group_size
+    )
