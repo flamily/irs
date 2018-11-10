@@ -97,6 +97,7 @@
             }
           </style>
 
+          <meta id="reporting_data" data_label="{{ chart_label }}" data_data="{{ chart_data }}">
           <div class="card mb-3">
             <div class="card-header">
               <i class="fas fa-chart-area"></i>
@@ -133,7 +134,7 @@
                 }
 
                 function changeDatePicker(inputType){
-                  var decoration = "id='date-picker' class='form-control form-control-sm'";
+                  var decoration = "id='date-picker' class='form-control form-control-sm' onchange='alertOnDateChange()'";
                   populateYearOptions();
                   if (inputType == "year"){
                     document.getElementById("datepicker-container").innerHTML = "<select " + decoration + ">" + options + "</select>";
@@ -144,12 +145,18 @@
                   adddata();
 
                 }
+
+                function alertOnDateChange(){
+                  //alert("Changed");
+                  alert($('#reporting_data').data()[0]);
+
+                }
               </script>
 
           </div>
             <div class="card-body">
               <div id="datepicker-container">
-                <input type="week" id="date-picker" class="form-control form-control-sm">
+                <input type="date" id="date-picker" class="form-control form-control-sm" onchange="alertOnDateChange()">
               </div>
               <!--<select style="margin-bottom: 1rem; margin-right: 5.5rem; float: right">
                 <option selected="selected">&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;</option>

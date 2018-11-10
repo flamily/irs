@@ -7,7 +7,6 @@ var data = {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
     datasets: [
         {
-            label: "My First dataset",
             fill: false,
             lineTension: 0.1,
             backgroundColor: "rgba(2,117,216,0.2)",
@@ -38,7 +37,10 @@ function adddata(){
 }
 
 var option = {
-	showLines: true
+	showLines: true,
+  legend: {
+    display: false
+  }
 };
 var myLineChart = Chart.Line(canvas,{
 	data:data,
