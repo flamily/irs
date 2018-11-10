@@ -77,6 +77,35 @@ def test_create_multiple_satisfaction(database_snapshot):
             assert curs.rowcount == 3
 
 
+def test_css_historic_time(database_snapshot):
+    """Retrieve average css for staff"""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn, 1)
+        conn.commit()
+
+        ce1 = mr.create_reservation(conn, t[0], staff, 5)
+        ms.create_satisfaction(conn, 50, ce1[0], ce1[1])
+        ce2 = mr.order(conn, [], t[0], staff)
+        ms.create_satisfaction(conn, 60, ce2[0], ce2[1])
+        ce3 = mr.paid(conn, t[0], staff)
+        ms.create_satisfaction(conn, 70, ce3[0], ce3[1])
+
+        datetime_start = datetime.datetime(2018, 1, 1)
+        datetime_end = datetime.datetime(2018, 12, 31)
+
+        with conn.cursor() as curs:
+            curs.execute(
+                "SELECT * "
+                "FROM satisfaction AS s "
+                "JOIN event AS e ON e.event_id = s.event_id"
+            )
+            scores = ms.css_historic_time(
+                conn, datetime_start.date(), datetime_end.date())
+            assert scores[0].score == 50
+            assert scores[1].score == 60
+            assert scores[2].score == 70
+
+
 def test_css_per_period(database_snapshot):
     """Retrieve average css from __ to __"""
     with database_snapshot.getconn() as conn:
