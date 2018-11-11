@@ -1,3 +1,10 @@
+"""
+Lambda which converts images into css
+Triggers on s3 bucket event
+Upload the image to Azure
+Put the CSS into the db
+"""
+
 import urllib.parse
 import boto3
 import biz.css.emotion_recognition as er
@@ -13,6 +20,9 @@ __pool = None
 
 
 def get_pool_lazy():  # pragma: no cover
+    """
+    Get a database pool, but in a way we can override for tests
+    """
     # pylint: disable=global-statement
     global __pool
     if __pool is None:
@@ -21,6 +31,12 @@ def get_pool_lazy():  # pragma: no cover
 
 
 def get_details(event):
+    """
+    Get details of the event being passed into the lambda
+
+    :param event: Event object passed into the lambda
+    :return: Name of the bucket and key of file (filename)
+    """
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(
         event['Records'][0]['s3']['object']['key'],
@@ -30,6 +46,14 @@ def get_details(event):
 
 
 def generate_url(s3client, bucket, key):  # pragma: no cover
+    """
+    Generate a short-lived public url for the specified key
+
+    :param s3client: AWS S3 client to use to generate url
+    :param bucket: The bucket the object resides in
+    :param key: The key of the object
+    :return: Public url to the object
+    """
     return s3client.generate_presigned_url(
         ClientMethod='get_object',
         ExpiresIn='60',
@@ -41,12 +65,25 @@ def generate_url(s3client, bucket, key):  # pragma: no cover
 
 
 def css_for_image_at_url(url):
-    print('detecting from url:{}.'.format(url))
+    """
+    Calculate the css for an image at `url`
+
+    :param url: The url to use
+    :return: CSS score
+    """
     css = er.detect_from_url(url)
     return r.apply_reduction(css)
 
 
 def save_css(p, css, eid, rid):
+    """
+    Save the CSS to the database
+
+    :param p: Database pool
+    :param css: CSS Score
+    :param eid: Event ID
+    :param rid: Reservation ID
+    """
     conn = p.getconn()
     try:
         ms.create_satisfaction(conn, css, eid, rid)
@@ -55,7 +92,12 @@ def save_css(p, css, eid, rid):
 
 
 # second parameter is the context, but currently unused
-def customer_satisfaction(event, _):
+def calculate_css_from_image(event, _):
+    """
+    The lambda event handler entry point
+
+    :param event: Information about the trigger
+    """
     bucket, key = get_details(event)
     eid = None
     rid = None
