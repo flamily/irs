@@ -18,6 +18,9 @@ def __spoof_tables(db_conn, n, username, first, last):
 
     :param db_conn: A psycopg2 connection to the database.
     :param n: The number of restaurant_tables to create.
+    :param username: The username for the staff member.
+    :param first: First name of staff member.
+    :param last: Last name of staff member.
     :return: ([t1_id, t2_id ... tn_id], staff_id)
     """
     staff_id = mgs.create_staff_member(
