@@ -249,6 +249,63 @@ def overview(db_conn):
         return rt_list
 
 
+def get_available_tables(db_conn, capacity):
+    """List of all available ('ready') restaurant
+    tables based on capacity.
+    If capacity < 0, all available ('ready') resturant
+    tables will be returned
+
+    :param db_conn: A psycopg2 connection to the database.
+    :param capacity: group size.
+    :return: Return a list of RestaurantTables that are
+             in 'ready' state.
+    """
+    with db_conn.cursor() as curs:
+        if capacity > 0:
+            curs.execute(
+                "SELECT rt.*, et.description "
+                "FROM restaurant_table rt "
+                "JOIN event et on"
+                " et.restaurant_table_id=rt.restaurant_table_id "
+                "WHERE et.event_id = ("
+                " SELECT e.event_id FROM event e "
+                " WHERE e.restaurant_table_id = rt.restaurant_table_id "
+                " ORDER BY event_dt desc LIMIT 1"
+                ")"
+                "AND et.description = 'ready'"
+                "AND rt.capacity >= %s",
+                (capacity,)
+            )
+        else:
+            curs.execute(
+                "SELECT rt.*, et.description "
+                "FROM restaurant_table rt "
+                "JOIN event et on"
+                " et.restaurant_table_id=rt.restaurant_table_id "
+                "WHERE et.event_id = ("
+                " SELECT e.event_id FROM event e "
+                " WHERE e.restaurant_table_id = rt.restaurant_table_id "
+                " ORDER BY event_dt desc LIMIT 1"
+                ")"
+                "AND et.description = 'ready'"
+            )
+
+        rt_list = []
+        for table in curs.fetchall():
+            rt_list.append(
+                RestaurantTable(
+                    rt_id=table[0],
+                    capacity=table[1],
+                    coordinate=Coordinate(x=table[2], y=table[3]),
+                    width=table[4],
+                    height=table[5],
+                    shape=Shape(table[6]),
+                    latest_event=Event(table[7])
+                )
+            )
+    return rt_list
+
+
 def get_table(db_conn, table_id):
     """Get details for a specifc restaurant table.
 
