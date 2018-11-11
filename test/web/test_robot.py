@@ -1,4 +1,4 @@
-from biz.manage_restaurant import ( 
+from biz.manage_restaurant import (
     create_restaurant_table,
     get_available_tables
 )
@@ -85,9 +85,11 @@ def test_reserve(client, status_code, form):
 
     form['table_id'] = tid
 
-    result = client.post('/robot/table/reserve',
-                         data=form,
-                         follow_redirects=True)
+    result = client.post(
+        '/robot/table/reserve',
+        data=form,
+        follow_redirects=True
+    )
     print(dir(result))
     print(result.location)
     assert result.status_code == status_code
