@@ -361,6 +361,18 @@ def test_overview_empty(db_connection):
     """Check that the manager returns nothing."""
     assert not mg.overview(db_connection)
 
+def test_available_tables(database_snapshot):
+    """Check that the manager returns available tables."""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn ,3)
+        conn.commit()
+        mg.create_reservation(conn, t[0], staff, 4)
+        conn.commit()
+
+        rt_list = mg.get_available_tables(conn, 3)
+        assert len(rt_list) == 2
+        assert rt_list[1].state is Event.ready
+        assert rt_list[2].state is Event.ready
 
 def test_table_creation(database_snapshot):
     """Check that a resturant table can be created."""
