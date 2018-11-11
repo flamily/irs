@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, request, url_for, redirect
+    Blueprint, request, url_for, redirect, render_template
 )
 import biz.manage_restaurant as mr
 from biz.css.file_storage import bucket_upload
@@ -27,14 +27,20 @@ def party_size():
 
 
 @ROBOT_BLUEPRINT.route('/robot/table', methods=['GET'])
-@templated(template='robot-table-availability.html')
+#@templated(template='robot-table-availability.html')
 @login_required()
 def table():
     people = int(request.args.get('people', '999'))
-    tables = mr.overview(db)
-    return dict(page_title='Robot - Select Table',
-                tables=tables,
-                people=people)
+    tables = mr.get_available_tables(db)
+    if len(tables) == 0: 
+        #return dict(page_title='Robot - Tables Full')
+        return redirect(url_for('robot.table_full'))
+    else:
+        tables = mr.overview(db)
+        return render_template('robot-table-availability.html', tables=tables, people=people)
+    #    return dict(page_title='Robot - Select Table',
+    #            tables=tables,
+    #            people=people)
 
 
 @ROBOT_BLUEPRINT.route('/robot/table/reserve', methods=['POST'])
