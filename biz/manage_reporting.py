@@ -7,14 +7,7 @@ def get_satisfaction_between_dates(db_conn, start, end):
         params = (start, end)
         curs.execute(sql, params)
         events = curs.fetchall()
-
-        scores = []
-        times = []
-        for event in events:
-            scores.append(event[7])
-            times.append(event[2].strftime("%Y-%m-%d %H:%M:%S"))
-
-    return [times, scores]
+        return events
 
 def get_satisfactions_by_date(db_conn, date):
     """Get all satisfaction events of a specific date

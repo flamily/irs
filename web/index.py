@@ -13,7 +13,7 @@ INDEX_BLUEPRINT = Blueprint('index', __name__, template_folder='templates')
 @login_required()
 @templated(template='index.html')
 def index():
-    return dict(page_title='IRS - Admin Dashboard', test_page_title='IRS - TEST TITLE')
+    return dict(page_title='IRS - Admin Dashboard')
 
 
 @INDEX_BLUEPRINT.route('/test_dashboard')
@@ -23,9 +23,6 @@ def test():
 @INDEX_BLUEPRINT.route('/api/reporting/<type>')
 def get_report(type):
     date_string = request.args.get('dateString')
-
-    print("Inbound function call: %s with date string: %s" % (type, date_string))
-
     my_function = {
         "date": report_date,
         "week": report_week,
@@ -34,12 +31,4 @@ def get_report(type):
     }.get(type, None)
 
     res = my_function(date_string)
-
-    json_ready = {
-        "labels": res[0],
-        "data": res[1]
-    }
-    print(json_ready)
-    print(jsonify(labels=res[0], data=res[1]))
-
-    return jsonify(({'labels':res[0], 'data':res[1]}))
+    return jsonify(res)

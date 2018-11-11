@@ -144,9 +144,22 @@
 
                 function alertOnDateChange(elem){
                   $.getJSON('/api/reporting/' + elem.name + '?dateString=' + $("#date-picker").val(), function(data){
-                    //alert(data.labels)
-                    myLineChart.data.datasets[0].data = data.data;
-                    myLineChart.data.labels = data.labels;
+                    myLineChart.data.datasets[0].data = [];
+                    myLineChart.data.labels = [];
+                    document.getElementById('dataTable').getElementsByTagName("tbody")[0].innerHTML = ""
+                    for(i = 0; i < data.length; i++){
+                      var row = "<tr>"
+                      row += "<td>" + data[i].date + "</td>";
+                      row += "<td>" + data[i].description + "</td>";
+                      row += "<td>" + data[i].table_id + "</td>";
+                      row += "<td>" + data[i].staff_id + "</td>";
+                      row += "<td>" + data[i].reservation_id + "</td>";
+                      row += "<td>" + data[i].score + "</td>";
+                      row += "</tr>"
+                      document.getElementById('dataTable').getElementsByTagName("tbody")[0].innerHTML += row;
+                      myLineChart.data.datasets[0].data.push(data[i].score);
+                      myLineChart.data.labels.push(data[i].date);
+                    }
                     myLineChart.update();
                   })
                 }
@@ -179,22 +192,22 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Position</th>
-                      <th>Office</th>
-                      <th>Age</th>
-                      <th>Start date</th>
-                      <th>Salary</th>
+                      <th>Date</th>
+                      <th>Event Description</th>
+                      <th>Table Number</th>
+                      <th>Staff ID</th>
+                      <th>Reservation ID</th>
+                      <th>Satisfaction Score</th>
                     </tr>
                   </thead>
                   <tfoot>
                     <tr>
-                      <th>Name</th>
-                      <th>Position</th>
-                      <th>Office</th>
-                      <th>Age</th>
-                      <th>Start date</th>
-                      <th>Salary</th>
+                      <th>Date</th>
+                      <th>Event Description</th>
+                      <th>Table Number</th>
+                      <th>Staff ID</th>
+                      <th>Reservation ID</th>
+                      <th>Satisfaction Score</th>
                     </tr>
                   </tfoot>
                   <tbody>
@@ -204,6 +217,7 @@
                       <td>London</td>
                       <td>43</td>
                       <td>2012/12/18</td>
+                      <td>$313,500</td>
                       <td>$313,500</td>
                     </tr>
                     <tr>
