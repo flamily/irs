@@ -34,13 +34,15 @@ def party_size():
 def table():
     people = int(request.args.get('people', '999'))
     tables = mr.get_available_tables(db, people)
-    if not tables: 
+    if not tables:
         return redirect(url_for('robot.table_full'))
     else:
         tables = mr.overview(db)
-        return render_template('robot-table-availability.html', 
-                tables=tables, 
-                people=people)
+        return render_template(
+            'robot-table-availability.html',
+            tables=tables,
+            people=people
+        )
 
 
 @ROBOT_BLUEPRINT.route('/robot/table/reserve', methods=['POST'])
@@ -56,7 +58,8 @@ def reserve_table():
     return redirect(
         url_for(
             'robot.confirmation',
-            rid=rid, tid=table_id,
+            rid=rid,
+            tid=table_id,
             group_size=group_size
         )
     )
@@ -78,6 +81,7 @@ def confirmation():
     group_size = request.args.get('group_size', 'NO_GROUP_SIZE')
     return dict(
         page_title='Robot - Tables Full',
-        table=tid, rid=rid,
+        table=tid,
+        rid=rid,
         group_size=group_size
     )
