@@ -51,7 +51,7 @@ def __spoof_menu_items(db_conn, n):
             )
         )
     return items
-    
+
 
 # Functions for spoofing time
 def __update_event_dt(db_conn, eid, dt):
