@@ -61,8 +61,6 @@ def avg_css_per_period(db_conn, datetime_start, datetime_end):
             "WHERE r.reservation_dt BETWEEN %s AND %s",
             (datetime_start, datetime_end)
         )
-        if curs.rowcount != 1:
-            return None
         avg_score = curs.fetchone()[0]
     return avg_score
 
@@ -82,8 +80,6 @@ def avg_css_per_staff(db_conn, staff_id):
             "WHERE e.staff_id = %s",
             ([staff_id])
         )
-        if curs.rowcount != 1:
-            return None
         avg_score = curs.fetchone()[0]
     return avg_score
 
@@ -127,7 +123,5 @@ def avg_css_per_menu_item(db_conn, menu_item):
             "WHERE s.score IS NOT NULL AND menu_item_id = %s",
             ([menu_item])
         )
-        if curs.rowcount != 1:
-            return None
         avg_score = curs.fetchone()[0]
     return avg_score
