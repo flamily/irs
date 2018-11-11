@@ -106,7 +106,7 @@ def test_event_css(mocker):
             }
         }
     ]}
-    sl.customer_satisfaction(event, None)
+    sl.calculate_css_from_image(event, None)
 
     sl.css_for_image_at_url.assert_called_once_with(mock_image_url)
     sl.save_css.assert_called_once_with('super-legit-pool', 50, 2, 3)
@@ -126,7 +126,7 @@ def test_event_css_bad_filename(mocker):
             }
         }
     ]}
-    sl.customer_satisfaction(event, None)
+    sl.calculate_css_from_image(event, None)
     sl.generate_url.assert_not_called()
 
 
@@ -147,7 +147,7 @@ def test_event_css_generate_failed(mocker):
         }
     ]}
     with pytest.raises(Exception) as execinfo:
-        sl.customer_satisfaction(event, None)
+        sl.calculate_css_from_image(event, None)
     assert str(execinfo.value) == 'oh no'
     sl.save_css.assert_not_called()
 
