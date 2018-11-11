@@ -1,8 +1,8 @@
 import urllib.parse
 import boto3
-from biz.css.emotion_recognition import SatisfactionScore
-from biz.css.reduction import apply_reduction
-import biz.manage_restaurant as mr
+import biz.css.emotion_recognition as er
+import biz.css.reduction as r
+import biz.css.manage_satisfaction as ms
 import biz.css.file_storage as fs
 from psycopg2 import pool
 import config
@@ -10,10 +10,17 @@ import config
 print('Loading function')
 s3 = boto3.client('s3')
 conn = config.connection_string()
-pool = pool.ThreadedConnectionPool(1, 1, conn)
+__pool = None
 
 
-def __get_details(event):
+def get_pool_lazy():  # pragma: no cover
+    global __pool
+    if __pool is None:
+        __pool = pool.ThreadedConnectionPool(1, 1, conn)
+    return __pool
+
+
+def get_details(event):
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(
         event['Records'][0]['s3']['object']['key'],
@@ -22,8 +29,8 @@ def __get_details(event):
     return (bucket, key)
 
 
-def __generate_url(bucket, key):
-    return s3.generate_presigned_url(
+def generate_url(s3client, bucket, key):  # pragma: no cover
+    return s3client.generate_presigned_url(
         ClientMethod='get_object',
         ExpiresIn='60',
         Params={
@@ -33,9 +40,23 @@ def __generate_url(bucket, key):
     )
 
 
+def css_for_image_at_url(url):
+    print('detecting from url:{}.'.format(url))
+    css = er.detect_from_url(url)
+    return r.apply_reduction(css)
+
+
+def save_css(pool, css, eid, rid):
+    conn = pool.getconn()
+    try:
+        ms.create_satisfaction(conn, css, eid, rid)
+    finally:
+        pool.putconn(conn)
+
+
 # second parameter is the context, but currently unused
 def customer_satisfaction(event, _):
-    bucket, key = __get_details(event)
+    bucket, key = get_details(event)
     eid = None
     rid = None
     try:
@@ -50,7 +71,7 @@ def customer_satisfaction(event, _):
 
     url = None
     try:
-        url = __generate_url(bucket, key)
+        url = generate_url(s3, bucket, key)
     except Exception as e:
         print(e)
         print('Error getting object {} from bucket {}.\
@@ -58,14 +79,5 @@ def customer_satisfaction(event, _):
          same region as this function.'.format(key, bucket))
         raise e
 
-    print('detecting from url:{}.'.format(url))
-    css = SatisfactionScore().detect_from_url(url)
-    print(css)
-    reduced = apply_reduction(css)
-    print(reduced)
-
-    conn = pool.getconn()
-    try:
-        mr.put_satisfaction(conn, (eid, rid), reduced)
-    finally:
-        pool.putconn(conn)
+    reduced = css_for_image_at_url(url)
+    save_css(get_pool_lazy(), reduced, eid, rid)
