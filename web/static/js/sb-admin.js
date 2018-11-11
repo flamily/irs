@@ -145,11 +145,39 @@
     }
   }
   // End Exit Interface
-  
+
+
+  $(document).find('.btn-select-pad').click(function() {
+    var size = document.getElementsByName('partySize')[0].value;
+    if(parseInt(size, 10) > 10){
+      $(document).find('#confirmPartySize').prop('disabled', true);
+      $('.seatingDisclaimer').addClass('text-danger');
+      $('.seatingDisclaimer').text(
+        'Max number of people our Restaurant can seat is 10'
+        );
+    }
+    else if(parseInt(size, 10) == 0){
+      $(document).find('#confirmPartySize').prop('disabled', true);
+      $('.seatingDisclaimer').addClass('text-danger');
+      $('.seatingDisclaimer').text(
+        'Please select a number greater than 0. Our restaurant can seat a maximum of 10 people.'
+        );
+    }
+    else{
+      $(document).find('#confirmPartySize').prop('disabled', false);
+      $('.seatingDisclaimer').removeClass('text-danger');
+      $('.seatingDisclaimer').text(
+        'Max number of people our Restaurant can seat is 10'
+        );
+    }
+  });
 
   $(document).find('#confirmPartySize').click(function() {
-    var size = document.getElementsByName('partySize')[0].value
-    $('.modal-body').text('You are confirming a table for ' + size + ' people. Please select confirm to continue or cancel to enter again.')
+    var size = document.getElementsByName('partySize')[0].value;
+    $('.modal-body').text(
+      'You are confirming a table for ' + size +
+      ' people. Please select confirm to continue or cancel to enter again.'
+      );
   });
 
   //Robot Photo
@@ -168,17 +196,17 @@
 
   /********************************
     * START
-    * Robot photo 
+    * Robot photo
   ********************************/
 
-  
+
   if(window.location.pathname.includes('robot')){
     // Standard commands
     // Accept trigger words
     var triggerWords = ['confirm', 'confirmed', 'yes'];
     // Cancel trigger words
     triggerWords = $.merge(triggerWords, ['no', 'cancel']);
-    // Back to start trigger words 
+    // Back to start trigger words
     triggerWords = $.merge(triggerWords, ['restart', 'back', 'over', 'exit', 'quit']);
     // Numbers for table selection
     triggerWords = $.merge(triggerWords, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']);
@@ -212,7 +240,7 @@
     var modalCallback = function(matchedIndex){
       if(matchedIndex != -1){
         var recognisedWord = triggerWords[matchedIndex];
-        
+
         handleGenericCommands(recognisedWord);
 
         switch(recognisedWord){
@@ -237,12 +265,12 @@
     var tableCallback = function(matchedIndex){
       if(matchedIndex != -1){
         var recognisedWord = triggerWords[matchedIndex];
-        
+
         handleGenericCommands(recognisedWord);
 
         if(!parseInt(recognisedWord))
           recognisedWord = wordToNumber(recognisedWord);
-      
+
         if(!$("[value='Table " + recognisedWord + "']").prop('disabled'))
           $("[value='Table " + recognisedWord + "']").triggerHandler('click');
         else
@@ -275,13 +303,13 @@
            window.location.replace("/robot");
           break;
         case 'back':
-          window.history.back();        
+          window.history.back();
         default:
         break;
       };
     }
     /********************************
-     * END 
+     * END
      * Robot photo callbacks and handlers
     ********************************/
 
@@ -315,7 +343,7 @@
   }
 
   /********************************
-    * END 
-    * Robot photo 
+    * END
+    * Robot photo
   ********************************/
 })(jQuery); // End of use strict
