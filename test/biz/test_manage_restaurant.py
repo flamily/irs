@@ -368,6 +368,8 @@ def test_available_tables(database_snapshot):
         conn.commit()
         mg.create_reservation(conn, t[0], staff, 4)
         conn.commit()
+        mg.paid(conn, t[0], staff)
+        conn.commit()
 
         rt_list = mg.get_available_tables(conn, 1)
         assert len(rt_list) == 2
