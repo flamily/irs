@@ -24,8 +24,12 @@
 
           <div id="table-layout" class="container table-layout">
             {% for table in tables %}
-            <button type="button" data-tableId="{{ table.rt_id }}"
-                    class="{{ table.state }}-table {% if table.capacity < 3 %}table-sm{% else %}table-lg{% endif %}">Table {{ table.rt_id }}</button>
+            <button 
+              type="button" 
+              data-status="{{ table.state }}" 
+              data-tableId="{{ table.rt_id }}"
+              class="{{ table.state }}-table table-{{ table.shape }}-{% if table.capacity < 3 %}sm{% else %}lg{% endif %}">Table {{ table.rt_id }}<p>{{ table.state }}</p>
+            </button>
             {% endfor %}
           </div>
 

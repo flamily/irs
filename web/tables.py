@@ -12,6 +12,7 @@ from web.decorators import (
     login_required, templated, user
 )
 import biz.manage_restaurant as mr
+from biz.css.file_storage import bucket_upload
 
 TABLES_BLUEPRINT = Blueprint('tables', __name__, template_folder='templates')
 
@@ -21,11 +22,6 @@ TABLES_BLUEPRINT = Blueprint('tables', __name__, template_folder='templates')
 #  - In the template 'tables.html' we need to:
 #       1. Make it pretty.
 #       2. Get it to capture an image with Jason's js library.
-
-
-def __mock_bucket_send(img, event_id, reservation_id):
-    """Send image to bucket (mock)."""
-    print("Sent ({}, {}): {}".format(event_id, reservation_id, img))
 
 
 @TABLES_BLUEPRINT.route('/tables', methods=['GET'])
@@ -47,7 +43,7 @@ def pay():
 
     # Get the exit image and send to bucket
     customer_img = request.form['customerImg']
-    __mock_bucket_send(customer_img, event_id, reservation_id)
+    bucket_upload(customer_img, event_id, reservation_id)
 
     return jsonify(status='unavailable')
 
