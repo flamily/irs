@@ -146,17 +146,18 @@
                   $.getJSON('/api/reporting/' + elem.name + '?dateString=' + $("#date-picker").val(), function(data){
                     myLineChart.data.datasets[0].data = [];
                     myLineChart.data.labels = [];
-                    document.getElementById('dataTable').getElementsByTagName("tbody")[0].innerHTML = ""
+                    var table = $('#dataTable').DataTable();
+                    table.clear();
                     for(i = 0; i < data.length; i++){
-                      var row = "<tr>"
-                      row += "<td>" + data[i].date + "</td>";
-                      row += "<td>" + data[i].description + "</td>";
-                      row += "<td>" + data[i].table_id + "</td>";
-                      row += "<td>" + data[i].staff_id + "</td>";
-                      row += "<td>" + data[i].reservation_id + "</td>";
-                      row += "<td>" + data[i].score + "</td>";
-                      row += "</tr>"
-                      document.getElementById('dataTable').getElementsByTagName("tbody")[0].innerHTML += row;
+                      table.row.add([
+                        data[i].date,
+                        data[i].description,
+                        data[i].table_id,
+                        data[i].staff_id,
+                        data[i].reservation_id,
+                        data[i].score,
+                      ]).draw( false );
+
                       myLineChart.data.datasets[0].data.push(data[i].score);
                       myLineChart.data.labels.push(data[i].date);
                     }
