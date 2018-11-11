@@ -373,8 +373,8 @@ def test_available_tables(database_snapshot):
 
         rt_list = mg.get_available_tables(conn, 1)
         assert len(rt_list) == 2
-        assert rt_list[1].state is Event.ready
-        assert rt_list[2].state is Event.ready
+        assert rt_list[1].latest_event is Event.ready
+        assert rt_list[2].latest_event is Event.ready
 
 def test_table_creation(database_snapshot):
     """Check that a resturant table can be created."""
