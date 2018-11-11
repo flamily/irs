@@ -289,7 +289,12 @@ def get_available_tables(db_conn, capacity):
             rt_list.append(
                 RestaurantTable(
                     rt_id=table[0],
-                    capacity=table[1]
+                    capacity=table[1],
+                    coordinate=Coordinate(x=table[2], y=table[3]),
+                    width=table[4],
+                    height=table[5],
+                    shape=Shape(table[6]),
+                    latest_event=Event(table[7])
                 )
             )
     return rt_list
