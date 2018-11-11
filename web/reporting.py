@@ -1,6 +1,15 @@
 from web.db import db
 from biz import manage_reporting as mr
+from datetime import datetime, timedelta, timezone
+import calendar
 
+def get_timestamp(date):
+    epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
+    timestamp = (date - epoch) / timedelta(seconds=1)
+    return {
+        "display": date,
+        "timestamp": timestamp
+    }
 
 def format_dict(satisf_event):
     lst = []

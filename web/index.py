@@ -31,4 +31,14 @@ def get_report(type):
     }.get(type, None)
 
     res = my_function(date_string)
-    return jsonify(res)
+    labels = []
+    data = []
+    if res:
+        labels=[x["date"] for x in res]
+        data=[x["score"] for x in res]
+        assert data[10] == res[10]["score"] and labels[10] == res[10]["date"]
+
+        print(labels)
+        print(data)
+
+    return jsonify(data=res, labels=labels, scores=data)

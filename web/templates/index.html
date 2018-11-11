@@ -14,7 +14,8 @@
         <div class="container-fluid">
 
         {% include 'breadcrumb.html' %}
-
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
           <!-- Icon Cards
           <div class="row">
             <div class="col-xl-3 col-sm-6 mb-3">
@@ -89,6 +90,19 @@
               margin-left: 8px;
               width: 25%;
             }
+
+            .graph-mode-buttons > * {
+              display: inline-block;
+              margin-left: 8px;
+              width: 32%;
+              margin-bottom: 20px;
+            }
+
+            .graph_footer > * {
+              display: inline-block;
+              margin-left: 8px;
+            }
+
             #datepicker-container > * {
               width: 20%;
               margin-bottom: 1rem;
@@ -97,10 +111,65 @@
             }
           </style>
 
+          <script type="text/javascript">
+            var options = "";
+
+            function populateYearOptions(){
+              if (options.length > 1){
+                return options
+              }
+              for (i = 0; i < 20; i++){
+                var fillstr = i.toString();
+                if (fillstr.length < 2){
+                  fillstr = "0" + fillstr;
+                }
+                options += "<option>20" + fillstr + "</option>";
+              }
+            }
+
+            function changeDatePicker(inputType){
+              var decoration = "id='date-picker' class='form-control form-control-sm' onchange='alertOnDateChange(this)'";
+              populateYearOptions();
+              if (inputType == "year"){
+                document.getElementById("datepicker-container").innerHTML = "<select name='year'" + decoration + ">" + options + "</select>";
+              } else {
+                document.getElementById("datepicker-container").innerHTML = "<input name='" + inputType + "' type=" + inputType + " " + decoration + ">";
+              }
+            }
+
+            function alertOnDateChange(elem){
+              var api_string = '/api/reporting/' + elem.name + '?dateString=' + $("#date-picker").val();
+
+              $.getJSON(api_string, function(data){
+                myLineChart.data.datasets[0].data = data.scores;
+                myLineChart.data.labels = data.labels;
+                myLineChart.update();
+              });
+
+              myDataTable.ajax.url(api_string).load();
+            }
+
+            window.onload = function(e){
+              alertOnDateChange(document.getElementById('date-picker'));
+            }
+          </script>
+
+          <div class="graph-mode-buttons">
+            <div>
+              <input value="Customer Satisfaction" class="btn btn-primary btn-block" onclick="changeDatePicker('date')">
+            </div>
+            <div>
+              <input value="Staff Performance" class="btn btn-primary btn-block" onclick="changeDatePicker('week')">
+            </div>
+            <div>
+              <input value="Meal Trends" class="btn btn-primary btn-block" onclick="changeDatePicker('month')">
+            </div>
+          </div>
+
           <div class="card mb-3">
             <div class="card-header">
               <i class="fas fa-chart-area"></i>
-              Customer Satisfaction Graph
+              <span id="graph_title">Customer Satisfaction Graph</span>
               <div class="btn-group" style="float: right; width: 40%">
                 <div>
                   <input value="Daily" class="btn btn-primary btn-block" onclick="changeDatePicker('date')">
@@ -115,72 +184,18 @@
                   <input value="Yearly" class="btn btn-primary btn-block" onclick="changeDatePicker('year')">
                 </div>
               </div>
+            </div>
 
-              <script type="text/javascript">
-                var options = "";
-
-                function populateYearOptions(){
-                  if (options.length > 1){
-                    return options
-                  }
-                  for (i = 0; i < 20; i++){
-                    var fillstr = i.toString();
-                    if (fillstr.length < 2){
-                      fillstr = "0" + fillstr;
-                    }
-                    options += "<option>20" + fillstr + "</option>";
-                  }
-                }
-
-                function changeDatePicker(inputType){
-                  var decoration = "id='date-picker' class='form-control form-control-sm' onchange='alertOnDateChange(this)'";
-                  populateYearOptions();
-                  if (inputType == "year"){
-                    document.getElementById("datepicker-container").innerHTML = "<select name='year'" + decoration + ">" + options + "</select>";
-                  } else {
-                    document.getElementById("datepicker-container").innerHTML = "<input name='" + inputType + "' type=" + inputType + " " + decoration + ">";
-                  }
-                }
-
-                function alertOnDateChange(elem){
-                  $.getJSON('/api/reporting/' + elem.name + '?dateString=' + $("#date-picker").val(), function(data){
-                    myLineChart.data.datasets[0].data = [];
-                    myLineChart.data.labels = [];
-                    var table = $('#dataTable').DataTable();
-                    table.clear();
-                    for(i = 0; i < data.length; i++){
-                      table.row.add([
-                        data[i].date,
-                        data[i].description,
-                        data[i].table_id,
-                        data[i].staff_id,
-                        data[i].reservation_id,
-                        data[i].score,
-                      ]).draw( false );
-
-                      myLineChart.data.datasets[0].data.push(data[i].score);
-                      myLineChart.data.labels.push(data[i].date);
-                    }
-                    myLineChart.update();
-                  })
-                }
-
-                window.onload = function(e){
-                  alertOnDateChange(document.getElementById('date-picker'));
-                }
-              </script>
-
-          </div>
             <div class="card-body">
               <div id="datepicker-container">
                 <input name="date" type="date" value="2018-11-08" id="date-picker" class="form-control form-control-sm" onchange="alertOnDateChange(this)">
               </div>
-              <!--<select style="margin-bottom: 1rem; margin-right: 5.5rem; float: right">
-                <option selected="selected">&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;&nbsp;&nbsp;&nbsp;</option>
-              </select>-->
               <canvas id="myAreaChart" width="100%" height="30"></canvas>
             </div>
-            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+            <div class="card-footer small text-muted graph_footer">
+              <span><strong>Average Satisfaction:</strong></span>
+              <span style="float: right">Updated yesterday at 11:59 PM</span>
+            </div>
           </div>
 
           <!-- DataTables Example -->
