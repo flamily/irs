@@ -2,7 +2,7 @@ from datetime import date, timedelta
 import calendar
 
 def get_satisfaction_between_dates(db_conn, start, end):
-    sql = 'SELECT * FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE event_dt BETWEEN %s AND %s'
+    sql = 'SELECT * FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE event_dt BETWEEN %s AND %s ORDER BY e.event_dt ASC'
     with db_conn.cursor() as curs:
         params = (start, end)
         curs.execute(sql, params)
