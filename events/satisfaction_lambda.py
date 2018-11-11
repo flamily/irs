@@ -9,14 +9,14 @@ import config
 
 print('Loading function')
 s3 = boto3.client('s3')
-conn = config.connection_string()
 __pool = None
 
 
 def get_pool_lazy():  # pragma: no cover
+    # pylint: disable=global-statement
     global __pool
     if __pool is None:
-        __pool = pool.ThreadedConnectionPool(1, 1, conn)
+        __pool = pool.ThreadedConnectionPool(1, 1, config.connection_string())
     return __pool
 
 
@@ -46,12 +46,12 @@ def css_for_image_at_url(url):
     return r.apply_reduction(css)
 
 
-def save_css(pool, css, eid, rid):
-    conn = pool.getconn()
+def save_css(p, css, eid, rid):
+    conn = p.getconn()
     try:
         ms.create_satisfaction(conn, css, eid, rid)
     finally:
-        pool.putconn(conn)
+        p.putconn(conn)
 
 
 # second parameter is the context, but currently unused

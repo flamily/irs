@@ -4,6 +4,8 @@ import biz.css.reduction as r
 import biz.css.emotion_recognition as er
 import pytest
 
+# pylint: disable=no-member
+
 
 def test_get_details():
     event = {'Records': [
@@ -37,10 +39,11 @@ def test_get_details_throw():
         }
     ]}
     with pytest.raises(KeyError):
-        bucket, key = sl.get_details(event)
+        sl.get_details(event)
 
 
 def test_save_css_exception(mocker):
+    # pylint: disable=too-few-public-methods
     class MockPool():
         def __init__(self):
             self.getconn = mocker.stub(name='getconn_stub')
@@ -52,15 +55,16 @@ def test_save_css_exception(mocker):
     with pytest.raises(Exception) as execinfo:
         sl.save_css(dodgy_pool, 50, 11, 22)
     ms.create_satisfaction.assert_called_once_with('super-legit-conn',
-                                                    50,
-                                                    11,
-                                                    22)
-    assert 'oh no' == str(execinfo.value)
+                                                   50,
+                                                   11,
+                                                   22)
+    assert str(execinfo.value) == 'oh no'
     dodgy_pool.getconn.assert_called_once()
     dodgy_pool.putconn.assert_called_once()
 
 
 def test_save_css(mocker):
+    # pylint: disable=too-few-public-methods
     class MockPool():
         def __init__(self):
             self.getconn = mocker.stub(name='getconn_stub')
@@ -144,7 +148,7 @@ def test_event_css_generate_failed(mocker):
     ]}
     with pytest.raises(Exception) as execinfo:
         sl.customer_satisfaction(event, None)
-    assert 'oh no' == str(execinfo.value)
+    assert str(execinfo.value) == 'oh no'
     sl.save_css.assert_not_called()
 
 
