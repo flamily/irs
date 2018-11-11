@@ -179,7 +179,7 @@
     // Cancel trigger words
     triggerWords = $.merge(triggerWords, ['no', 'cancel']);
     // Back to start trigger words 
-    triggerWords = $.merge(triggerWords, ['restart', 'back', 'over']);
+    triggerWords = $.merge(triggerWords, ['restart', 'back', 'over', 'exit', 'quit']);
     // Numbers for table selection
     triggerWords = $.merge(triggerWords, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']);
     triggerWords = $.merge(triggerWords, ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']);
@@ -270,6 +270,8 @@
         case 'restart':
         // Case for 'start over'
         case 'over':
+        case 'exit':
+        case 'quit':
            window.location.replace("/robot");
           break;
         case 'back':
