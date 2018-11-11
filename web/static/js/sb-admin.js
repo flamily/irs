@@ -149,14 +149,14 @@
 
   $(document).find('.btn-select-pad').click(function() {
     var size = document.getElementsByName('partySize')[0].value;
-    if(parseInt(size, 10) > 10){
+    if(size > 10){
       $(document).find('#confirmPartySize').prop('disabled', true);
       $('.seatingDisclaimer').addClass('text-danger');
       $('.seatingDisclaimer').text(
         'Max number of people our Restaurant can seat is 10'
         );
     }
-    else if(parseInt(size, 10) == 0){
+    else if(size == 0){
       $(document).find('#confirmPartySize').prop('disabled', true);
       $('.seatingDisclaimer').addClass('text-danger');
       $('.seatingDisclaimer').text(
