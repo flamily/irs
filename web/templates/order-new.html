@@ -4,7 +4,7 @@
   <body class="bg-dark">
     <div class="container">
       <div class="row justify-content-center">
-        <h1>Welcome to Avalon Smart Restaurant</h1>
+        <h1>Place An Order</h1>
       </div>
     </div>
     <div class="container">
@@ -15,7 +15,7 @@
               {% for table in tables %}
               <div class="col-md-3">
                   <div class="well">
-                    <input type=radio value="{{ table.rt_id }}" name=table_id required>
+                    <input type=radio data-menu_table_id="{{ table.rt_id }}" value="{{ table.rt_id }}" name=table_id required>
                     <h4 class="text-light">Table {{ table.rt_id }}</h4>
                 </div>
               </div>
@@ -35,7 +35,7 @@
                       <td>{{ menu_item.name }}</td>
                       <td>{{ menu_item.description }}</td>
                       <td>{{ menu_item.price }}</td>
-                      <td><input type="number" name="{{ menu_item.mi_id }}" min="1" max="99"></td>
+                      <td><input type="number" data-menu_item_id="{{ menu_item.mi_id }}" name="{{ menu_item.mi_id }}" min="1" max="99"></td>
                     </tr>
                     {% endfor %}
                   </table>

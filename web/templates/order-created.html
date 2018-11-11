@@ -4,16 +4,13 @@
   <body class="bg-dark">
     <div class="container">
       <div class="row justify-content-center">
-        <h1>Welcome to Avalon Smart Restaurant</h1>
-      </div>
-      <div class="row justify-content-center">
         <p class="text-primary">Your order has been placed</p>
       </div>
       <div class="row justify-content-center">
-        <p class="text-secondary">Order ID: {{ oid }}</p>
+        <p class="text-secondary" data-order_id="{{ oid }}">Order ID: {{ oid }}</p>
       </div>
       <div class="row justify-content-center">
-        <p class="text-secondary">Reservation ID: {{ rid }}</p>
+        <p class="text-secondary" data-reservation_id="{{ rid }}">Reservation ID: {{ rid }}</p>
       </div>
     </div>
     <div class="container-fluid">
