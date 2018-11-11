@@ -109,6 +109,32 @@ def avg_css_all_staff(db_conn):
             avg_scores.append(staff_score)
     return avg_scores
 
+def staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
+    """Get specific staff member satisfaction scores
+
+    :param db_conn: A psycopg2 connection to the database.
+    :return: List of tuples containing all staff data
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            'SELECT * FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE staff_id= %s AND event_dt BETWEEN %s AND %s ORDER BY e.event_dt ASC',
+            (staff_id, s_dt, e_dt)
+        )
+        return curs.fetchall()
+
+def avg_staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
+    """Get specific staff member average score
+
+    :param db_conn: A psycopg2 connection to the database.
+    :return: returns average
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            'SELECT AVG(s.score) FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE staff_id= %s AND event_dt BETWEEN %s AND %s',
+            (staff_id, s_dt, e_dt)
+        )
+        return curs.fetchone()[0]
+
 
 def avg_css_per_menu_item(db_conn, menu_item):
     """Average CSS for specified menu_item.

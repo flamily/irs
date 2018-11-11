@@ -91,6 +91,10 @@
               width: 25%;
             }
 
+            .inline-elemnts > * {
+              display: inline-block;
+            }
+
             .graph-mode-buttons > * {
               display: inline-block;
               margin-left: 8px;
@@ -104,15 +108,20 @@
             }
 
             #datepicker-container > * {
-              width: 20%;
               margin-bottom: 1rem;
-              margin-right: 0rem;
+              margin-right: 2rem;
               float: right;
+            }
+
+            #date-picker {
+              float: right;
+              width:70%;
             }
           </style>
 
           <script type="text/javascript">
             var options = "";
+            var mode = "Customer";
 
             function populateYearOptions(){
               if (options.length > 1){
@@ -128,19 +137,27 @@
             }
 
             function changeDatePicker(inputType){
-              var decoration = "id='date-picker' class='form-control form-control-sm' onchange='alertOnDateChange(this)'";
+              var decoration = "id='date-picker' class='form-control form-control-sm' onchange='alertOnDateChange()'";
               populateYearOptions();
               if (inputType == "year"){
-                document.getElementById("datepicker-container").innerHTML = "<select name='year'" + decoration + ">" + options + "</select>";
+                document.getElementById("date-picker-module").innerHTML = "<select name='year'" + decoration + ">" + options + "</select>";
               } else {
-                document.getElementById("datepicker-container").innerHTML = "<input name='" + inputType + "' type=" + inputType + " " + decoration + ">";
+                document.getElementById("date-picker-module").innerHTML = "<input name='" + inputType + "' type=" + inputType + " " + decoration + ">";
               }
             }
 
-            function alertOnDateChange(elem){
-              var api_string = '/api/reporting/' + elem.name + '?dateString=' + $("#date-picker").val();
+            function alertOnDateChange(){
+              var date_type = document.getElementById('date-picker').getAttribute("name");
+              var date_string = $("#date-picker").val();
+              var item_selector_value = $("select#item-selector>option:selected").attr("value");
+              if (mode == "Customer"){
+                  var api_string = '/api/reporting/' + mode + '/' + date_type + '?dateString=' + date_string;
+              } else {
+                var api_string = '/api/reporting/' + mode + '/' + item_selector_value + '/' + date_type + '?dateString=' + date_string;
+              }
 
               $.getJSON(api_string, function(data){
+                document.getElementById("average_score").innerHTML = "<strong>Average Score: " + data.average + "</strong>"
                 myLineChart.data.datasets[0].data = data.scores;
                 myLineChart.data.labels = data.labels;
                 myLineChart.update();
@@ -149,20 +166,34 @@
               myDataTable.ajax.url(api_string).load();
             }
 
+            function changeGraphMode(elem){
+              mode = elem.name;
+              document.getElementById("graph_title").innerHTML = elem.name + " Satisfaction Graph";
+
+              if (elem.name == "Customer"){
+                document.getElementById('item-selector-area').style.display = "none";
+              } else {
+                document.getElementById('item-selector-area').style.display = "block";
+                document.getElementById('item-select-label').innerHTML = elem.name + " ID";
+              }
+            }
+
             window.onload = function(e){
+              document.getElementById('item-selector-area').style.display = "none";
+              mode = "Customer";
               alertOnDateChange(document.getElementById('date-picker'));
             }
           </script>
 
           <div class="graph-mode-buttons">
             <div>
-              <input value="Customer Satisfaction" class="btn btn-primary btn-block" onclick="changeDatePicker('date')">
+              <input name="Customer" value="Customer Satisfaction" class="btn btn-primary btn-block" onclick="changeGraphMode(this)">
             </div>
             <div>
-              <input value="Staff Performance" class="btn btn-primary btn-block" onclick="changeDatePicker('week')">
+              <input name="Staff" value="Staff Performance" class="btn btn-primary btn-block" onclick="changeGraphMode(this)">
             </div>
             <div>
-              <input value="Meal Trends" class="btn btn-primary btn-block" onclick="changeDatePicker('month')">
+              <input name="Meal" value="Meal Trends" class="btn btn-primary btn-block" onclick="changeGraphMode(this)">
             </div>
           </div>
 
@@ -187,13 +218,37 @@
             </div>
 
             <div class="card-body">
-              <div id="datepicker-container">
-                <input name="date" type="date" value="2018-11-08" id="date-picker" class="form-control form-control-sm" onchange="alertOnDateChange(this)">
+              <div class="inline-elements">
+                <div id="item-selector">
+
+                </div>
+                <div id="datepicker-container">
+                  <span id="item-selector-area" style="float: left; width: 30%; display: none">
+                    <label id="item-select-label" for="item-selector" style="float: left; padding-right: 3rem">Staff ID: </label>
+                    <span id="item-selector-module">
+                    <select id="item-selector" style="float: left; width:70%" class="form-control form-control-sm" onchange='alertOnDateChange()'>
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                    </select>
+                    </span>
+                  </span>
+                  <span id="date-picker-area" style="float: right; width: 30%">
+                    <label id="date-picker-label" for="date-picker">Date: </label>
+                    <span id="date-picker-module">
+                      <input name="date" type="date" value="2018-11-08" id="date-picker" class="form-control form-control-sm" onchange="alertOnDateChange()">
+                    </span>
+                  </span>
+                </div>
               </div>
               <canvas id="myAreaChart" width="100%" height="30"></canvas>
             </div>
             <div class="card-footer small text-muted graph_footer">
-              <span><strong>Average Satisfaction:</strong></span>
+              <span id="average_score"><strong>Average Satisfaction:</strong></span>
               <span style="float: right">Updated yesterday at 11:59 PM</span>
             </div>
           </div>

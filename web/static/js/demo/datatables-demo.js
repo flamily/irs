@@ -14,7 +14,7 @@ var dateFormatOptions = {
 $(document).ready(function() {
   myDataTable = $('#dataTable').DataTable({
     ajax: {
-      url: '/api/reporting/date?dateString=2018-11-08',
+      url: '/api/reporting/Customer/date?dateString=2018-11-08',
       method: "GET",
       xhrFields: {
         withCredentials: true
