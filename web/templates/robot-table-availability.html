@@ -14,7 +14,7 @@
             {% for table in tables %}
             <div class="col-md-3">
               <div class="well">
-                <form action="/robot/table/reserve" method="post">
+                <form action="/robot/table/reserve" class="robotTableReserve" method="post">
                   <input type=submit
                   value="Table {{ table.rt_id }}"
                   class="btn btn-default"
@@ -23,7 +23,7 @@
                   {% endif %}>
                   <input type=hidden value="{{ table.rt_id }}" name=table_id>
                   <input type=hidden value="{{ people }}" name=group_size>
-                  <input type=hidden value="{% include 'photo.txt' %}" name=photo>
+                  <input class="customerImg" type=hidden value="" name=photo>
                 </form>
                 <h4 class="text-light">Table {{ table.rt_id }}</h4>
               </div>
@@ -42,7 +42,7 @@
       <div class="row justify-content-center">
         <div class="btn-toolbar">
           <form action="/robot/proceed" method="get">
-            <input type=submit value="Confirm Table" class="btn btn-default">
+            <input type=submit value="Confirm Table" id="confirm-table-option" class="btn btn-default">
           </form>
           <form action="/robot" method="get">
             <input type=submit value="Start Over" class="btn btn-default">

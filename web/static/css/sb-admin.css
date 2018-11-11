@@ -442,6 +442,11 @@ h4 {
   color:#FFFFFF;
 }
 
+.table-layout button p{
+   margin-bottom: 0; 
+   text-transform: capitalize;
+}
+
 .table-rectangle-lg {
   width: 310px;
   height: 90px;
