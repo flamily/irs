@@ -206,7 +206,7 @@
       }
       // Re run voice
       else
-      irs.listen(triggerWords, 10000, partyCallback);
+        irs.listen(triggerWords, 10000, partyCallback);
     };
 
     var modalCallback = function(matchedIndex){
@@ -244,7 +244,7 @@
           recognisedWord = wordToNumber(recognisedWord);
       
         if(!$("[value='Table " + recognisedWord + "']").prop('disabled'))
-          $("[value='Table " + recognisedWord + "']").parent().submit();
+          $("[value='Table " + recognisedWord + "']").triggerHandler('click');
         else
           alert("Table is taken");
       }
