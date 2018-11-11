@@ -186,7 +186,7 @@
 
     /********************************
      * START
-     * Robot photo calbacks and handlers
+     * Robot photo callbacks and handlers
     ********************************/
     var partyCallback = function(matchedIndex){
       if(matchedIndex != -1){
@@ -280,7 +280,7 @@
     }
     /********************************
      * END 
-     * Robot photo calbacks and handlers
+     * Robot photo callbacks and handlers
     ********************************/
 
 
