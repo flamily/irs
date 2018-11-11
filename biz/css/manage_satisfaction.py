@@ -61,8 +61,6 @@ def avg_css_per_period(db_conn, datetime_start, datetime_end):
             "WHERE r.reservation_dt BETWEEN %s AND %s",
             (datetime_start, datetime_end)
         )
-        if curs.rowcount != 1:
-            return None
         avg_score = curs.fetchone()[0]
     return avg_score
 
@@ -82,8 +80,6 @@ def avg_css_per_staff(db_conn, staff_id):
             "WHERE e.staff_id = %s",
             ([staff_id])
         )
-        if curs.rowcount != 1:
-            return None
         avg_score = curs.fetchone()[0]
     return avg_score
 
@@ -103,37 +99,11 @@ def avg_css_all_staff(db_conn):
         )
         avg_scores = []
         if curs.rowcount < 1:
-            return avg_scores.append((-1, -1))
+            return None
         for item in curs.fetchall():
             staff_score = (item[0], item[1])
             avg_scores.append(staff_score)
     return avg_scores
-
-def staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
-    """Get specific staff member satisfaction scores
-
-    :param db_conn: A psycopg2 connection to the database.
-    :return: List of tuples containing all staff data
-    """
-    with db_conn.cursor() as curs:
-        curs.execute(
-            'SELECT * FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE staff_id= %s AND event_dt BETWEEN %s AND %s ORDER BY e.event_dt ASC',
-            (staff_id, s_dt, e_dt)
-        )
-        return curs.fetchall()
-
-def avg_staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
-    """Get specific staff member average score
-
-    :param db_conn: A psycopg2 connection to the database.
-    :return: returns average
-    """
-    with db_conn.cursor() as curs:
-        curs.execute(
-            'SELECT AVG(s.score) FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE staff_id= %s AND event_dt BETWEEN %s AND %s',
-            (staff_id, s_dt, e_dt)
-        )
-        return curs.fetchone()[0]
 
 
 def avg_css_per_menu_item(db_conn, menu_item):
@@ -153,7 +123,5 @@ def avg_css_per_menu_item(db_conn, menu_item):
             "WHERE s.score IS NOT NULL AND menu_item_id = %s",
             ([menu_item])
         )
-        if curs.rowcount != 1:
-            return None
         avg_score = curs.fetchone()[0]
     return avg_score
