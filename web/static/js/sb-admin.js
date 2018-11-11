@@ -242,14 +242,14 @@
 
         if(!parseInt(recognisedWord))
           recognisedWord = wordToNumber(recognisedWord);
-
-        $("[value='Table " + recognisedWord + "']").parent().submit();
-
+      
+        if(!$("[value='Table " + recognisedWord + "']").prop('disabled'))
+          $("[value='Table " + recognisedWord + "']").parent().submit();
+        else
+          alert("Table is taken");
       }
       // Rerun voice
-      else{
-        irs.listen(triggerWords, 10000, tableCallback);
-      }
+      irs.listen(triggerWords, 10000, tableCallback);
     };
 
     var proceedCallback = function(matchedIndex){
