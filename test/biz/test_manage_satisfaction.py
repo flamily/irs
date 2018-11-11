@@ -153,6 +153,21 @@ def test_avg_css_per_period(database_snapshot):
             conn, dt1.date(), dt1.date()) == 60
         assert ms.avg_css_per_period(
             conn, dt1.date(), dt2.date()) == 60
+
+
+def test_missing_avg_css_per_period(database_snapshot):
+    """Retrieve average css on and between 2018-01-01 and 2018-12-31"""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        conn.commit()
+
+        dt1 = datetime.datetime(2018, 1, 1)
+        dt2 = datetime.datetime(2018, 12, 31)
+
+        ce1 = mr.create_reservation(conn, t[0], staff, 5)
+        ms.create_satisfaction(conn, 40, ce1[0], ce1[1])
+        __update_reservation_dt(conn, ce1[1], ce1[0], dt1)
+
         assert ms.avg_css_per_period(
             conn, dt2.date(), dt2.date()) is None
 
@@ -164,8 +179,6 @@ def test_avg_css_per_staff(database_snapshot):
         t2, staff2 = __spoof_tables(conn, 1, 'lsarge', 'Lt', 'Sarge')
 
         conn.commit()
-
-        assert ms.avg_css_per_staff(conn, 12345) is None
 
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
         ms.create_satisfaction(conn, 50, ce1[0], ce1[1])
@@ -184,23 +197,55 @@ def test_avg_css_per_staff(database_snapshot):
         assert ms.avg_css_per_staff(conn, staff2) == 80
 
 
-def test_avg_css_all_staff(database_snapshot):
+def test_missing_avg_css_per_staff(database_snapshot):
     """Retrieve average css for staff"""
     with database_snapshot.getconn() as conn:
         t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+
         conn.commit()
 
-        assert ms.avg_css_all_staff(conn) is None
+        ce1 = mr.create_reservation(conn, t[0], staff, 5)
+        ms.create_satisfaction(conn, 50, ce1[0], ce1[1])
+
+        assert ms.avg_css_per_staff(conn, 12345) is None
+
+
+def test_avg_css_all_staff(database_snapshot):
+    """Retrieve average css for all staff"""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        t2, staff2 = __spoof_tables(conn, 1, 'lsarge', 'Lt', 'Sarge')
+
+        conn.commit()
 
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
-        ms.create_satisfaction(conn, 80, ce1[0], ce1[1])
+        ms.create_satisfaction(conn, 10, ce1[0], ce1[1])
         ce2 = mr.order(conn, [], t[0], staff)
         ms.create_satisfaction(conn, 20, ce2[0], ce2[1])
         ce3 = mr.paid(conn, t[0], staff)
-        ms.create_satisfaction(conn, 50, ce3[0], ce3[1])
+        ms.create_satisfaction(conn, 30, ce3[0], ce3[1])
+        ce4 = mr.create_reservation(conn, t2[0], staff2, 5)
+        ms.create_satisfaction(conn, 40, ce4[0], ce4[1])
+        ce5 = mr.order(conn, [], t[0], staff2)
+        ms.create_satisfaction(conn, 50, ce5[0], ce5[1])
+        ce6 = mr.paid(conn, t2[0], staff2)
+        ms.create_satisfaction(conn, 60, ce6[0], ce6[1])
 
         avg_css = ms.avg_css_all_staff(conn)
-        assert avg_css[0] == (1, 50)
+        assert avg_css[0] == (staff, 20)
+        assert avg_css[1] == (staff2, 50)
+
+
+def test_missing_avg_css_all_staff(database_snapshot):
+    """Retrieve average css for all staff"""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+
+        conn.commit()
+
+        mr.create_reservation(conn, t[0], staff, 5)
+
+        assert ms.avg_css_all_staff(conn) is None
 
 
 def test_avg_css_per_menu_item(database_snapshot):
@@ -214,11 +259,25 @@ def test_avg_css_per_menu_item(database_snapshot):
         mi = __spoof_menu_items(conn, 2)
         expected = [(mi[0], 2), (mi[1], 3)]
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
-        (_, _, _) = mr.order(conn, expected, t[0], staff)
         ms.create_satisfaction(conn, 70, ce1[0], ce1[1])
+        (_, _, _) = mr.order(conn, expected, t[0], staff)
         ce2 = mr.order(conn, [], t[0], staff)
         ms.create_satisfaction(conn, 100, ce2[0], ce2[1])
         ce3 = mr.paid(conn, t[0], staff)
         ms.create_satisfaction(conn, 100, ce3[0], ce3[1])
 
         assert ms.avg_css_per_menu_item(conn, 1) == 90
+
+
+def test_missing_avg_css_per_menu_item(database_snapshot):
+    """Retrieve average css for staff menu item"""
+    with database_snapshot.getconn() as conn:
+        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        conn.commit()
+
+        mi = __spoof_menu_items(conn, 2)
+        expected = [(mi[0], 2), (mi[1], 3)]
+        mr.create_reservation(conn, t[0], staff, 5)
+        (_, _, _) = mr.order(conn, expected, t[0], staff)
+
+        assert ms.avg_css_per_menu_item(conn, 1) is None

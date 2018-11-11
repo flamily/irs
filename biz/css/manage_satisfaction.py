@@ -103,7 +103,7 @@ def avg_css_all_staff(db_conn):
         )
         avg_scores = []
         if curs.rowcount < 1:
-            return avg_scores.append((-1, -1))
+            return None
         for item in curs.fetchall():
             staff_score = (item[0], item[1])
             avg_scores.append(staff_score)
