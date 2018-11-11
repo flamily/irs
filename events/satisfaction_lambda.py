@@ -3,6 +3,9 @@ Lambda which converts images into css
 Triggers on s3 bucket event
 Upload the image to Azure
 Put the CSS into the db
+
+Author: Robin Wohlers-Reichel
+Date: 11/11/2018
 """
 
 import urllib.parse

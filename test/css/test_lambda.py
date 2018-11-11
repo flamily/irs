@@ -1,3 +1,10 @@
+"""
+Test the CSS lambda
+
+Author: Robin Wohlers-Reichel
+Date: 11/11/2018
+"""
+
 import events.satisfaction_lambda as sl
 import biz.css.manage_satisfaction as ms
 import biz.css.reduction as r
@@ -8,6 +15,9 @@ import pytest
 
 
 def test_get_details():
+    """
+    Check the details are read from the filename
+    """
     event = {'Records': [
         {
             's3': {
@@ -26,6 +36,9 @@ def test_get_details():
 
 
 def test_get_details_throw():
+    """
+    Correctly handle malformed filenames
+    """
     event = {'Records': [
         {
             's3': {
@@ -43,6 +56,9 @@ def test_get_details_throw():
 
 
 def test_save_css_exception(mocker):
+    """
+    Do not eat database exceptions
+    """
     # pylint: disable=too-few-public-methods
     class MockPool():
         def __init__(self):
@@ -64,6 +80,9 @@ def test_save_css_exception(mocker):
 
 
 def test_save_css(mocker):
+    """
+    Saving css using correct biz methods
+    """
     # pylint: disable=too-few-public-methods
     class MockPool():
         def __init__(self):
@@ -82,6 +101,9 @@ def test_save_css(mocker):
 
 
 def test_event_css(mocker):
+    """
+    Test whole thing through
+    """
     mock_image_url = 'https://www.example.com/1-2.img'
 
     mocker.patch('events.satisfaction_lambda.generate_url')
@@ -113,6 +135,9 @@ def test_event_css(mocker):
 
 
 def test_event_css_bad_filename(mocker):
+    """
+    Bad filename means no call to Azure
+    """
     mocker.patch('events.satisfaction_lambda.generate_url')
     event = {'Records': [
         {
@@ -131,6 +156,9 @@ def test_event_css_bad_filename(mocker):
 
 
 def test_event_css_generate_failed(mocker):
+    """
+    Throws exception while generating URL
+    """
     mocker.patch('events.satisfaction_lambda.generate_url')
     sl.generate_url.side_effect = Exception('oh no')
     mocker.patch('events.satisfaction_lambda.save_css')
@@ -153,6 +181,9 @@ def test_event_css_generate_failed(mocker):
 
 
 def test_css_for_image_at_url(mocker):
+    """
+    Make sure we are getting features, then reducing
+    """
     mocker.patch('biz.css.emotion_recognition.detect_from_url')
 
     mocker.patch('biz.css.reduction.apply_reduction')
