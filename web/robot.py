@@ -16,10 +16,10 @@ ROBOT_BLUEPRINT = Blueprint('robot', __name__, template_folder='templates')
 @login_required()
 def index():
     tables = mr.get_available_tables(db, 0)
-    if len(tables) == 0: 
+    if not tables:
         return redirect(url_for('robot.table_full'))
     else:
-         return render_template('robot-welcome.html')
+        return render_template('robot-welcome.html')
 
 
 @ROBOT_BLUEPRINT.route('/robot/party', methods=['GET'])
@@ -34,7 +34,7 @@ def party_size():
 def table():
     people = int(request.args.get('people', '999'))
     tables = mr.get_available_tables(db, people)
-    if len(tables) == 0: 
+    if not tables: 
         return redirect(url_for('robot.table_full'))
     else:
         tables = mr.overview(db)
