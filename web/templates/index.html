@@ -150,7 +150,7 @@
                     table.clear();
                     for(i = 0; i < data.length; i++){
                       table.row.add([
-                        data[i].date,
+                        new Date(data[i].date).toDateString(),
                         data[i].description,
                         data[i].table_id,
                         data[i].staff_id,
