@@ -1,6 +1,5 @@
 from biz.manage_restaurant import (
     create_restaurant_table,
-    get_available_tables
 )
 from biz.restaurant_table import (
     Shape, Coordinate
@@ -11,18 +10,25 @@ from test.web.helper import spoof_user
 
 def test_index(client):
     """Test that welcome endpoint can be hit."""
-    spoof_user(client)
+    sid = spoof_user(client)
     pool = client.testing_db_pool
     conn = pool.getconn()
-    tables = get_available_tables(conn, 0)
     conn.commit()
     pool.putconn(conn)
-    result = client.get('/robot')
-    if not tables:
-        assert result.status_code == 302
-    else:
-        assert result.status_code == 200
-        assert b'Welcome' in result.data
+
+    table_full_result = client.get('/robot')
+    assert table_full_result.status_code == 302
+
+    create_restaurant_table(
+        conn, 2,
+        Coordinate(x=0, y=3),
+        1, 5,
+        Shape.rectangle,
+        sid
+    )
+    table_available_result = client.get('/robot')
+    assert table_available_result.status_code == 200
+    assert b'Welcome' in table_available_result.data
 
 
 def test_party_size(client):
@@ -34,17 +40,24 @@ def test_party_size(client):
 
 def test_table(client):
     """Test that robot_table endpoint can be hit."""
-    spoof_user(client)
+    sid = spoof_user(client)
     pool = client.testing_db_pool
     conn = pool.getconn()
-    tables = get_available_tables(conn, 1)
     conn.commit()
     pool.putconn(conn)
-    result = client.get('/robot/table?people=1')
-    if not tables:
-        assert result.status_code == 302
-    else:
-        assert result.status_code == 200
+
+    no_tables_available_result = client.get('/robot/table?people=1')
+    assert no_tables_available_result.status_code == 302
+
+    create_restaurant_table(
+        conn, 2,
+        Coordinate(x=0, y=3),
+        1, 5,
+        Shape.rectangle,
+        sid
+    )
+    table_available_result = client.get('/robot/table?people=2')
+    assert table_available_result.status_code == 200
 
 
 def test_full(client):
