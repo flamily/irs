@@ -1,26 +1,6 @@
 from web.db import db
 from biz import manage_reporting as mr
-import datetime
-from decimal import Decimal
 
-__MAX_GRAPH_ENTRIES__ = 15
-
-
-def average_out_entries(labels, data):
-    tmp_labels = []
-    tmp_data = []
-    averaging = int(len(labels) / __MAX_GRAPH_ENTRIES__ - 1 )
-
-    tmp_score = 0
-    for i in range(len(labels)):
-        if i % averaging == 0:
-            tmp_data.append(float(float(tmp_score) / float(averaging)))
-            tmp_labels.append(labels[i])
-            tmp_score = 0
-
-        tmp_score += data[i]
-
-    return [tmp_labels, tmp_data]
 
 def format_dict(satisf_event):
     lst = []
