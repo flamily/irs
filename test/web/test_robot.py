@@ -11,22 +11,18 @@ from test.web.helper import spoof_user
 
 def test_index(client):
     """Test that welcome endpoint can be hit."""
-    sid = spoof_user(client)
+    spoof_user(client)
     pool = client.testing_db_pool
     conn = pool.getconn()
     tables = get_available_tables(conn, 0)
     conn.commit()
+    pool.putconn(conn)
     result = client.get('/robot')
     if not tables:
         assert result.status_code == 302
-    c = Coordinate(x=0, y=3)
-    create_restaurant_table(conn, 10, c, 1, 5, Shape.rectangle, sid)
-    conn.commit()
-    pool.putconn(conn)
-    result = client.get('/robot')
-    assert result.status_code == 200
-    assert b'Welcome' in result.data
-
+    else:
+        assert result.status_code == 200
+        assert b'Welcome' in result.data
 
 
 def test_party_size(client):
