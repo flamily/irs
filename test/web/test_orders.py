@@ -1,4 +1,3 @@
-import pytest
 import biz.manage_menu as mm
 import biz.manage_restaurant as mr
 from test.web.helper import spoof_user, spoof_tables
@@ -12,8 +11,8 @@ def __spoof_menu_items(client):
     pool = client.testing_db_pool
     conn = pool.getconn()
     menu_item = mm.create_menu_item(
-                conn, 'food stuffs', 'good stuff', 2.99
-            )
+        conn, 'food stuffs', 'good stuff', 2.99
+    )
     conn.commit()
 
     pool.putconn(conn)
@@ -69,16 +68,15 @@ def test_order_created(client):
 
 def test_list_menu_items(client):
     """Test that restaurant tables from db are being returned."""
+    menu_items = list()
     num_tables = 1
     sid = spoof_user(client)
     table = spoof_tables(client, num_tables, sid, True)[0]
+    menu_item = __spoof_menu_items(client)
+    menu_items.append(tuple([menu_item, 1]))
     pool = client.testing_db_pool
     conn = pool.getconn()
-    r_id = mr.lookup_reservation(conn, table)
-    o_id = mr.lookup_order(conn, r_id)
     pool.putconn(conn)
-    form = dict([('rid', r_id)])
-    result = client.post('/order/get',
-                         data=form,
-                         follow_redirects=True)
-    assert o_id in str(result)
+    _, r_id, _ = mr.order(conn, menu_items, table, sid)
+    result = client.get('/order/get?rid='+str(r_id))
+    assert result.status_code == 200

@@ -45,9 +45,9 @@ def create_order():
                 oid=oid)
 
 
-@ORDERS_BLUEPRINT.route('/order/get', methods=['POST'])
+@ORDERS_BLUEPRINT.route('/order/get', methods=['GET'])
 @login_required()
 def get_order():
-    rid = request.form['rid']
+    rid = request.args['rid']
     response = mr.lookup_order(db, rid)
     return jsonify(response)
