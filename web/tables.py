@@ -5,14 +5,14 @@ Author: Andrew Pope
 Date: 22/10/2018
 """
 from flask import (
-    redirect, url_for, Blueprint, request
+    Blueprint, request, jsonify
 )
 from web.db import db
 from web.decorators import (
     login_required, templated, user
 )
 import biz.manage_restaurant as mr
-
+from biz.css.file_storage import bucket_upload
 
 TABLES_BLUEPRINT = Blueprint('tables', __name__, template_folder='templates')
 
@@ -22,11 +22,6 @@ TABLES_BLUEPRINT = Blueprint('tables', __name__, template_folder='templates')
 #  - In the template 'tables.html' we need to:
 #       1. Make it pretty.
 #       2. Get it to capture an image with Jason's js library.
-
-
-def __mock_bucket_send(img, event_id, reservation_id):
-    """Send image to bucket (mock)."""
-    print("Sent ({}, {}): {}".format(event_id, reservation_id, img))
 
 
 @TABLES_BLUEPRINT.route('/tables', methods=['GET'])
@@ -48,9 +43,9 @@ def pay():
 
     # Get the exit image and send to bucket
     customer_img = request.form['customerImg']
-    __mock_bucket_send(customer_img, event_id, reservation_id)
+    bucket_upload(customer_img, event_id, reservation_id)
 
-    return redirect(url_for('tables.index'))
+    return jsonify(status='unavailable')
 
 
 @TABLES_BLUEPRINT.route("/tables/maintain/", methods=['POST'])
@@ -60,7 +55,7 @@ def maintain():
     table_id = int(request.form['tableId'])
     mr.maintain(db, table_id, user.s_id)
 
-    return redirect(url_for('tables.index'))
+    return jsonify(status='unavailable')
 
 
 @TABLES_BLUEPRINT.route("/tables/ready/", methods=['POST'])
@@ -70,4 +65,4 @@ def ready():
     table_id = int(request.form['tableId'])
     mr.ready(db, table_id, user.s_id)
 
-    return redirect(url_for('tables.index'))
+    return jsonify(status='available')
