@@ -18,6 +18,7 @@ passlib = "*"
 zappa = "*"
 cognitive-face = "*"
 pytest-mock = "*"
+"boto3" = "*"
 
 [requires]
 python_version = "3.6"

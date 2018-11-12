@@ -25,7 +25,7 @@
         "certificate_arn": "arn:aws:acm:us-east-1:647081355413:certificate/e07a960a-b094-48a8-ba75-bbf3c4b7806b",
         "s3_bucket": "irs-zappa",
         "keep_warm": false,
-        "exclude": ["static"],
+        "exclude": ["static", "RF_model.pkl", ".coverage"],
         "events": [{
             "function": "events.satisfaction_lambda.calculate_css_from_image",
             "event_source": {
