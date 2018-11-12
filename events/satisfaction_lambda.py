@@ -75,6 +75,7 @@ def css_for_image_at_url(url):
     :return: CSS score
     """
     css = er.detect_from_url(url)
+    print("Cognitive Face Result: {}".format(css))
     return r.apply_reduction(css)
 
 
@@ -114,9 +115,14 @@ def calculate_css_from_image(event, _):
         print(e)
         print('Error deconstructing filename {} into \
         event id and reservation id.'.format(key))
-        return
+        return dict(
+            event_id=eid,
+            reservation_id=rid,
+            css=None,
+            result='invalid_filename'
+        )
 
-    print('eid={}, rid={}'.format(eid, rid))
+    print('Calculate CSS for Event={}, Reservation={}'.format(eid, rid))
 
     url = None
     try:
@@ -130,3 +136,9 @@ def calculate_css_from_image(event, _):
 
     reduced = css_for_image_at_url(url)
     save_css(get_pool_lazy(), reduced, eid, rid)
+    return dict(
+        event_id=eid,
+        reservation_id=rid,
+        css=reduced,
+        result='success'
+    )
