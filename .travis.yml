@@ -15,7 +15,7 @@ script:
   - flake8
 deploy:
   - provider: script
-    script: pipenv uninstall --all && pipenv install --dev --deploy --ignore-pipfile && pip uninstall -y pylint passlib && zappa package -o irs-css-lambda.zip css && unzip -l irs-css-lambda.zip | tail -n1 | awk '{ print $1 }'
+    script: pipenv uninstall --all && pip install -r css_requirements.txt && zappa package -o irs-css-lambda.zip css && unzip -l irs-css-lambda.zip | tail -n1 | awk '{ print $1 }'
     on:
       branch: satisfaction-optimisation
   - provider: script
@@ -23,7 +23,7 @@ deploy:
     on:
       branch: master
   - provider: script
-    script: pipenv uninstall --all && pipenv install --dev --deploy --ignore-pipfile && pip uninstall pylint passlib && zappa update css
+    script: pipenv uninstall --all && pip install -r css_requirements.txt && zappa update css
     on:
       branch: master
 notifications:
