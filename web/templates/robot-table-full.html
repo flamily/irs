@@ -2,26 +2,33 @@
   {% include 'header.html' %}
 {% endwith %}
   <body class="bg-dark">
+
     <div class="container">
       <div class="row justify-content-center">
         <h1 class="h1-robot">Welcome to Avalon Smart Restaurant</h1>
       </div>
       <div class="row justify-content-center">
-        <p class="text-primary">Sorry, there are no available tables</p>
+        <h4 class="h4-robot">Sorry, there are no available tables. We apologise for any inconvenience.</h4>
       </div>
     </div>
+
     <div class="container-fluid">
       <div class="row justify-content-center">
-          <button class="btn btn-secondary">
-            <a class="justify-content-center" onClick="location.href='/robot';">Cancel</a>
+          <button class="btn btn-danger" style="height: 75px; width: 200px; border-radius: 50px;"
+            onClick="location.href='/robot';">
+            Start Again
           </button>
       </div>
     </div>
+
     <script>
       window.setTimeout(function(){
         window.location.href = "/robot";
       }, 7000);
     </script>
+
   </body>
+
   {% include 'footer.html' %}
+
 </html>

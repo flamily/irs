@@ -2,14 +2,18 @@
   {% include 'header.html' %}
 {% endwith %}
   <body class="bg-dark">
+
     <div class="container">
       <div class="row justify-content-center">
         <h1 class="h1-robot">Welcome to Avalon Smart Restaurant</h1>
       </div>
       <div class="row justify-content-center">
-        <p class="text-primary">You have been assigned to Table {{ table }} for a party size of {{ group_size }}.</p>
+        <h4 class="robot-h4">
+          You have been assigned to Table {{ table }} for a party size of {{ group_size }}.
+        </h4>
       </div>
     </div>
+
     <div class="container-fluid">
       <div class="row justify-content-center">
         <form action="/robot" method="get">
@@ -17,6 +21,9 @@
         </form>
       </div>
     </div>
+
   </body>
+
   {% include 'footer.html' %}
+
 </html>
