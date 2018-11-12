@@ -7,36 +7,8 @@ Date: 11/11/2018
 import datetime
 import biz.css.manage_satisfaction as ms
 import biz.manage_restaurant as mr
-import biz.manage_staff as mgs
+import test.helper as h
 import biz.manage_menu as mm
-from biz.staff import Permission
-from biz.restaurant_table import (Coordinate, Shape)
-
-
-def __spoof_tables(db_conn, n, username, first, last):
-    """Load a series of restaurant tables and a staff member.
-
-    :param db_conn: A psycopg2 connection to the database.
-    :param n: The number of restaurant_tables to create.
-    :param username: The username for the staff member.
-    :param first: First name of staff member.
-    :param last: Last name of staff member.
-    :return: ([t1_id, t2_id ... tn_id], staff_id)
-    """
-    staff_id = mgs.create_staff_member(
-        db_conn, username, 'prettygood', (first, last),
-        Permission.wait_staff
-    )
-
-    tables = []
-    for _ in range(0, n):
-        tables.append(
-            mr.create_restaurant_table(
-                db_conn, 2, Coordinate(x=0, y=3), 1,
-                5, Shape.rectangle, staff_id
-            )[0]
-        )
-    return (tables, staff_id)
 
 
 def __spoof_menu_items(db_conn, n):
@@ -94,7 +66,7 @@ def __update_reservation_dt(db_conn, rid, eid, dt):
 def test_create_satisfaction(database_snapshot):
     """Attempt to create a satisfaction order."""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        t, staff = h.spoof_tables(conn, 1)
         conn.commit()
         (e1, r1) = mr.create_reservation(conn, t[0], staff, 5)
         ms.create_satisfaction(conn, 100, e1, r1)
@@ -104,7 +76,7 @@ def test_create_satisfaction(database_snapshot):
 def test_lookup_missing_satisfaction(database_snapshot):
     """Attempt to lookup a missing satisfaction."""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        t, staff = h.spoof_tables(conn, 1)
         conn.commit()
         (e1, r1) = mr.create_reservation(conn, t[0], staff, 5)
         assert ms.lookup_satisfaction(conn, e1, r1) is None
@@ -113,7 +85,7 @@ def test_lookup_missing_satisfaction(database_snapshot):
 def test_create_multiple_satisfaction(database_snapshot):
     """Create a satisfaciton record for multiple customer events."""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        t, staff = h.spoof_tables(conn, 1)
         conn.commit()
 
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
@@ -133,7 +105,7 @@ def test_create_multiple_satisfaction(database_snapshot):
 def test_avg_css_per_period(database_snapshot):
     """Retrieve average css on and between 2018-01-01 and 2018-12-31"""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        t, staff = h.spoof_tables(conn, 1)
         conn.commit()
 
         dt1 = datetime.datetime(2018, 1, 1)
@@ -158,7 +130,7 @@ def test_avg_css_per_period(database_snapshot):
 def test_missing_avg_css_per_period(database_snapshot):
     """Retrieve missing average css on 2018-12-31"""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        t, staff = h.spoof_tables(conn, 1)
         conn.commit()
 
         dt1 = datetime.datetime(2018, 1, 1)
@@ -174,8 +146,8 @@ def test_missing_avg_css_per_period(database_snapshot):
 def test_avg_css_per_staff(database_snapshot):
     """Retrieve average css for specified staff"""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
-        t2, staff2 = __spoof_tables(conn, 1, 'lsarge', 'Lt', 'Sarge')
+        t, staff = h.spoof_tables(conn, 1)
+        t2, staff2 = h.spoof_tables(conn, 1, 'lsarge', 'Lt', 'Sarge')
 
         conn.commit()
 
@@ -199,7 +171,7 @@ def test_avg_css_per_staff(database_snapshot):
 def test_missing_avg_css_per_staff(database_snapshot):
     """Retrieve missing average css for specified staff"""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        t, staff = h.spoof_tables(conn, 1)
 
         conn.commit()
 
@@ -211,8 +183,8 @@ def test_missing_avg_css_per_staff(database_snapshot):
 def test_avg_css_all_staff(database_snapshot):
     """Retrieve average css for all staff"""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
-        t2, staff2 = __spoof_tables(conn, 1, 'lsarge', 'Lt', 'Sarge')
+        t, staff = h.spoof_tables(conn, 1)
+        t2, staff2 = h.spoof_tables(conn, 1, 'lsarge', 'Lt', 'Sarge')
 
         conn.commit()
 
@@ -237,7 +209,7 @@ def test_avg_css_all_staff(database_snapshot):
 def test_missing_avg_css_all_staff(database_snapshot):
     """Retrieve missing average css for all staff"""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        t, staff = h.spoof_tables(conn, 1)
 
         conn.commit()
 
@@ -249,7 +221,7 @@ def test_missing_avg_css_all_staff(database_snapshot):
 def test_avg_css_per_menu_item(database_snapshot):
     """Retrieve average css for specified menu item"""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        t, staff = h.spoof_tables(conn, 1)
         conn.commit()
 
         assert ms.avg_css_per_menu_item(conn, 1) is None
@@ -270,7 +242,7 @@ def test_avg_css_per_menu_item(database_snapshot):
 def test_missing_avg_css_per_menu_item(database_snapshot):
     """Retrieve missing average css for specified menu item"""
     with database_snapshot.getconn() as conn:
-        t, staff = __spoof_tables(conn, 1, 'ldavid', 'Lt', 'David')
+        t, staff = h.spoof_tables(conn, 1)
         conn.commit()
 
         mr.create_reservation(conn, t[0], staff, 5)

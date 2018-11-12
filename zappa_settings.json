@@ -26,7 +26,7 @@
         "s3_bucket": "irs-zappa",
         "keep_warm": false,
         "events": [{
-            "function": "events.satisfaction_lambda.customer_satisfaction",
+            "function": "events.satisfaction_lambda.calculate_css_from_image",
             "event_source": {
                 "arn": "arn:aws:s3:::irs-images",
                 "events": [

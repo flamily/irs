@@ -12,3 +12,7 @@ def connection_string():  # pragma: no cover
 def is_running_on_lambda():
     root = os.environ.get("LAMBDA_TASK_ROOT", '')
     return len(root) > 0
+
+
+def cf_api_key():  # pragma: no cover
+    return os.environ.get("CF_API_KEY", 'fcef05be3b9f440f9e38dfb675b07de6')
