@@ -17,37 +17,53 @@
 
           <!-- TODO: Somehow we need to call Jason's code on submit to take the picture -->
           <form method="post" id="tableInfo" class="d-none">
-            <input name="tableId" type="int" id="tableId" class="form-control" placeholder="Table ID" required="required">
-            <input name="customerImg" type="int" id="customerImg" class="form-control" placeholder="Customer Image" >
+            <input name="tableId" type="int" id="tableId"
+              class="form-control" placeholder="Table ID" required="required">
+            <input name="customerImg" type="int" id="customerImg"
+              class="form-control" placeholder="Customer Image" >
           </form>
-
 
           <div id="table-layout" class="container table-layout">
             {% for table in tables %}
-            <button 
-              type="button" 
-              data-status="{{ table.state }}" 
+            <button
+              type="button"
+              data-status="{{ table.state }}"
               data-tableId="{{ table.rt_id }}"
-              class="{{ table.state }}-table table-{{ table.shape }}-{% if table.capacity < 3 %}sm{% else %}lg{% endif %}">Table {{ table.rt_id }}<p>{{ table.state }}</p>
+              class="{{ table.state }}-table
+                table-{{ table.shape }}-{% if table.capacity < 3 %}sm{% else %}lg{% endif %}"
+              >Table {{ table.rt_id }}<p>{{ table.state }}</p>
             </button>
             {% endfor %}
           </div>
 
           <!-- Modal -->
-          <div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+          <div class="modal fade" id="statusModal" tabindex="-1"
+            role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="modalLabel">Set status of table <span id="modalTableNumber" style="content=''"></span></h5>
+                  <h5 class="modal-title" id="modalLabel">
+                    Set status of table
+                    <span id="modalTableNumber" style="content=''"></span>
+                  </h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
                 <div class="modal-body">
                   <form id="updateTable" method="post">
-                    <input type=submit formaction="{{ url_for('tables.pay') }} " value="Pay" class="btn btn-primary btn-block">
-                    <input type=submit formaction="{{ url_for('tables.ready') }} " value="Ready" class="btn btn-primary btn-block">
-                    <input type=submit formaction="{{ url_for('tables.maintain') }} " value="Maintain" class="btn btn-primary btn-block">
+                    <input type=submit
+                      formaction="{{ url_for('tables.pay') }}"
+                      value="Pay"
+                      class="btn btn-primary btn-block">
+                    <input type=submit
+                      formaction="{{ url_for('tables.ready') }}"
+                      value="Ready"
+                      class="btn btn-primary btn-block">
+                    <input type=submit
+                      formaction="{{ url_for('tables.maintain') }}"
+                      value="Maintain"
+                      class="btn btn-primary btn-block">
                   </form>
                 </div>
               </div>
