@@ -114,9 +114,9 @@ def get_date_bounds(bounds, date_str):
     elif bounds == "month":
         year, month = date_str.split("-")
         start_date = "%s-%s-%s" % (year, month, calendar.monthrange(
-                                            int(year), int(month))[0] + 1)
+            int(year), int(month))[0] + 1)
         end_date = "%s-%s-%s 23:59:59.998" % (year, month, calendar.monthrange(
-                                            int(year), int(month))[1])
+            int(year), int(month))[1])
 
     elif bounds == "year":
         start_date = "%s-1-1" % (date_str)
@@ -136,8 +136,7 @@ def get_customer_satisfaciton(date_type, date_string):
     """
     s_dt, e_dt = get_date_bounds(date_type, date_string)
     return sort_data(format_dict(
-            mcss.get_satisfaction_between_dates(db, s_dt, e_dt)
-        ))
+        mcss.get_satisfaction_between_dates(db, s_dt, e_dt)))
 
 
 def get_staff_satisfaction_report(s_id, date_type, date_string):
@@ -153,8 +152,7 @@ def get_staff_satisfaction_report(s_id, date_type, date_string):
     """
     s_dt, e_dt = get_date_bounds(date_type, date_string)
     return sort_data(format_dict(
-            mcss.staff_css_between_dates(db, s_id, s_dt, e_dt)
-        ))
+        mcss.staff_css_between_dates(db, s_id, s_dt, e_dt)))
 
 
 def get_menu_satisfaction(m_id, date_type, date_string):
@@ -200,10 +198,10 @@ def get_staff_average_score(s_id, date_type, date_string):
     return float(mcss.avg_staff_css_between_dates(db, s_id, s_dt, e_dt))
 
 
-def get_avg_menu_score(id, date_type, date_string):
+def get_avg_menu_score(menu_id, date_type, date_string):
     """Gets average menu satisfaction score between dates
 
-    :param id: Menu ID
+    :param menu_id: Menu ID
     :param date_type: String representation of date function
     (date, week, month, year)
     :param date_string: The string supplied from the request
@@ -211,7 +209,7 @@ def get_avg_menu_score(id, date_type, date_string):
     :return: float representation of average menu score
     """
     s_dt, e_dt = get_date_bounds(date_type, date_string)
-    return float(mcss.avg_menu_item_score(db, id, s_dt, e_dt))
+    return float(mcss.avg_menu_item_score(db, menu_id, s_dt, e_dt))
 
 
 def get_staff_members():
@@ -240,8 +238,8 @@ def get_latest_time():
     :note: this is required to correctly load in initialisation data on
     document load
     """
-    date = mcss.get_latest_satisfaction_date(db)
-    return date.strftime("%Y-%m-%d")
+    latest_date = mcss.get_latest_satisfaction_date(db)
+    return latest_date.strftime("%Y-%m-%d")
 
 
 def get_year_list():
