@@ -48,3 +48,10 @@ def bucket_upload(img, event_id, reservation_id):  # pragma: no cover
         print("Not running on lambda. \
         Mocking sent image event={}, reservation={}, \
         encoded img len={}".format(event_id, reservation_id, len(img)))
+
+
+def bucket_download(bucket, key):  # pragma: no cover
+    s3 = boto3.resource('s3')
+    obj = s3.Object(bucket, key)
+    res = obj.get()
+    return res['Body'].read()
