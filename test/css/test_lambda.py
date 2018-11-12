@@ -7,9 +7,11 @@ Date: 11/11/2018
 
 import events.satisfaction_lambda as sl
 import biz.css.manage_satisfaction as ms
+import biz.manage_restaurant as mr
 import biz.css.reduction as r
 import biz.css.emotion_recognition as er
 import pytest
+import test.helper as h
 
 # pylint: disable=no-member
 
@@ -59,45 +61,62 @@ def test_save_css_exception(mocker):
     """
     Do not eat database exceptions
     """
-    # pylint: disable=too-few-public-methods
-    class MockPool():
-        def __init__(self):
-            self.getconn = mocker.stub(name='getconn_stub')
-            self.getconn.return_value = 'super-legit-conn'
-            self.putconn = mocker.stub(name='putconn_stub')
     mocker.patch('biz.css.manage_satisfaction.create_satisfaction')
     ms.create_satisfaction.side_effect = Exception('oh no')
-    dodgy_pool = MockPool()
+    dodgy_pool = h.mock_db_pool(mocker)
     with pytest.raises(Exception) as execinfo:
         sl.save_css(dodgy_pool, 50, 11, 22)
-    ms.create_satisfaction.assert_called_once_with('super-legit-conn',
+    ms.create_satisfaction.assert_called_once_with(dodgy_pool.conn,
                                                    50,
                                                    11,
                                                    22)
     assert str(execinfo.value) == 'oh no'
     dodgy_pool.getconn.assert_called_once()
     dodgy_pool.putconn.assert_called_once()
+    dodgy_pool.conn.commit.assert_not_called()
+    dodgy_pool.conn.rollback.assert_called_once()
 
 
 def test_save_css(mocker):
     """
     Saving css using correct biz methods
     """
-    # pylint: disable=too-few-public-methods
-    class MockPool():
-        def __init__(self):
-            self.getconn = mocker.stub(name='getconn_stub')
-            self.getconn.return_value = 'super-legit-conn'
-            self.putconn = mocker.stub(name='putconn_stub')
     mocker.patch('biz.css.manage_satisfaction.create_satisfaction')
-    dodgy_pool = MockPool()
+    dodgy_pool = h.mock_db_pool(mocker)
     sl.save_css(dodgy_pool, 50, 11, 22)
-    ms.create_satisfaction.assert_called_once_with('super-legit-conn',
+    ms.create_satisfaction.assert_called_once_with(dodgy_pool.conn,
                                                    50,
                                                    11,
                                                    22)
     dodgy_pool.getconn.assert_called_once()
     dodgy_pool.putconn.assert_called_once()
+    dodgy_pool.conn.commit.assert_called_once()
+    dodgy_pool.conn.rollback.assert_not_called()
+
+
+def test_save_css_with_database(mocker, database_snapshot):
+    """
+    Saving css using db snapshot. check transaction etc
+    """
+    # setup db
+    setup_conn = database_snapshot.getconn()
+    t, staff = h.spoof_tables(setup_conn, 1)
+    setup_conn.commit()
+    (e1, r1) = mr.create_reservation(setup_conn, t[0], staff, 5)
+    setup_conn.commit()
+    database_snapshot.putconn(setup_conn)
+    setup_conn = None
+
+    # run test
+    sl.save_css(database_snapshot, 50, e1, r1)
+
+    # assert result
+    conn = database_snapshot.getconn()
+    try:
+        score = ms.lookup_satisfaction(conn, e1, r1)
+        assert 50 == score
+    finally:
+        database_snapshot.putconn(conn)
 
 
 def test_event_css(mocker):

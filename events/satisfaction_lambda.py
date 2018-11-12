@@ -90,6 +90,10 @@ def save_css(p, css, eid, rid):
     conn = p.getconn()
     try:
         ms.create_satisfaction(conn, css, eid, rid)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
     finally:
         p.putconn(conn)
 
