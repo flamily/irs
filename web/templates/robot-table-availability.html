@@ -4,7 +4,7 @@
   <body class="bg-dark">
     <div class="container">
       <div class="row justify-content-center">
-        <h1>Welcome to Avalon Smart Restaurant</h1>
+        <h1 class="h1-robot">Please select a table:</h1>
       </div>
     </div>
     <div class="container">
@@ -17,7 +17,7 @@
                 <form action="/robot/table/reserve" class="robotTableReserve" method="post">
                   <input type=submit
                   value="Table {{ table.rt_id }}"
-                  class="btn btn-default"
+
                   {% if table.state|string() != 'available' or people > table.capacity %}
                   disabled
                   {% endif %}>
@@ -25,16 +25,21 @@
                   <input type=hidden value="{{ people }}" name=group_size>
                   <input class="customerImg" type=hidden value="" name=photo>
                 </form>
-                <h4 class="text-light">Table {{ table.rt_id }}</h4>
+                <h4 class="h4-robot text-light">Table {{ table.rt_id }}</h4>
               </div>
             </div>
-            <!-- <tr>
-              <td>{{ table.rt_id }}</td>
-              <td>{{ table.state }}</td>
-              <td>{{ table.capacity }}</td>
-            </tr> -->
             {% endfor %}
-          </div>   
+          </div>
+          <div id="table-layout" class="container table-layout">
+            {% for table in tables %}
+            <button
+              type="button"
+              data-status="{{ table.state }}"
+              data-tableId="{{ table.rt_id }}"
+              class="{{ table.state }}-table table-{{ table.shape }}-{% if table.capacity < 3 %}sm{% else %}lg{% endif %}">Table {{ table.rt_id }}<p>{{ table.state }}</p>
+            </button>
+            {% endfor %}
+          </div>
         </div>
       </div>
     </div>

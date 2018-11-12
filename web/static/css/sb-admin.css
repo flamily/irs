@@ -374,13 +374,13 @@ body.sidebar-toggled footer.sticky-footer {
   }
 }
 
-h1 {
+.h1-robot {
   color: #fff;
   text-align: center;
   padding: 20px;
 }
 
-h4 {
+.h4-robot {
   color: #fff;
   text-align: center;
   padding: 30px;
@@ -443,7 +443,7 @@ h4 {
 }
 
 .table-layout button p{
-   margin-bottom: 0; 
+   margin-bottom: 0;
    text-transform: capitalize;
 }
 
