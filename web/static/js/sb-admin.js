@@ -260,7 +260,7 @@
           case 'no':
             $("[data-dismiss='modal']").first().click();
             irs.say("Please enter or say how many people you wish to seat, the max we seat is 10");
-            setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 2000);
+            setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 5000);
             break;
           case 'confirm':
           case 'confirmed':
