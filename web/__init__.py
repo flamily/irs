@@ -1,4 +1,5 @@
 import os
+import traceback
 from flask import Flask, render_template
 from web.db import register as register_db
 from web.db import db
@@ -24,18 +25,18 @@ def not_found(e):
 
 
 @APP.errorhandler(KeyError)
-def key_error(e):
-    print('KeyError: {}'.format(e))
+def key_error(_):
+    traceback.print_exc()
     db.rollback()
     return render_template('500.html'), 400
 
 
 @APP.errorhandler(Exception)
-def generic_error(e):
+def generic_error(_):
     """Gotta catch em all."""
     # teardown_appcontext does not recieve error objects if an exception
     # handler for a specific exception is setup, as such, we need to do the
     # rollback here.
-    print('something went wrong: {}'.format(e))
+    traceback.print_exc()
     db.rollback()
     return render_template('500.html'), 500

@@ -76,7 +76,11 @@ var irs = (function() {
             imageCapture.grabFrame()
             .then(imageBitmap => {
                 drawCanvas(htmlCanvas, imageBitmap);
-                callback(htmlCanvas.toDataURL())
+                callback(htmlCanvas.toDataURL());
+                mediaStreamTrack.stop();
+                navigator.mediaDevices.getUserMedia({video: true})
+                .then(gotMedia)
+				.catch(error => console.error('getUserMedia() error:', error.message));
             })
             .catch(error => console.log(error));
         }
