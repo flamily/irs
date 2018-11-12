@@ -7,18 +7,21 @@
         <h1>Welcome to Avalon Smart Restaurant</h1>
       </div>
       <div class="row justify-content-center">
-        <p class="text-primary">Sorry, there are no available tables for your specified party size.</p>
+        <p class="text-primary">Sorry, there are no available tables</p>
       </div>
     </div>
     <div class="container-fluid">
       <div class="row justify-content-center">
-        <div id="trigger_listen">
-          <button class="btn start-btn">
-            <a class="justify-content-center" onClick="location.href='/robot/listen';">Tap to start again</a>
+          <button class="btn btn-secondary">
+            <a class="justify-content-center" onClick="location.href='/robot';">Cancel</a>
           </button>
-        </div>
       </div>
     </div>
+    <script>
+      window.setTimeout(function(){
+        window.location.href = "/robot";
+      }, 7000);
+    </script>
   </body>
   {% include 'footer.html' %}
 </html>
