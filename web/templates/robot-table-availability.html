@@ -10,34 +10,23 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-12">
-          <div class="row">
-            {% for table in tables %}
-            <div class="col-md-3">
-              <div class="well">
-                <form action="/robot/table/reserve" class="robotTableReserve" method="post">
-                  <input type=submit
-                  value="Table {{ table.rt_id }}"
-
-                  {% if table.state|string() != 'available' or people > table.capacity %}
-                  disabled
-                  {% endif %}>
-                  <input type=hidden value="{{ table.rt_id }}" name=table_id>
-                  <input type=hidden value="{{ people }}" name=group_size>
-                  <input class="customerImg" type=hidden value="" name=photo>
-                </form>
-                <h4 class="h4-robot text-light">Table {{ table.rt_id }}</h4>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
           <div id="table-layout" class="container table-layout">
             {% for table in tables %}
-            <button
-              type="button"
-              data-status="{{ table.state }}"
-              data-tableId="{{ table.rt_id }}"
-              class="{{ table.state }}-table table-{{ table.shape }}-{% if table.capacity < 3 %}sm{% else %}lg{% endif %}">Table {{ table.rt_id }}<p>{{ table.state }}</p>
-            </button>
+              <form action="/robot/table/reserve" class="robotTableReserve" method="post">
+                <button type="submit"
+                  class="{%if table.state|string() == 'available' %}
+                    available{% else %}unavailable{% endif %}-table
+                    table-{{ table.shape }}-{% if table.capacity < 3 %}sm
+                    {% else %}lg{% endif %}"
+                    {% if table.state|string() != 'available' or people > table.capacity %}
+                    disabled
+                    {% endif %}"
+                  > Table {{ table.rt_id }}
+                </button>
+                <input type=hidden value="{{ table.rt_id }}" name=table_id>
+                <input type=hidden value="{{ people }}" name=group_size>
+                <input class="customerImg" type=hidden value="" name=photo>
+              </form>
             {% endfor %}
           </div>
         </div>
@@ -45,14 +34,12 @@
     </div>
     <div class="container">
       <div class="row justify-content-center">
-        <div class="btn-toolbar">
-          <form action="/robot/proceed" method="get">
-            <input type=submit value="Confirm Table" id="confirm-table-option" class="btn btn-default">
-          </form>
-          <form action="/robot" method="get">
-            <input type=submit value="Start Over" class="btn btn-default">
-          </form>
-        </div>
+        <form action="/robot" method="get">
+          <input type=submit value="Start Over" class="btn btn-danger" style="margin:20px;">
+        </form>
+        <form action="/robot/proceed" method="get">
+          <input type=submit value="Confirm Table" id="confirm-table-option" class="btn btn-success" style="margin:20px;">
+        </form>
       </div>
     </div>
   </body>
