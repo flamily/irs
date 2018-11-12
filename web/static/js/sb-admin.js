@@ -246,6 +246,7 @@
         irs.say("Please enter or say how many people you wish to seat, the max we seat is 10");
         setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 5000);
       }
+
     };
 
     var modalCallback = function(matchedIndex){
