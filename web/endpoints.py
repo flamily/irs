@@ -27,13 +27,6 @@ def get_staff_report(id, date_type):
 
     return jsonify(data=res, labels=labels, scores=data, average=avg)
 
-@API_BLUEPRINT.route('/reporting/list_items')
-def get_staff_and_menu_items():
-    staff_list = get_staff_members()
-    menu_list = get_menu_items()
-
-    return jsonify(menu=menu_list, staff=staff_list)
-
 @API_BLUEPRINT.route('/reporting/Menu/<id>/<date_type>')
 def get_menu_score(id, date_type):
     date_string = request.args.get('dateString')
@@ -42,6 +35,13 @@ def get_menu_score(id, date_type):
     avg = get_avg_menu_score(id, date_type, date_string)
 
     return jsonify(data=res, labels=labels, scores=scores, average=avg)
+
+@API_BLUEPRINT.route('/reporting/list_items')
+def get_staff_and_menu_items():
+    staff_list = get_staff_members()
+    menu_list = get_menu_items()
+
+    return jsonify(menu=menu_list, staff=staff_list)
 
 @API_BLUEPRINT.route('/time/get_latest')
 def get_latest_entry_time():
@@ -52,6 +52,5 @@ def get_latest_entry_time():
 @API_BLUEPRINT.route('/time/get_years')
 def get_list_of_years():
     time = get_year_list()
-    print(time)
 
     return jsonify(years=time)

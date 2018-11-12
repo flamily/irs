@@ -1,8 +1,19 @@
+/**
+* All functions for html generation & endpoint data calls to create a seemless, one page dashboard solution
+*
+* Author: Jacob Vorreiter
+* Date: 12/11/2018
+*/
+
 // Set new default font family and font color to mimic Bootstrap's default styling
 Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#292b2c';
 
 var canvas = document.getElementById('myAreaChart');
+
+/**
+* Initialises the Chart.js line chart options, sets labels and data to empty, defines colouring and styling
+*/
 var data = {
     labels: [],
     datasets: [
@@ -36,6 +47,9 @@ var option = {
   }
 };
 
+/**
+* Creates the Chart.js Line chart using established options and data
+*/
 var myLineChart = Chart.Line(canvas,{
 	data:data,
   options:option

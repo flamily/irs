@@ -6,12 +6,51 @@ Date: 12/11/2018
 """
 
 def get_satisfaction_between_dates(db_conn, start, end):
+    """Gets the customers satisfaction between dates across all staff and menu items
+
+    :param db_conn: A psycopg2 connection to the databaseself.
+    :param start: The start date in string form (ie 2018-10-25)
+    :param end: The end date in string form
+    :return: An SQL List of Tuples of all items"""
+
     sql = 'SELECT * FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE event_dt BETWEEN %s AND %s ORDER BY e.event_dt ASC'
     with db_conn.cursor() as curs:
         params = (start, end)
         curs.execute(sql, params)
         events = curs.fetchall()
         return events
+
+def staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
+    """Get staff member's satisfaction score between dates
+
+    :param db_conn: A psycopg2 connection to the database.
+    :param staff_id: The ID of the staff member.
+    :param s_dt: The start date in string form (ie 25-10-25)
+    :param e_dt: The end date in string form
+    :return: List of Tuples of all staff items
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            'SELECT * FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE staff_id= %s AND event_dt BETWEEN %s AND %s ORDER BY e.event_dt ASC',
+            (staff_id, s_dt, e_dt)
+        )
+        return curs.fetchall()
+
+def avg_staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
+    """Get staff member's average satisfaction score between dates
+
+    :param db_conn: A psycopg2 connection to the database.
+    :param staff_id: The ID of the staff member.
+    :param s_dt: The start date in string form (ie 25-10-25)
+    :param e_dt: The end date in string form
+    :return: Average value of staff's satisfaction score
+    """
+    with db_conn.cursor() as curs:
+        curs.execute(
+            'SELECT AVG(s.score) FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE staff_id= %s AND event_dt BETWEEN %s AND %s',
+            (staff_id, s_dt, e_dt)
+        )
+        return curs.fetchone()[0]
 
 def create_satisfaction(db_conn, score, event_id, reservation_id):
     """Store a calculated satisfaction score in the database.
@@ -134,11 +173,13 @@ def avg_css_per_menu_item(db_conn, menu_item):
     return avg_score
 
 def get_menu_item_satisfaction(db_conn, menu_item, start_date, end_date):
-        """Average CSS for specified menu_item.
+        """Average CSS for specified menu_item in a specified time range.
 
         :param db_conn: A psycopg2 connection to the database.
         :param menu_item: The ID of the menu item.
-        :return: Average CSS for the menu item.
+        :param start_date: The start date in string form (ie 25-10-25)
+        :param end_date: The end date in string form
+        :return: SQL list of tuples of relevant data for menu item reporting
         """
         with db_conn.cursor() as curs:
             curs.execute(
@@ -161,7 +202,9 @@ def avg_menu_item_score(db_conn, menu_item, start_date, end_date):
 
     :param db_conn: A psycopg2 connection to the database.
     :param menu_item: The ID of the menu item.
-    :return: Average CSS for the menu item.
+    :param start_date: The start date in string form (ie 25-10-25)
+    :param end_date: The end date in string form
+    :return: Average CSS for the menu item between dates.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -182,7 +225,7 @@ def get_latest_satisfaction_date(db_conn):
     """Average CSS for specified menu_item.
 
     :param db_conn: A psycopg2 connection to the database.
-    :return: Gets latest data entry.
+    :return: Gets latest data entry for initialisation of populated data.
     """
     with db_conn.cursor() as curs:
         curs.execute(
@@ -194,7 +237,7 @@ def get_all_years(db_conn):
     """Average CSS for specified menu_item.
 
     :param db_conn: A psycopg2 connection to the database.
-    :return: Tuple of all times.
+    :return: List of years that the data spans across.
     """
     with db_conn.cursor() as curs:
         curs.execute(

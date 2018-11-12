@@ -12,8 +12,3 @@ INDEX_BLUEPRINT = Blueprint('index', __name__, template_folder='templates')
 @templated(template='index.html')
 def index():
     return dict(page_title='IRS - Admin Dashboard')
-
-
-@INDEX_BLUEPRINT.route('/test_dashboard')
-def test():
-    return render_template("index.html")

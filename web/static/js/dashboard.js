@@ -1,6 +1,16 @@
+/**
+* All functions for html generation & endpoint data calls to create a seemless, one page dashboard solution
+*
+* Author: Jacob Vorreiter
+* Date: 12/11/2018
+*/
+
 var options = "";
 var mode = "Customer";
 
+/**
+* One time endpoint call make ready the options for a year selector
+*/
 function populateYearOptions(){
   function callback(data){
     $.each(data.years, function(k, v){
@@ -13,6 +23,10 @@ function populateYearOptions(){
   }
 }
 
+/**
+* JS HTML generator for date format change (date, week, month, year)
+* @param {String} inputType String for date format change
+*/
 function changeDatePicker(inputType){
   var decoration = "id='date-picker' class='form-control form-control-sm' onchange='updateAll()'";
   if (inputType == "year"){
@@ -23,6 +37,10 @@ function changeDatePicker(inputType){
   }
 }
 
+/**
+* Generates the string to call the correct endpoint
+* @return {String} A formatted, populated api call (eg /api/reporting/Customer/week?dateString=2018-W45)
+*/
 function getAPIString(){
   var date_type = document.getElementById('date-picker').getAttribute("name");
   var date_string = $("#date-picker").val();
@@ -40,11 +58,17 @@ function getAPIString(){
   return api_string;
 }
 
+/**
+* Updates the chart and table, calling appropriate functions to get data from the endpoint
+*/
 function updateAll(){
   updateChart();
   updateTable();
 }
 
+/**
+* Updates the Chart.js chart data by reading data from the endpoint
+*/
 function updateChart(){
   api_string = getAPIString();
 
@@ -53,15 +77,22 @@ function updateChart(){
     myLineChart.data.datasets[0].data = data.scores;
     myLineChart.data.labels = data.labels;
     myLineChart.update();
+    document.getElementById('chart-updated').innerHTML = "Updated " + new Date();
   });
 }
 
+/**
+* Updates the DataTable table by reading data from the endpoint and reloading the DataTable ajax url
+*/
 function updateTable(api_string){
   api_string = getAPIString();
-
   myDataTable.ajax.url(api_string).load();
+  document.getElementById('table-updated').innerHTML = "Updated " + new Date();
 }
 
+/**
+* Obtains selector data from the endpoint and populates the select with options according to the current mode (ie Staff or Menu)
+*/
 function populateListItems(){
   $.getJSON('/api/reporting/list_items', function(data){
     document.getElementById('item-selector').innerHTML = "";
@@ -71,6 +102,9 @@ function populateListItems(){
   });
 }
 
+/**
+* Changes the Graph mode to view different satisfaction visualisations (ie Customer, Staff, Menu)
+*/
 function changeGraphMode(elem){
   mode = elem.name;
   document.getElementById("graph_title").innerHTML = elem.name + " Satisfaction Graph";
