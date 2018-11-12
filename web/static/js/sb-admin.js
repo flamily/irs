@@ -188,7 +188,6 @@
       );
   });
 
-
   //Robot Photo
   var robotInputElement;
 
@@ -247,7 +246,6 @@
         irs.say("Please enter or say how many people you wish to seat, the max we seat is 10");
         setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 5000);
       }
-
     };
 
     var modalCallback = function(matchedIndex){
@@ -286,13 +284,16 @@
         if(!parseInt(recognisedWord))
           recognisedWord = wordToNumber(recognisedWord);
 
-        if(!$("[value='Table " + recognisedWord + "']").prop('disabled'))
-          $("[value='Table " + recognisedWord + "']").triggerHandler('click');
+        if(!$($("[value='" + recognisedWord + "']")[0]).siblings('button:submit').prop('disabled'))
+          $($("[value=" + recognisedWord + "]")[0]).parent().submit();
         else
-          alert("Table is taken");
+          irs.say("Table is taken, please select another");
       }
-      // Rerun voice
-      irs.listen(triggerWords, 10000, tableCallback);
+      else {
+        irs.say("Please tap a table or say the table number");
+      }
+        // Rerun voice
+        setTimeout(function(){irs.listen(triggerWords, 10000, tableCallback)}, 3000);
     };
 
     var proceedCallback = function(matchedIndex){
