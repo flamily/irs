@@ -5,20 +5,25 @@ Author: Andrew Pope, Andy GO, Jacob Vorreiter
 Date: 12/11/2018
 """
 
+
 def get_satisfaction_between_dates(db_conn, start, end):
-    """Gets the customers satisfaction between dates across all staff and menu items
+    """Gets the customers satisfaction between dates across all
+    staff and menu items
 
     :param db_conn: A psycopg2 connection to the databaseself.
     :param start: The start date in string form (ie 2018-10-25)
     :param end: The end date in string form
     :return: An SQL List of Tuples of all items"""
 
-    sql = 'SELECT * FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE event_dt BETWEEN %s AND %s ORDER BY e.event_dt ASC'
+    sql = "SELECT * FROM event AS e \
+           JOIN satisfaction AS s ON e.event_id = s.event_id \
+           WHERE event_dt BETWEEN %s AND %s ORDER BY e.event_dt ASC"
     with db_conn.cursor() as curs:
         params = (start, end)
         curs.execute(sql, params)
         events = curs.fetchall()
         return events
+
 
 def staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
     """Get staff member's satisfaction score between dates
@@ -31,10 +36,14 @@ def staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
     """
     with db_conn.cursor() as curs:
         curs.execute(
-            'SELECT * FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE staff_id= %s AND event_dt BETWEEN %s AND %s ORDER BY e.event_dt ASC',
+            "SELECT * FROM event AS e "
+            "JOIN satisfaction AS s ON e.event_id = s.event_id "
+            "WHERE staff_id= %s AND event_dt BETWEEN %s AND %s "
+            "ORDER BY e.event_dt ASC",
             (staff_id, s_dt, e_dt)
         )
         return curs.fetchall()
+
 
 def avg_staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
     """Get staff member's average satisfaction score between dates
@@ -47,10 +56,13 @@ def avg_staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
     """
     with db_conn.cursor() as curs:
         curs.execute(
-            'SELECT AVG(s.score) FROM event AS e JOIN satisfaction AS s ON e.event_id = s.event_id WHERE staff_id= %s AND event_dt BETWEEN %s AND %s',
+            "SELECT AVG(s.score) FROM event AS e JOIN satisfaction AS s "
+            "ON e.event_id = s.event_id "
+            "WHERE staff_id= %s AND event_dt BETWEEN %s AND %s",
             (staff_id, s_dt, e_dt)
         )
         return curs.fetchone()[0]
+
 
 def create_satisfaction(db_conn, score, event_id, reservation_id):
     """Store a calculated satisfaction score in the database.
@@ -172,6 +184,7 @@ def avg_css_per_menu_item(db_conn, menu_item):
         avg_score = curs.fetchone()[0]
     return avg_score
 
+
 def get_menu_item_satisfaction(db_conn, menu_item, start_date, end_date):
         """Average CSS for specified menu_item in a specified time range.
 
@@ -183,19 +196,22 @@ def get_menu_item_satisfaction(db_conn, menu_item, start_date, end_date):
         """
         with db_conn.cursor() as curs:
             curs.execute(
-                "SELECT e.event_id, quantity, order_dt, restaurant_table_id, staff_id, s.reservation_id, score "
-                 "FROM satisfaction s "
-                 "JOIN reservation r ON s.reservation_id = r.reservation_id "
-                 "JOIN customer_order c ON r.reservation_id = c.reservation_id "
-                 "JOIN order_item oi ON c.customer_order_id = oi.customer_order_id "
-                 "JOIN menu_item mi ON oi.menu_item_id = mi.menu_item_id "
-                 "JOIN event e ON e.event_id = s.event_id "
-                 "WHERE s.score IS NOT NULL AND oi.menu_item_id = %s "
-                 "AND order_dt BETWEEN %s AND %s"
-                 "ORDER BY order_dt ASC",
+                "SELECT e.event_id, quantity, order_dt, restaurant_table_id, "
+                "staff_id, s.reservation_id, score "
+                "FROM satisfaction s "
+                "JOIN reservation r ON s.reservation_id = r.reservation_id "
+                "JOIN customer_order c ON r.reservation_id = c.reservation_id "
+                "JOIN order_item oi "
+                "ON c.customer_order_id = oi.customer_order_id "
+                "JOIN menu_item mi ON oi.menu_item_id = mi.menu_item_id "
+                "JOIN event e ON e.event_id = s.event_id "
+                "WHERE s.score IS NOT NULL AND oi.menu_item_id = %s "
+                "AND order_dt BETWEEN %s AND %s"
+                "ORDER BY order_dt ASC",
                 (menu_item, start_date, end_date)
             )
             return curs.fetchall()
+
 
 def avg_menu_item_score(db_conn, menu_item, start_date, end_date):
     """Average CSS for specified menu_item.
@@ -209,17 +225,18 @@ def avg_menu_item_score(db_conn, menu_item, start_date, end_date):
     with db_conn.cursor() as curs:
         curs.execute(
             "SELECT AVG(score) "
-             "FROM satisfaction s "
-             "JOIN reservation r ON s.reservation_id = r.reservation_id "
-             "JOIN customer_order c ON r.reservation_id = c.reservation_id "
-             "JOIN order_item oi ON c.customer_order_id = oi.customer_order_id "
-             "JOIN menu_item mi ON oi.menu_item_id = mi.menu_item_id "
-             "JOIN event e ON e.event_id = s.event_id "
-             "WHERE s.score IS NOT NULL AND oi.menu_item_id = %s "
-             "AND order_dt BETWEEN %s AND %s",
+            "FROM satisfaction s "
+            "JOIN reservation r ON s.reservation_id = r.reservation_id "
+            "JOIN customer_order c ON r.reservation_id = c.reservation_id "
+            "JOIN order_item oi ON c.customer_order_id = oi.customer_order_id "
+            "JOIN menu_item mi ON oi.menu_item_id = mi.menu_item_id "
+            "JOIN event e ON e.event_id = s.event_id "
+            "WHERE s.score IS NOT NULL AND oi.menu_item_id = %s "
+            "AND order_dt BETWEEN %s AND %s",
             (menu_item, start_date, end_date)
         )
         return curs.fetchone()[0]
+
 
 def get_latest_satisfaction_date(db_conn):
     """Average CSS for specified menu_item.
@@ -232,6 +249,7 @@ def get_latest_satisfaction_date(db_conn):
             "SELECT event_dt FROM event ORDER BY event_dt DESC",
         )
         return curs.fetchone()[0]
+
 
 def get_all_years(db_conn):
     """Average CSS for specified menu_item.

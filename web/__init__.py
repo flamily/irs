@@ -20,7 +20,6 @@ APP.register_blueprint(ROBOT_BLUEPRINT)
 APP.register_blueprint(API_BLUEPRINT, url_prefix="/api")
 
 
-
 @APP.errorhandler(404)
 def not_found(e):
     print('attempt to access missing: {}'.format(e))
