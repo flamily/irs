@@ -1,6 +1,6 @@
 """
 Author: Joshua De los Santos
-Modified: 12:12PM - 12/11/2018
+Modified: 10:38PM - 12/11/2018
 
 Description:
     Methods to reduce azure data into a single satisfaction number.
@@ -42,13 +42,32 @@ def apply_reduction(raw_results):
         emotion_weight *= -1
     model = load_RF_File()
     to_predict = [list(emotions.values())]
-    prediction = (model.predict(to_predict) + emotion_weight) * 10
-    return prediction[0] if prediction[0] < 100 else 100
+    to_predict_str = ['{:.3f}'.format(x) for x in to_predict]
+    prediction = bagging_predict(model, to_predict_str) * 10
+    return prediction if prediction < 100 else 100
+
+
+def bagging_predict(trees, row):
+    predictions = [predict(tree, row) for tree in trees]
+    return max(set(predictions), key=predictions.count)
+
+
+def predict(node, row):
+    if row[node['index']] < node['value']:
+        if isinstance(node['left'], dict)
+            return predict(node['left'], row)
+        else:
+            return node['left']
+    else:
+        if isinstance(node['right'], dict):
+            return predict(node['right'], row)
+        else:
+            return node['right']
 
 
 def load_RF_File():
-    """Load .joblib model file
+    """Load .pkl model file
     :return: classifier object
     """
-    with open('biz/css/RF_model.pkl', 'rb') as model_file:
+    with open('biz/css/RF_list.pkl', 'rb') as model_file:
         return pickle.load(model_file)
