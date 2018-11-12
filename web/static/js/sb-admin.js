@@ -188,7 +188,6 @@
       );
   });
 
-
   //Robot Photo
   var robotInputElement;
 
@@ -286,13 +285,15 @@
         if(!parseInt(recognisedWord))
           recognisedWord = wordToNumber(recognisedWord);
 
-        if(!$("[value='Table " + recognisedWord + "']").prop('disabled'))
-          $("[value='Table " + recognisedWord + "']").triggerHandler('click');
+        if(!$($("[value='" + recognisedWord + "']")[0]).siblings('button:submit').prop('disabled'))
+          $($("[value=" + recognisedWord + "]")[0]).parent().submit();
         else
-          alert("Table is taken");
+          irs.say("Table is taken, please select another");
       }
+      else 
+        irs.say("Please tap a table or say the table number");
       // Rerun voice
-      irs.listen(triggerWords, 10000, tableCallback);
+      setTimeout(function(){irs.listen(triggerWords, 10000, tableCallback)}, 3000);
     };
 
     var proceedCallback = function(matchedIndex){
@@ -302,9 +303,8 @@
         handleGenericCommands(recognisedWord);
       }
       // Rerun voice
-      else{
+      else
         irs.listen(triggerWords, 10000, proceedCallback);
-      }
     };
 
 
@@ -346,7 +346,6 @@
 
       return numberMap.get(numberString);
     }
-
 
     // Actually do something
     if(window.location.pathname.includes('/party')){
