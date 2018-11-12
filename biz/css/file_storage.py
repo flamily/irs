@@ -50,7 +50,7 @@ def bucket_upload(img, event_id, reservation_id):  # pragma: no cover
         encoded img len={}".format(event_id, reservation_id, len(img)))
 
 
-def bucket_download(bucket, key):
+def bucket_download(bucket, key):  # pragma: no cover
     s3 = boto3.resource('s3')
     obj = s3.Object(bucket, key)
     res = obj.get()

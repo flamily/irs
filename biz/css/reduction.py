@@ -53,7 +53,7 @@ def load_RF_File():
     :return: classifier object
     """
     if config.is_running_on_lambda():
-        return __lazy_s3_model()
+        return __lazy_s3_model()  # pragma: no cover
     with open('biz/css/RF_model.pkl', 'rb') as model_file:
         return pickle.load(model_file)
 
@@ -61,7 +61,8 @@ def load_RF_File():
 _model = None
 
 
-def __lazy_s3_model():
+def __lazy_s3_model():  # pragma: no cover
+    # pylint: disable=global-statement
     global _model
     if _model is None:
         print("Don't have the model yet. Have to load model from S3...")
