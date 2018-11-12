@@ -156,7 +156,7 @@
         'Max number of people our Restaurant can seat is 10'
         );
     }
-    else if(size == 0){
+    else if(size < 1){
       $(document).find('#confirmPartySize').prop('disabled', true);
       $('.seatingDisclaimer').addClass('text-danger');
       $('.seatingDisclaimer').text(
@@ -174,6 +174,14 @@
 
   $(document).find('#confirmPartySize').click(function() {
     var size = document.getElementsByName('partySize')[0].value;
+    if (size == ""){
+      event.preventDefault();
+      $(document).find('#confirmPartySize').prop('disabled', true);
+      $('.seatingDisclaimer').addClass('text-danger');
+      $('.seatingDisclaimer').text(
+        'Number can\'t be blank please enter a number. Our restaurant can seat a maximum of 10 people.'
+        );
+    }
     $('.modal-body').text(
       'You are confirming a table for ' + size +
       ' people. Please select confirm to continue or cancel to enter again.'
