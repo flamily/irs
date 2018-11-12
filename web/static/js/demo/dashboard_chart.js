@@ -4,7 +4,7 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 
 var canvas = document.getElementById('myAreaChart');
 var data = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    labels: [],
     datasets: [
         {
             fill: false,
@@ -24,7 +24,7 @@ var data = {
             pointHoverBorderWidth: 2,
             pointRadius: 5,
             pointHitRadius: 10,
-            data: [65, 59, 80, 0, 56, 55, 40],
+            data: [],
         }
     ]
 };

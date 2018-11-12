@@ -6,6 +6,7 @@ from web.login import LOGIN_BLUEPRINT
 from web.index import INDEX_BLUEPRINT
 from web.robot import ROBOT_BLUEPRINT
 from web.tables import TABLES_BLUEPRINT
+from web.endpoints import API_BLUEPRINT
 
 
 APP = Flask(__name__)
@@ -15,8 +16,9 @@ APP.register_blueprint(LOGIN_BLUEPRINT, url_prefix="/login")
 APP.register_blueprint(INDEX_BLUEPRINT)
 APP.register_blueprint(TABLES_BLUEPRINT)
 APP.register_blueprint(ROBOT_BLUEPRINT)
+APP.register_blueprint(API_BLUEPRINT, url_prefix="/api")
 
-# 
+
 # @APP.errorhandler(404)
 # def not_found(e):
 #     print('attempt to access missing: {}'.format(e))
