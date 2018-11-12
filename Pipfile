@@ -5,19 +5,19 @@ name = "pypi"
 
 [dev-packages]
 sklearn = "*"
-
-[packages]
 coverage = "*"
 "flake8" = "*"
-flask = "*"
-"psycopg2" = "*"
 pylint = "*"
 pytest = "*"
 pytest-cov = "*"
+pytest-mock = "*"
+
+[packages]
+flask = "*"
+"psycopg2" = "*"
 passlib = "*"
 zappa = "*"
 cognitive-face = "*"
-pytest-mock = "*"
 "boto3" = "*"
 
 [requires]
