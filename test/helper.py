@@ -23,7 +23,7 @@ def spoof_user(client):
     return s_id
 
 
-def spoof_tables(db_conn, n):
+def spoof_tables(db_conn, n, username='ldavid', first='Larry', last='David'):
     """Load a series of restaurant tables and a staff member.
 
     :param db_conn: A psycopg2 connection to the database.
@@ -31,7 +31,7 @@ def spoof_tables(db_conn, n):
     :return: ([t1_id, t2_id ... tn_id], staff_id)
     """
     staff_id = ms.create_staff_member(
-        db_conn, 'ldavid', 'prettygood', ('Larry', 'David'),
+        db_conn, username, 'prettygood', (first, last),
         Permission.wait_staff
     )
 
