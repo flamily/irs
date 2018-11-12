@@ -4,7 +4,7 @@ Testing for web error codes.
 Author: Andrew Pope
 Date: 06/11/2018
 """
-from test.web.helper import spoof_user
+from test.helper import spoof_user
 
 
 def test_404(client):

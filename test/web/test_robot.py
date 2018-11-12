@@ -5,7 +5,7 @@ from biz.restaurant_table import (
     Shape, Coordinate
 )
 import pytest
-from test.web.helper import spoof_user
+from test.helper import spoof_user
 
 
 def test_index(client):

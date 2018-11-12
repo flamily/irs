@@ -41,6 +41,7 @@ passlib = "*"
 gunicorn = "*"
 zappa = "*"
 cognitive-face = "*"
+pytest-mock = "*"
 
 [requires]
 python_version = "3.6"
