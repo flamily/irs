@@ -94,7 +94,7 @@ def test_save_css(mocker):
     dodgy_pool.conn.rollback.assert_not_called()
 
 
-def test_save_css_with_database(mocker, database_snapshot):
+def test_save_css_with_database(database_snapshot):
     """
     Saving css using db snapshot. check transaction etc
     """
@@ -114,7 +114,7 @@ def test_save_css_with_database(mocker, database_snapshot):
     conn = database_snapshot.getconn()
     try:
         score = ms.lookup_satisfaction(conn, e1, r1)
-        assert 50 == score
+        assert score == 50
     finally:
         database_snapshot.putconn(conn)
 

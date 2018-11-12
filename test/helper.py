@@ -47,6 +47,9 @@ def spoof_tables(db_conn, n):
 
 
 def mock_db_pool(mocker):
+    """
+    Make a mock db pool to test commit/rollback being called
+    """
     # pylint: disable=too-few-public-methods
     class MockConn():
         def __init__(self):
@@ -59,5 +62,5 @@ def mock_db_pool(mocker):
             self.getconn = mocker.stub(name='getconn_stub')
             self.getconn.return_value = self.conn
             self.putconn = mocker.stub(name='putconn_stub')
-    
+
     return MockPool()
