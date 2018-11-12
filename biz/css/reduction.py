@@ -6,7 +6,6 @@ Description:
     Methods to reduce azure data into a single satisfaction number.
 """
 import pickle
-import config
 
 negative_emotions = ['anger', 'contempt', 'disgust', 'fear', 'sadness']
 
@@ -82,21 +81,5 @@ def load_RF_File():
     """Load .pkl model file
     :return: classifier object
     """
-    with open('RF_list.pkl', 'rb') as model_file:
+    with open('biz/css/RF_list.pkl', 'rb') as model_file:
         return pickle.load(model_file)
-
-
-_model = None
-
-
-def __lazy_s3_model():  # pragma: no cover
-    # pylint: disable=global-statement
-    global _model
-    if _model is None:
-        print("Don't have the model yet. Have to load model from S3...")
-        f = fs.bucket_download(
-            config.model_bucket(),
-            config.model_key(),
-        )
-        _model = pickle.loads(f)
-    return _model
