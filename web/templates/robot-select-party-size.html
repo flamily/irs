@@ -2,6 +2,7 @@
   {% include 'header.html' %}
 {% endwith %}
   <body id="page-top" class="bg-dark">
+
     <script type="text/javascript">
       function addNum(key){
         var partySize = document.forms[0].partySize;
@@ -16,19 +17,26 @@
         }
       }
     </script>
+
     <div class="container">
+
       <div class="text-center">
-        <h1>Welcome to Avalon Smart Restaurant</h1>
-        <div class="row justify-content-center">
-            <p class="text-primary">You may speak to the Robot or press the button below for manual entry.</p>
-        </div>
-        <p style="color:white; font-size: 24px;">Please enter how many people you wish to seat:<p>
-        <p style="color:white;">Max number of people our Restaurant can seat is 10.</p>
+        <h1 class="h1-robot">
+          Welcome to Avalon Smart Restaurant
+        </h1>
+        <p style="color:white; font-size: 24px;">
+          You may speak to the Robot or enter how many people you wish to seat:
+        </p>
+        <p class="seatingDisclaimer" style="color:white;">
+          Max number of people our Restaurant can seat is 10.
+        </p>
       </div>
+
       <div id="num-pad" class="container text-center">
         <form action="partySize.htm" method="get">
           <div class="input">
-              <input type="text" name="partySize" value="" maxlength="4" class="display text-center numpad-field" readonly="readonly" />
+              <input type="text" name="partySize" value="" maxlength="4"
+                class="display text-center numpad-field" readonly="readonly"/>
           </div>
           <div class="row">
             <div class="col">
@@ -61,31 +69,44 @@
           </div>
           <div class="row justify-content-center">
             <div class="col-sm-4">
-              <button id="confirmPartySize" type="button" class="btn btn-block confirm-button" data-toggle="modal" data-target="#confirmModal">
+              <button id="confirmPartySize" type="button" class="btn btn-block btn-success confirm-button"
+                data-toggle="modal" data-target="#confirmModal">
                 Confirm
               </button>
             </div>
           </div>
         </form>
       </div>
-      <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+      <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title justify-content-center" id="exampleModalLabel">Are you sure?</h5>
+              <h5 class="modal-title justify-content-center" id="exampleModalLabel">
+                Are you sure?
+              </h5>
               <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body"></div>
             <div class="modal-footer">
-              <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-              <button class="btn btn-primary" type="button" id='findAvailableTables'>Find available tables</button>
+              <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                Cancel
+              </button>
+              <button class="btn btn-primary" type="button" id='findAvailableTables'>
+                Find available tables
+              </button>
             </div>
           </div>
         </div>
       </div>
+
     </div>
+
   </body>
+
   {% include 'footer.html' %}
+
 </html>

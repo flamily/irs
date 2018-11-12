@@ -13,13 +13,23 @@ script:
   - coverage report --omit '/usr/*,/home/travis/virtualenv/*' -m --skip-covered --fail-under=100
   - find . -iname "*.py" | xargs pylint -d "c0111, R0801, C0103, C0411"
   - flake8
+  - |
+    echo "Checking if the web lambda is under 256MiB" && \
+    zappa package -o irs-web-lambda.zip web && \
+    size=$(unzip -l irs-web-lambda.zip | tail -n1 | awk '{ print $1 }'); max=262144000; echo $size; if [ "$size" -gt "$max" ]; then false; fi
+  - |
+    echo "Checking if the css lambda is under 256MiB" && \
+    zappa package -o irs-css-lambda.zip web && \
+    size=$(unzip -l irs-css-lambda.zip | tail -n1 | awk '{ print $1 }'); max=262144000; echo $size; if [ "$size" -gt "$max" ]; then false; fi
 deploy:
   - provider: script
-    script: pipenv uninstall --all && pipenv install --deploy --ignore-pipfile && zappa update web
+    script: zappa update -z irs-web-lambda.zip web
+    skip_cleanup: true
     on:
       branch: master
   - provider: script
-    script: pipenv uninstall --all && pipenv install --dev --deploy --ignore-pipfile && zappa update css
+    script: zappa update -z irs-css-lambda.zip css
+    skip_cleanup: true
     on:
       branch: master
 notifications:

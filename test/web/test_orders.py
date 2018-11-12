@@ -1,6 +1,6 @@
 import biz.manage_menu as mm
 import biz.manage_restaurant as mr
-from test.web.helper import spoof_user, spoof_tables
+from test.helper import spoof_user, spoof_tables
 
 
 def __spoof_menu_items(client):

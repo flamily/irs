@@ -1,6 +1,6 @@
 """
 Author: Joshua De los Santos
-Modified: 1:17PM - 8/11/2018
+Modified: 10:38PM - 12/11/2018
 
 Description:
     Methods to reduce azure data into a single satisfaction number.
@@ -41,14 +41,42 @@ def apply_reduction(raw_results):
     if emotion_weight_key in negative_emotions:
         emotion_weight *= -1
     model = load_RF_File()
-    to_predict = [list(emotions.values())]
-    prediction = (model.predict(to_predict) + emotion_weight) * 10
-    return prediction if prediction < 100 else 100
+    to_predict = list(emotions.values())
+    to_predict_str = ['{:.3f}'.format(x) for x in to_predict]
+    prediction = bagging_predict(model, to_predict_str) * 10
+    return int(prediction) if int(prediction) < 100 else 100
+
+
+def bagging_predict(trees, row):
+    """Make a prediction with a list of bagged trees
+
+    :param trees: a list of the random forest trees
+    :param row: entry of data to be classified
+    :return: predicted data
+    """
+    predictions = [predict(tree, row) for tree in trees]
+    return max(set(predictions), key=predictions.count)
+
+
+def predict(node, row):
+    """Make a prediction with a single decision tree
+
+    :param node: a tree
+    :param row: entry of data to be classified
+    :return: predicted data
+    """
+    if row[node['index']] < node['value']:
+        if isinstance(node['left'], dict):
+            return predict(node['left'], row)
+        return node['left']
+    if isinstance(node['right'], dict):
+        return predict(node['right'], row)
+    return node['right']
 
 
 def load_RF_File():
-    """Load .joblib model file
+    """Load .pkl model file
     :return: classifier object
     """
-    with open('biz/css/RF_model.pkl', 'rb') as model_file:
+    with open('biz/css/RF_list.pkl', 'rb') as model_file:
         return pickle.load(model_file)
