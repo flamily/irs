@@ -13,13 +13,14 @@ script:
   - coverage report --omit '/usr/*,/home/travis/virtualenv/*' -m --skip-covered --fail-under=100
   - find . -iname "*.py" | xargs pylint -d "c0111, R0801, C0103, C0411"
   - flake8
+  - pipenv uninstall --all && pipenv install --dev --deploy --ignore-pipfile && pip uninstall pylint passlib && zappa package -o irs-css-lambda.zip css && unzip -l irs-css-lambda.zip | tail -n1 | awk '{ print $1 }'
 deploy:
   - provider: script
     script: pipenv uninstall --all && pipenv install --deploy --ignore-pipfile && zappa update web
     on:
       branch: master
   - provider: script
-    script: pipenv uninstall --all && pipenv install --dev --deploy --ignore-pipfile && zappa update css
+    script: pipenv uninstall --all && pipenv install --dev --deploy --ignore-pipfile && pip uninstall pylint passlib && zappa update css
     on:
       branch: master
 notifications:
