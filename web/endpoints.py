@@ -23,7 +23,10 @@ def get_customer_report(date_type):
 def get_staff_report(staff_id, date_type):
     date_string = request.args.get('dateString')
 
-    res = report.get_staff_satisfaction_report(staff_id, date_type, date_string)
+    res = report.get_staff_satisfaction_report(
+        staff_id, 
+        date_type,
+        date_string)
     labels, data = report.get_chart_data(res)
     avg = report.get_staff_average_score(staff_id, date_type, date_string)
 
