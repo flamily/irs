@@ -238,11 +238,15 @@
         $(document).find('#confirmPartySize').click();
 
         // Handle Modal
-        irs.listen(triggerWords, 10000, modalCallback);
+        irs.say('Do you want to confirm this or cancel?');
+        setTimeout(function(){irs.listen(triggerWords, 10000, modalCallback)}, 2000);
       }
       // Re run voice
-      else
-        irs.listen(triggerWords, 10000, partyCallback);
+      else{
+        irs.say("Please enter or say how many people you wish to seat, the max we seat is 10");
+        setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 5000);
+      }
+
     };
 
     var modalCallback = function(matchedIndex){
@@ -254,8 +258,9 @@
         switch(recognisedWord){
           case 'cancel':
           case 'no':
-            $("#confirmModal").hide();
-            irs.listen(triggerWords, 10000, partyCallback);
+            $("[data-dismiss='modal']").first().click();
+            irs.say("Please enter or say how many people you wish to seat, the max we seat is 10");
+            setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 2000);
             break;
           case 'confirm':
           case 'confirmed':
@@ -266,7 +271,8 @@
       }
       // Rerun voice
       else{
-        irs.listen(triggerWords, 10000, modalCallback);
+        irs.say('Do you want to confirm this or cancel?');
+        setTimeout(function(){irs.listen(triggerWords, 10000, modalCallback)}, 2000);
       }
     };
 
@@ -342,12 +348,21 @@
 
 
     // Actually do something
-    if(window.location.pathname.includes('/party'))
-      irs.listen(triggerWords, 10000, partyCallback);
-    else if(window.location.pathname.includes('/table'))
-      irs.listen(triggerWords, 10000, tableCallback);
-    else if(window.location.pathname.includes('/proceed'))
-      irs.listen(triggerWords, 10000, proceedCallback);
+    if(window.location.pathname.includes('/party')){
+      irs.say("Please enter or say how many people you wish to seat, the max we seat is 10");
+      setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 5000);
+    }
+    else if(window.location.pathname.includes('/table')){
+      irs.say("Please tap a table or say the table number");
+      setTimeout(function(){irs.listen(triggerWords, 10000, tableCallback)}, 3000);
+    }
+    else if(window.location.pathname.includes('/proceed')){
+      irs.say("Your table is now ready for you");
+      setTimeout(function(){irs.listen(triggerWords, 10000, proceedCallback)}, 3000);
+    }
+    else if(window.location.pathname.includes('/full')){
+      irs.say("Sorry, all the tables are taken");
+    }
   }
 
   /********************************
