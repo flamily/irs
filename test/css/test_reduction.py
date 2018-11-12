@@ -124,6 +124,43 @@ from biz.css.reduction import apply_reduction
                                                     'neutral': 0.0,
                                                     'sadness': 0.0,
                                                     'surprise': 0.0}}}]),
+    ([{
+        'faceId': '68581599-6228-42a2-b16d-1f651918df08',
+            'faceRectangle': {
+                'top': 269,
+                'left': 604,
+                'width': 173,
+                'height': 173},
+            'faceAttributes': {
+                'glasses': 'NoGlasses',
+                'emotion': {
+                    'anger': 0.003,
+                    'contempt': 0.049,
+                    'disgust': 0.0,
+                    'fear': 0.0,
+                    'happiness': 0.0,
+                    'neutral': 0.6,
+                    'sadness': 0.346,
+                    'surprise': 0.0}}}]),
+
+    ([{
+        'faceId': 'e0c5a991-398b-42df-ad6b-f914384f8fd6',
+            'faceRectangle': {
+                'top': 250,
+                'left': 582,
+                'width': 171,
+                'height': 171},
+            'faceAttributes': {
+                'glasses': 'NoGlasses',
+                'emotion': {
+                    'anger': 0.002,
+                    'contempt': 0.064,
+                    'disgust': 0.0,
+                    'fear': 0.0,
+                    'happiness': 0.0,
+                    'neutral': 0.571,
+                    'sadness': 0.362,
+                    'surprise': 0.0}}}]),
 ])
 def test_json_input(raw_results):
     """Input valid azure json data"""

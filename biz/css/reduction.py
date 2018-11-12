@@ -1,6 +1,6 @@
 """
 Author: Joshua De los Santos
-Modified: 1:17PM - 8/11/2018
+Modified: 12:12PM - 12/11/2018
 
 Description:
     Methods to reduce azure data into a single satisfaction number.
@@ -43,7 +43,7 @@ def apply_reduction(raw_results):
     model = load_RF_File()
     to_predict = [list(emotions.values())]
     prediction = (model.predict(to_predict) + emotion_weight) * 10
-    return prediction if prediction < 100 else 100
+    return prediction[0] if prediction[0] < 100 else 100
 
 
 def load_RF_File():
