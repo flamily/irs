@@ -6,7 +6,6 @@ Date: 13/11/2018
 """
 
 from biz import reporting as report
-from test import helper as h
 
 
 def test_get_date_bounds():
@@ -37,10 +36,14 @@ def test_get_customer_satisfaction_missing(database_snapshot):
     date_str = "2018-11-08"
     date_format = "date"
 
-    assert report.get_customer_satisfaciton(db_conn,
-        date_format, date_str) == []
-    assert report.get_average_score(db_conn,
-        date_format, date_str) == 0
+    assert report.get_customer_satisfaciton(
+        db_conn,
+        date_format,
+        date_str) == []
+    assert report.get_average_score(
+        db_conn,
+        date_format,
+        date_str) == 0
 
 
 def test_get_staff_satisfaction_report_missing(database_snapshot):
@@ -51,10 +54,16 @@ def test_get_staff_satisfaction_report_missing(database_snapshot):
     date_format = "date"
     staff_id = 1
 
-    assert report.get_staff_satisfaction_report(db_conn, staff_id,
-        date_format, date_str) == []
-    assert report.get_staff_average_score(db_conn, staff_id,
-        date_format, date_str) == 0
+    assert report.get_staff_satisfaction_report(
+        db_conn,
+        staff_id,
+        date_format,
+        date_str) == []
+    assert report.get_staff_average_score(
+        db_conn,
+        staff_id,
+        date_format,
+        date_str) == 0
 
 
 def test_get_menu_satisfaction_missing(database_snapshot):
@@ -65,10 +74,16 @@ def test_get_menu_satisfaction_missing(database_snapshot):
     date_format = "date"
     menu_id = 1
 
-    assert report.get_menu_satisfaction(db_conn, menu_id,
-        date_format, date_str) == []
-    assert report.get_avg_menu_score(db_conn, menu_id,
-        date_format, date_str) == 0
+    assert report.get_menu_satisfaction(
+        db_conn,
+        menu_id,
+        date_format,
+        date_str) == []
+    assert report.get_avg_menu_score(
+        db_conn,
+        menu_id,
+        date_format,
+        date_str) == 0
 
 
 def test_get_staff_members_missing(database_snapshot):
