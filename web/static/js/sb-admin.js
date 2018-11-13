@@ -191,7 +191,7 @@
   //Robot Photo
   var robotInputElement;
 
-  $('.robotTableReserve').children('input:submit').click(function(event){
+  $('.robotTableReserve').children('button:submit').click(function(event){
     event.preventDefault();
     robotInputElement = $(this);
     irs.photo(robotPhotoCallback);
@@ -239,12 +239,12 @@
 
         // Handle Modal
         irs.say('Do you want to confirm this or cancel?');
-        setTimeout(function(){irs.listen(triggerWords, 10000, modalCallback)}, 2000);
+        setTimeout(function(){irs.listen(triggerWords, 10000, modalCallback)}, 3000);
       }
       // Re run voice
       else{
         irs.say("Please enter or say how many people you wish to seat, the max we seat is 10");
-        setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 5000);
+        setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 6000);
       }
 
     };
@@ -260,7 +260,7 @@
           case 'no':
             $("[data-dismiss='modal']").first().click();
             irs.say("Please enter or say how many people you wish to seat, the max we seat is 10");
-            setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 5000);
+            setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 6000);
             break;
           case 'confirm':
           case 'confirmed':
@@ -272,7 +272,7 @@
       // Rerun voice
       else{
         irs.say('Do you want to confirm this or cancel?');
-        setTimeout(function(){irs.listen(triggerWords, 10000, modalCallback)}, 2000);
+        setTimeout(function(){irs.listen(triggerWords, 10000, modalCallback)}, 3000);
       }
     };
 
@@ -350,7 +350,7 @@
     // Actually do something
     if(window.location.pathname.includes('/party')){
       irs.say("Please enter or say how many people you wish to seat, the max we seat is 10");
-      setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 5000);
+      setTimeout(function(){irs.listen(triggerWords, 10000, partyCallback)}, 6000);
     }
     else if(window.location.pathname.includes('/table')){
       irs.say("Please tap a table or say the table number");
