@@ -186,7 +186,7 @@ def avg_css_per_menu_item(db_conn, menu_item):
 
 
 def get_menu_item_satisfaction(db_conn, menu_item, start_date, end_date):
-    """CSS for specified menu_item in a specified time range.
+    """Gets all records for specified menu_item in a specified time range.
 
     :param db_conn: A psycopg2 connection to the database.
     :param menu_item: The ID of the menu item.
