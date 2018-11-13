@@ -14,6 +14,7 @@ def __spoof_menu_items(client):
     """Load a series of restaurant menu items.
 
     :param client: The client running the flask app.
+    :return: menu item which was created
     """
     pool = client.testing_db_pool
     conn = pool.getconn()
