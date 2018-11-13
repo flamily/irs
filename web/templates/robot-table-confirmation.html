@@ -2,21 +2,37 @@
   {% include 'header.html' %}
 {% endwith %}
   <body class="bg-dark">
+
     <div class="container">
       <div class="row justify-content-center">
-        <h1>Welcome to Avalon Smart Restaurant</h1>
+        <h1 class="h1-robot">Welcome to Avalon Smart Restaurant</h1>
       </div>
       <div class="row justify-content-center">
-        <p class="text-primary">You have been assigned to Table {{ table }} for a party size of {{ group_size }}.</p>
+        <h4 class="h4-robot">
+          You have been assigned to Table {{ table }} for
+          a group size of {{ group_size }}.
+        </h4>
+      </div>
+      <div class="row justify-content-center">
+        <i class="far fa-smile-beam fa-10x"
+          style="color:greenyellow; margin-bottom: 20px;">
+        </i>
       </div>
     </div>
+
     <div class="container-fluid">
       <div class="row justify-content-center">
         <form action="/robot" method="get">
-          <input type=submit value="Start Over" class="btn btn-default">
+          <button type=submit class="btn btn-danger"
+            style="height: 75px; width: 200px; border-radius: 50px; font-size: 20px;">
+            Start Over
+          </button>
         </form>
       </div>
     </div>
+
   </body>
+
   {% include 'footer.html' %}
+
 </html>
