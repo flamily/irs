@@ -35,8 +35,10 @@ def key_error(_):
 
 @APP.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
+    traceback.print_exc()
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
+    db.rollback()
     return response
 
 
