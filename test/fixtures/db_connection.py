@@ -10,6 +10,7 @@ import uuid
 import pytest
 import psycopg2
 from psycopg2 import pool
+import test.helper as h
 
 
 # Start of test:
@@ -91,3 +92,23 @@ def db_connection(database):
     yield conn
     conn.rollback()
     database.putconn(conn)
+
+
+@pytest.fixture(scope="session")
+def database_css():
+    """Yield a database that is persistent for the entire session."""
+    pool = next(__database_setup())
+    conn = pool.getconn()
+    res = h.spoof_system_for_css(conn)
+    conn.commit()
+    pool.putconn(conn)
+    yield (pool, res)
+
+
+@pytest.fixture()
+def db_conn_css(database_css):
+    # pylint:disable=redefined-outer-name
+    conn = database_css[0].getconn()
+    yield (conn, database_css[1])
+    conn.rollback()
+    database_css[0].putconn(conn)

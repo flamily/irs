@@ -11,7 +11,8 @@ def spoof_system_for_css(conn):
     t, staff = spoof_tables(conn, 3)
     conn.commit()
 
-    spoof_menu_items(conn, 3)
+    mi = spoof_menu_items(conn, 3)
+    menu_items = [(mi[0], 2), (mi[1], 3), (mi[2], 1)]
 
     dt1 = datetime.datetime(2018, 1, 1)
     dt2 = datetime.datetime(2018, 1, 4)
@@ -27,6 +28,7 @@ def spoof_system_for_css(conn):
         scores,
         [(1, 1)])
     conn.commit()
+    return (menu_items, dt1, dt2, dt3)
 
 
 def update_order_dt(db_conn, rid, dt):
