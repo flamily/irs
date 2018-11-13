@@ -29,6 +29,9 @@ def __spoof_menu_items(db_conn, n):
 
 
 def __spoof_satisfaction(db_conn, t, staff, dates, scores, menu_items=[]):
+    # pylint: disable=dangerous-default-value
+    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-locals
     db_connection = db_conn
     for table, event_date, score in zip(t, dates, scores):
         ce1 = mr.create_reservation(db_connection, table, staff, 5)
@@ -362,7 +365,13 @@ def test_get_menu_item_satisfaction(db_connection):
 
     scores = [[40, 60, 80], [50, 55, 60], [40, 60, 80, 100]]
 
-    __spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores, [(1, 1)])
+    __spoof_satisfaction(
+        db_connection,
+        t,
+        staff,
+        [dt1, dt2, dt3],
+        scores,
+        [(1, 1)])
 
     assert len(ms.get_menu_item_satisfaction(
         db_connection, 1, dt1.date(), dt1.date())) == 3
