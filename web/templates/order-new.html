@@ -1,58 +1,77 @@
-{% with page_title = page_title %}
-  {% include 'header.html' %}
-{% endwith %}
-  <body class="bg-dark">
-    <div class="container">
-      <div class="row justify-content-center">
-        <h1>Place An Order</h1>
-      </div>
-    </div>
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-12">
-          <form action="/order/new" method="post">
-            <div class="row">
-              {% for table in tables %}
-              <div class="col-md-3">
-                  <div class="well">
-                    <input type=radio data-menu_table_id="{{ table.rt_id }}" value="{{ table.rt_id }}" name=table_id required>
-                    <h4 class="text-light">Table {{ table.rt_id }}</h4>
+{% include 'header.html' %}
+  <body id="page-top">
+
+    {% include 'nav.html' %}
+
+    <div id="wrapper">
+
+      {% include 'sidebar.html' %}
+
+      <div id="content-wrapper">
+
+        <div class="container-fluid">
+
+          {% include 'breadcrumb.html' %}
+
+          <h1 class="restuarant-table-heading">Place An Order</h1>
+
+            <form action="/order/new" method="post">
+              <div class="row">
+                {% for table in tables %}
+                <div class="col-md-3">
+                    <input id="{{ table.rt_id }}" type=radio data-menu_table_id="{{ table.rt_id }}" value="{{ table.rt_id }}" name=table_id required>
+                    <label for="{{ table.rt_id }}">Table {{ table.rt_id }}</label>
                 </div>
+                {% endfor %}
               </div>
-              {% endfor %}
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <table style="width:100%" class="table-dark">
-                    <tr>
-                      <th>Item</th>
-                      <th>Description</th>
-                      <th>Price</th>
-                      <th>Quantity</th>
-                    </tr>
-                    {% for menu_item in menu_items %}
-                    <tr>
-                      <td>{{ menu_item.name }}</td>
-                      <td>{{ menu_item.description }}</td>
-                      <td>{{ menu_item.price }}</td>
-                      <td><input type="number" data-menu_item_id="{{ menu_item.mi_id }}" name="{{ menu_item.mi_id }}" min="1" max="99"></td>
-                    </tr>
-                    {% endfor %}
-                  </table>
-                  <input type=submit class="btn btn-default" value="Create Order">
-              </div>
-            </form>
-            <div class="col-md-6 justify-content-center">
-              <form action="/order/get" method="get">
-                <h4>Find an existing order</h4>
-                Reservation Number:<input type="number" name="rid" min="1" max="999">
-                <input type=submit class="btn btn-default" value="Find Order">
+              <div class="row">
+                <div class="col-md-12 justify-content-center">
+                  <table style="width:100%" class="table">
+                      <tr>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                      </tr>
+                      {% for menu_item in menu_items %}
+                      <tr>
+                        <td>{{ menu_item.name }}</td>
+                        <td>{{ menu_item.description }}</td>
+                        <td>{{ menu_item.price }}</td>
+                        <td><input type="number" data-menu_item_id="{{ menu_item.mi_id }}" name="{{ menu_item.mi_id }}" min="1" max="99"></td>
+                      </tr>
+                      {% endfor %}
+                    </table>
+                    <div class="row justify-content-center">
+                      <div class="col-md-12">
+                        <input type=submit class="btn btn-default" value="Create Order" style="display: block; margin: auto;">
+                      </div>
+                    </div>
+                </div>
               </form>
             </div>
           </div>
         </div>
+        <!-- /.container-fluid -->
+
+        <!-- Sticky Footer -->
+        <footer class="sticky-footer">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright © Your Website 2018</span>
+            </div>
+          </div>
+        </footer>
+
       </div>
+      <!-- /.content-wrapper -->
+
     </div>
+    <!-- /#wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
   </body>
   {% include 'footer.html' %}
 </html>

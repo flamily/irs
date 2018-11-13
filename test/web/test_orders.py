@@ -32,7 +32,6 @@ def test_order_menu_items(client):
     spoof_user(client)
     menu_item = __spoof_menu_items(client)
     result = client.get('/order/new', follow_redirects=True)
-
     expect = 'data-menu_item_id="{}"'.format(menu_item)
     assert expect in str(result.data).replace(' ', '')
 
@@ -71,12 +70,12 @@ def test_list_menu_items(client):
     menu_items = list()
     num_tables = 1
     sid = spoof_user(client)
+    pool = client.testing_db_pool
+    conn = pool.getconn()
     table = spoof_tables(client, num_tables, sid, True)[0]
     menu_item = __spoof_menu_items(client)
     menu_items.append(tuple([menu_item, 1]))
-    pool = client.testing_db_pool
-    conn = pool.getconn()
-    pool.putconn(conn)
     _, r_id, _ = mr.order(conn, menu_items, table, sid)
+    pool.putconn(conn)
     result = client.get('/order/get?rid='+str(r_id))
     assert result.status_code == 200
