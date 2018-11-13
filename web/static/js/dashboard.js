@@ -32,6 +32,7 @@ function changeDatePicker(inputType){
   if (inputType == "year"){
     var selector = document.getElementById("date-picker-module");
     selector.innerHTML = "<select name='year'" + decoration + ">" + options + "</select>";
+    updateAll();
   } else {
     document.getElementById("date-picker-module").innerHTML = "<input name='" + inputType + "' type=" + inputType + " " + decoration + ">";
   }
