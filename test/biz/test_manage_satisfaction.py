@@ -12,12 +12,6 @@ import test.helper as h
 import biz.manage_menu as mm
 
 
-def dump_cursor(curs):
-    print([desc[0] for desc in curs.description])
-    for r in curs.fetchall():
-        print(r)
-
-
 def __spoof_menu_items(db_conn, n):
     """Load a series of menu_items.
 
@@ -400,7 +394,7 @@ def test_get_menu_item_satisfaction(database_snapshot):
         [dt1, dt2, dt3],
         scores,
         [(1, 1)])
-        
+
     assert len(ms.get_menu_item_satisfaction(
         db_connection, 1, dt1.date(), dt1.date())) == 3
     assert len(ms.get_menu_item_satisfaction(
