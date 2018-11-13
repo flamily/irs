@@ -59,11 +59,40 @@ function getAPIString(){
 }
 
 /**
+* Validates date input data before sending it to the sql to avoid errors
+*/
+function validate(){
+  var date_picker = document.getElementById("date-picker");
+  var date_picker_label = document.getElementById("date-picker-label");
+  var date_string = $("#date-picker").val();
+  var date_regex = /[0-9]{4}\-0[0-9]|1[0-2]\-[0-2][0-9]|3[0-1]/;
+  var week_regex = /[0-9]{4}\-W[0-4][0-9]|W5[0-2]/;
+  var month_regex = /[0-9]{4}\-0[0-9]|1[0-2]/;
+  var year_regex = /[0-9]{4}/;
+  if (date_regex.test(date_string) == true ||
+      week_regex.test(date_string) == true ||
+      month_regex.test(date_string) == true ||
+      year_regex.test(date_string) == true){
+    date_picker.classList.remove("is-invalid");
+    date_picker.classList.add('is-valid');
+    date_picker_label.classList.remove('text-danger');
+    return true;
+  } else {
+    date_picker.classList.remove('is-valid');
+    date_picker.classList.add('is-invalid');
+    date_picker_label.classList.add('text-danger');
+    return false;
+  }
+}
+
+/**
 * Updates the chart and table, calling appropriate functions to get data from the endpoint
 */
 function updateAll(){
-  updateChart();
-  updateTable();
+  if (validate() == true){
+    updateChart();
+    updateTable();
+  }
 }
 
 /**

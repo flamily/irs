@@ -135,8 +135,12 @@ def get_customer_satisfaciton(date_type, date_string):
     :return: JSON ready list of dicts containing satisfaction reporting data
     """
     s_dt, e_dt = get_date_bounds(date_type, date_string)
-    return sort_data(format_dict(
-        mcss.get_satisfaction_between_dates(db, s_dt, e_dt)))
+    item = mcss.get_satisfaction_between_dates(db, s_dt, e_dt)
+
+    if item:
+        return sort_data(format_dict(item))
+    else:
+        return []
 
 
 def get_staff_satisfaction_report(s_id, date_type, date_string):
@@ -151,8 +155,12 @@ def get_staff_satisfaction_report(s_id, date_type, date_string):
     reporting data
     """
     s_dt, e_dt = get_date_bounds(date_type, date_string)
-    return sort_data(format_dict(
-        mcss.staff_css_between_dates(db, s_id, s_dt, e_dt)))
+    item = mcss.staff_css_between_dates(db, s_id, s_dt, e_dt)
+
+    if item:
+        return sort_data(format_dict(item))
+    else:
+        return []
 
 
 def get_menu_satisfaction(m_id, date_type, date_string):
@@ -168,7 +176,11 @@ def get_menu_satisfaction(m_id, date_type, date_string):
     """
     s_dt, e_dt = get_date_bounds(date_type, date_string)
     item = mcss.get_menu_item_satisfaction(db, m_id, s_dt, e_dt)
-    return sort_data(format_menu_dict(item))
+
+    if item:
+        return sort_data(format_menu_dict(item))
+    else:
+        return []
 
 
 def get_average_score(date_type, date_string):
@@ -181,7 +193,11 @@ def get_average_score(date_type, date_string):
     :return: float representation of average score
     """
     s_dt, e_dt = get_date_bounds(date_type, date_string)
-    return float(mcss.avg_css_per_period(db, s_dt, e_dt))
+    avg = mcss.avg_css_per_period(db, s_dt, e_dt)
+    if avg:
+        return float(avg)
+    else:
+        return 0
 
 
 def get_staff_average_score(s_id, date_type, date_string):
@@ -195,7 +211,11 @@ def get_staff_average_score(s_id, date_type, date_string):
     :return: float representation of average staff score
     """
     s_dt, e_dt = get_date_bounds(date_type, date_string)
-    return float(mcss.avg_staff_css_between_dates(db, s_id, s_dt, e_dt))
+    avg = mcss.avg_staff_css_between_dates(db, s_id, s_dt, e_dt)
+    if avg:
+        return float(avg)
+    else:
+        return 0
 
 
 def get_avg_menu_score(menu_id, date_type, date_string):
@@ -209,7 +229,12 @@ def get_avg_menu_score(menu_id, date_type, date_string):
     :return: float representation of average menu score
     """
     s_dt, e_dt = get_date_bounds(date_type, date_string)
-    return float(mcss.avg_menu_item_score(db, menu_id, s_dt, e_dt))
+    avg = mcss.avg_menu_item_score(db, menu_id, s_dt, e_dt)
+
+    if avg:
+        return float(avg)
+    else:
+        return 0
 
 
 def get_staff_members():
@@ -218,8 +243,12 @@ def get_staff_members():
     :return: list of dictionary items with value, name: staff_id, full_name
     """
     staff_list = ms.list_members(db)
-    return [{"value": x.s_id, "name": "%s %s" % (x.first_name, x.last_name)}
-            for x in staff_list]
+
+    if staff_list:
+        return [{"value": x.s_id, "name": "%s %s" %
+                (x.first_name, x.last_name)} for x in staff_list]
+    else:
+        return []
 
 
 def get_menu_items():
@@ -228,7 +257,10 @@ def get_menu_items():
     :return: list of dictionary items with value, name: menu_id, menu_name
     """
     menu_list = mm.list_menu(db)
-    return [{"value": x.mi_id, "name": x.name} for x in menu_list]
+    if menu_list:
+        return [{"value": x.mi_id, "name": x.name} for x in menu_list]
+    else:
+        return []
 
 
 def get_latest_time():
@@ -239,7 +271,11 @@ def get_latest_time():
     document load
     """
     latest_date = mcss.get_latest_satisfaction_date(db)
-    return latest_date.strftime("%Y-%m-%d")
+
+    if latest_date:
+        return latest_date.strftime("%Y-%m-%d")
+    else:
+        return ""
 
 
 def get_year_list():
