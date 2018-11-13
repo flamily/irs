@@ -4,45 +4,41 @@ import test.helper as h
 import datetime
 
 
-# "GET /api/reporting/Customer/date?dateString=2018-11-12 HTTP/1.1" 200 -
-# "GET /api/reporting/Customer/date?dateString=2018-11-12&_=1542092099537 HTTP/1.1" 200 -
-
-
 @pytest.mark.parametrize('url, err_msg', [
     # get_customer_report
     ('/api/reporting/Customer/not_date',
-        'No date string provided'),
+     'No date string provided'),
     ('/api/reporting/Customer/not_date?dateString=yew',
-        'Invalid date format provided'),
+     'Invalid date format provided'),
 
     # get_staff_report
     ('/api/reporting/Staff/1/date',
-        'No date string provided'),
+     'No date string provided'),
     ('/api/reporting/Staff/1/not_date?dateString=yew',
-        'Invalid date format provided'),
+     'Invalid date format provided'),
     ('/api/reporting/Staff/staff_id/date?dateString=yew',
-        'Invalid staff_id provided'),
+     'Invalid staff_id provided'),
 
     # get_menu_score
     ('/api/reporting/Menu/1/date',
-        'No date string provided'),
+     'No date string provided'),
     ('/api/reporting/Menu/1/not_date?dateString=yew',
-        'Invalid date format provided'),
+     'Invalid date format provided'),
     ('/api/reporting/Menu/staff_id/date?dateString=yew',
-        'Invalid menu_id provided'),
+     'Invalid menu_id provided'),
 
     # staff_missing_error
     ('/api/reporting/Staff//date',
-        'Missing staff_id from request'),
+     'Missing staff_id from request'),
 
     # menu_missing_error
     ('/api/reporting/Menu//date',
-        'Missing menu_id from request'),
+     'Missing menu_id from request'),
 
 ])
 def test_invalid_usage(client, url, err_msg):
     result = client.get(url)
-    assert 400 == result.status_code
+    assert result.status_code == 400
     assert err_msg == json.loads(result.data)['message']
 
 
@@ -53,53 +49,52 @@ def test_invalid_usage(client, url, err_msg):
 
     # get_customer_report
     ('/api/reporting/Customer/date?dateString=2018-01-01',
-        {
-            'average': None,
-            'data': 3,
-            'labels': 3,
-            'scores': 3,
-        }),
+     {
+         'average': None,
+         'data': 3,
+         'labels': 3,
+         'scores': 3,
+     }),
 
     # get_staff_report
     ('/api/reporting/Staff/1/date?dateString=2018-01-01',
-        {
-            'average': None,
-            'data': 3,
-            'labels': 3,
-            'scores': 3,
-        }),
+     {
+         'average': None,
+         'data': 3,
+         'labels': 3,
+         'scores': 3,
+     }),
 
     # get_menu_score
     ('/api/reporting/Menu/1/date?dateString=2018-01-01',
-        {
-            'average': None,
-            'data': 3,
-            'labels': 3,
-            'scores': 3,
-        }),
+     {
+         'average': None,
+         'data': 3,
+         'labels': 3,
+         'scores': 3,
+     }),
 
     # get_staff_and_menu_items
     ('/api/reporting/list_items',
-        {
-            'menu': 3,
-            'staff': 1,
-        }),
+     {
+         'menu': 3,
+         'staff': 1,
+     }),
 
     # get_latest_entry_time
     ('/api/time/get_latest',
-        {
-            'data': None,
-        }),
+     {
+         'data': None,
+     }),
 
     # get_list_of_years
     ('/api/time/get_years',
-        {
-            'years': 1,
-        }),
+     {
+         'years': 1,
+     }),
 ])
 def test_endpoints(client, url, json_cardinality):
-    pool = client.testing_db_pool
-    db_connection = pool.getconn()
+    db_connection = client.testing_db_pool.getconn()
     t, staff = h.spoof_tables(db_connection, 3)
     db_connection.commit()
 
@@ -119,10 +114,10 @@ def test_endpoints(client, url, json_cardinality):
         scores,
         [(1, 1)])
     db_connection.commit()
-    pool.putconn(db_connection)
+    client.testing_db_pool.putconn(db_connection)
 
     result = client.get(url)
-    assert 200 == result.status_code
+    assert result.status_code == 200
     payload = json.loads(result.data)
     assert len(json_cardinality) == len(payload)
     for key, cardinality in json_cardinality.items():
