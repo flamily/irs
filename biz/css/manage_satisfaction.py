@@ -186,7 +186,7 @@ def avg_css_per_menu_item(db_conn, menu_item):
 
 
 def get_menu_item_satisfaction(db_conn, menu_item, start_date, end_date):
-    """Average CSS for specified menu_item in a specified time range.
+    """CSS for specified menu_item in a specified time range.
 
     :param db_conn: A psycopg2 connection to the database.
     :param menu_item: The ID of the menu item.
@@ -201,8 +201,7 @@ def get_menu_item_satisfaction(db_conn, menu_item, start_date, end_date):
             "FROM satisfaction s "
             "JOIN reservation r ON s.reservation_id = r.reservation_id "
             "JOIN customer_order c ON r.reservation_id = c.reservation_id "
-            "JOIN order_item oi "
-            "ON c.customer_order_id = oi.customer_order_id "
+            "JOIN order_item oi ON c.customer_order_id = oi.customer_order_id "
             "JOIN menu_item mi ON oi.menu_item_id = mi.menu_item_id "
             "JOIN event e ON e.event_id = s.event_id "
             "WHERE s.score IS NOT NULL AND oi.menu_item_id = %s "
