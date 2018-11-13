@@ -11,6 +11,12 @@ import test.helper as h
 import biz.manage_menu as mm
 
 
+def dump_cursor(curs):
+    print([desc[0] for desc in curs.description])
+    for r in curs.fetchall():
+        print(r)
+
+
 def __spoof_menu_items(db_conn, n):
     """Load a series of menu_items.
 
@@ -380,22 +386,22 @@ def test_get_menu_item_satisfaction(database_snapshot):
     with db_connection.cursor() as curs:
         curs.execute("SELECT * FROM menu_item")
         print("MENU_ITEMS: ")
-        print(curs.fetchall())
+        dump_cursor(curs)
         curs.execute("SELECT * FROM satisfaction")
         print("SATISFACTION: ")
-        print(curs.fetchall())
+        dump_cursor(curs)
         curs.execute("SELECT * FROM customer_order")
         print("CUSTOMER_ORDERS: ")
-        print(curs.fetchall())
+        dump_cursor(curs)
         curs.execute("SELECT * FROM order_item")
         print("ORDER_ITEMS: ")
-        print(curs.fetchall())
+        dump_cursor(curs)
         curs.execute("SELECT * FROM event")
         print("EVENTS: ")
-        print(curs.fetchall())
+        dump_cursor(curs)
         curs.execute("SELECT * FROM reservation")
         print("RESERVATION: ")
-        print(curs.fetchall())
+        dump_cursor(curs)
 
         curs.execute(
             "SELECT e.event_id, quantity, order_dt, restaurant_table_id, "
@@ -409,7 +415,7 @@ def test_get_menu_item_satisfaction(database_snapshot):
             "JOIN event e ON e.event_id = s.event_id "
         )
         print("TEST SQL: ")
-        print(curs.fetchall())
+        dump_cursor(curs)
 
 
     assert len(ms.get_menu_item_satisfaction(
