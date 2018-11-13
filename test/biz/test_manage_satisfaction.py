@@ -196,19 +196,21 @@ def test_missing_avg_css_per_menu_item(database_snapshot):
         assert ms.avg_css_per_menu_item(conn, 1) is None
 
 
-def test_get_satisfaction_between_dates(database_snapshot):
+def test_get_satisfaction_between_dates(db_conn_css):
     """Get satisfaction records between time periods"""
-    db_connection = database_snapshot.getconn()
-    t, staff = h.spoof_tables(db_connection, 3)
-    db_connection.commit()
+    db_connection = db_conn_css[0]
+    menu_items, dt1, dt2, dt3, staff = db_conn_css[1]
+    # db_connection = database_snapshot.getconn()
+    # t, staff = h.spoof_tables(db_connection, 3)
+    # db_connection.commit()
 
-    dt1 = datetime.datetime(2018, 1, 1)
-    dt2 = datetime.datetime(2018, 1, 4)
-    dt3 = datetime.datetime(2018, 1, 6)
+    # dt1 = datetime.datetime(2018, 1, 1)
+    # dt2 = datetime.datetime(2018, 1, 4)
+    # dt3 = datetime.datetime(2018, 1, 6)
 
-    scores = [[40, 60, 80, 100], [40, 60, 80], [40, 60, 80]]
+    # scores = [[40, 60, 80, 100], [40, 60, 80], [40, 60, 80]]
 
-    h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
+    # h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
 
     assert len(ms.get_satisfaction_between_dates(
         db_connection, dt1.date(), dt1.date())) == 4
@@ -222,26 +224,28 @@ def test_get_satisfaction_between_dates(database_snapshot):
         db_connection, dt1.date(), dt1.date())[0]) == 8
 
 
-def test_staff_css_between_dates(database_snapshot):
+def test_staff_css_between_dates(db_conn_css):
     """Get staff satisfaction records between time periods"""
-    db_connection = database_snapshot.getconn()
-    t, staff = h.spoof_tables(db_connection, 3)
-    db_connection.commit()
+    db_connection = db_conn_css[0]
+    menu_items, dt1, dt2, dt3, staff = db_conn_css[1]
+    # db_connection = database_snapshot.getconn()
+    # t, staff = h.spoof_tables(db_connection, 3)
+    # db_connection.commit()
 
-    dt1 = datetime.datetime(2018, 1, 1)
-    dt2 = datetime.datetime(2018, 1, 4)
-    dt3 = datetime.datetime(2018, 1, 6)
+    # dt1 = datetime.datetime(2018, 1, 1)
+    # dt2 = datetime.datetime(2018, 1, 4)
+    # dt3 = datetime.datetime(2018, 1, 6)
 
-    scores = [[40, 60, 80], [40, 60, 80], [40, 60, 80]]
+    # scores = [[40, 60, 80], [40, 60, 80], [40, 60, 80]]
 
-    h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
+    # h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
 
     assert len(ms.staff_css_between_dates(
         db_connection, staff, dt1.date(), dt1.date())) == 3
     assert len(ms.staff_css_between_dates(
         db_connection, staff, dt1.date(), dt2.date())) == 6
     assert len(ms.staff_css_between_dates(
-        db_connection, staff, dt1.date(), dt3.date())) == 9
+        db_connection, staff, dt1.date(), dt3.date())) == 10
     assert len(ms.staff_css_between_dates(
         db_connection, staff, dt2.date(), dt3.date())) == 6
     assert len(ms.staff_css_between_dates(
@@ -250,19 +254,10 @@ def test_staff_css_between_dates(database_snapshot):
         db_connection, staff+1, dt2.date(), dt3.date())
 
 
-def test_avg_staff_css_between_dates(database_snapshot):
+def test_avg_staff_css_between_dates(db_conn_css):
     """Get average staff satisfaction between time periods"""
-    db_connection = database_snapshot.getconn()
-    t, staff = h.spoof_tables(db_connection, 3)
-    db_connection.commit()
-
-    dt1 = datetime.datetime(2018, 1, 1)
-    dt2 = datetime.datetime(2018, 1, 4)
-    dt3 = datetime.datetime(2018, 1, 6)
-
-    scores = [[40, 60, 80], [50, 55, 60], [40, 60, 80, 100]]
-
-    h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
+    db_connection = db_conn_css[0]
+    menu_items, dt1, dt2, dt3, staff = db_conn_css[1]
 
     assert ms.avg_staff_css_between_dates(
         db_connection, staff, dt1.date(), dt1.date()) == 60
@@ -277,7 +272,7 @@ def test_avg_staff_css_between_dates(database_snapshot):
 def test_get_menu_item_satisfaction(db_conn_css):
     """Get menu satisfaction records between time periods"""
     db_connection = db_conn_css[0]
-    menu_items, dt1, dt2, dt3 = db_conn_css[1]
+    menu_items, dt1, dt2, dt3, _ = db_conn_css[1]
 
     assert len(ms.get_menu_item_satisfaction(
         db_connection, 1, dt1.date(), dt1.date())) == 3
@@ -291,35 +286,17 @@ def test_get_menu_item_satisfaction(db_conn_css):
         db_connection, menu_items[2][0], dt2.date(), dt3.date())
 
 
-def test_avg_menu_item_score(database_snapshot):
+def test_avg_menu_item_score(db_conn_css):
     """Get average menu satisfaction between time periods"""
-    db_connection = database_snapshot.getconn()
-    t, staff = h.spoof_tables(db_connection, 3)
-    db_connection.commit()
-
-    mi = h.spoof_menu_items(db_connection, 3)
-    menu_items = [(mi[0], 2), (mi[1], 3), (mi[2], 1)]
-
-    dt1 = datetime.datetime(2018, 1, 1)
-    dt2 = datetime.datetime(2018, 1, 4)
-    dt3 = datetime.datetime(2018, 1, 6)
-
-    scores = [[40, 60, 80], [40, 60, 80, 100], [50, 55, 60]]
-
-    h.spoof_satisfaction(
-        db_connection,
-        t,
-        staff,
-        [dt1, dt2, dt3],
-        scores,
-        [(1, 1)])
+    db_connection = db_conn_css[0]
+    menu_items, dt1, dt2, dt3, _ = db_conn_css[1]
 
     assert ms.avg_menu_item_score(
         db_connection, 1, dt1.date(), dt1.date()) == 60
     assert math.floor(float(ms.avg_menu_item_score(
-        db_connection, 1, dt1.date(), dt2.date()))) == 67.0
+        db_connection, 1, dt1.date(), dt2.date()))) == 57.0
     assert ms.avg_menu_item_score(
-        db_connection, 1, dt3.date(), dt3.date()) == 55
+        db_connection, 1, dt3.date(), dt3.date()) == 70
     assert not ms.avg_menu_item_score(
         db_connection, menu_items[2][0], dt2.date(), dt3.date())
 

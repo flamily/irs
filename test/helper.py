@@ -28,7 +28,7 @@ def spoof_system_for_css(conn):
         scores,
         [(1, 1)])
     conn.commit()
-    return (menu_items, dt1, dt2, dt3)
+    return (menu_items, dt1, dt2, dt3, staff)
 
 
 def update_order_dt(db_conn, rid, dt):
