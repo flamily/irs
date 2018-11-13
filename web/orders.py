@@ -1,3 +1,9 @@
+"""
+Order interface to simulate external booking service
+
+Author: Robin Wohlers-Reichel, David Niwczyk
+Date: 14/11/2018
+"""
 from flask import (
     Blueprint, request, jsonify
 )

@@ -1,3 +1,9 @@
+"""
+Tests for Order interface
+
+Author: Robin Wohlers-Reichel, David Niwczyk
+Date: 14/11/2018
+"""
 import biz.manage_menu as mm
 import biz.manage_restaurant as mr
 from test.helper import spoof_user
@@ -50,7 +56,10 @@ def __spoof_tables(client, n, staff_id, reserve=False):
 
 
 def test_order_index(client):
-    """Test that welcome endpoint can be hit."""
+    """Test that welcome endpoint can be hit.
+
+    :param client: The client running the flask app.
+    """
     spoof_user(client)
     result = client.get('/order/new', follow_redirects=True)
     assert result.status_code == 200
@@ -58,7 +67,10 @@ def test_order_index(client):
 
 
 def test_order_menu_items(client):
-    """Test that the new order page is populated with menu items."""
+    """Test that the new order page is populated with menu items.
+
+    :param client: The client running the flask app.
+    """
     spoof_user(client)
     menu_item = __spoof_menu_items(client)
     result = client.get('/order/new', follow_redirects=True)
@@ -67,7 +79,10 @@ def test_order_menu_items(client):
 
 
 def test_order_tables(client):
-    """Test that the new order page is populated tables."""
+    """Test that the new order page is populated tables.
+
+    :param client: The client running the flask app.
+    """
     num_tables = 1
     sid = spoof_user(client)
     table = __spoof_tables(client, num_tables, sid, True)[0]
@@ -77,7 +92,10 @@ def test_order_tables(client):
 
 
 def test_order_created(client):
-    """Test that an order can be created."""
+    """Test that an order can be created.
+
+    :param client: The client running the flask app.
+    """
     num_tables = 1
     sid = spoof_user(client)
     table = __spoof_tables(client, num_tables, sid, True)[0]
@@ -96,7 +114,10 @@ def test_order_created(client):
 
 
 def test_list_menu_items(client):
-    """Test that restaurant tables from db are being returned."""
+    """Test that restaurant tables from db are being returned.
+
+    :param client: The client running the flask app.
+    """
     menu_items = list()
     num_tables = 1
     sid = spoof_user(client)
