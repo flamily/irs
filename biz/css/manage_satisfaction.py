@@ -51,8 +51,8 @@ def avg_css_per_period(db_conn, datetime_start, datetime_end, stride):
     :param db_conn: A psycopg2 connection to the database.
     :param datetime_start: The starting datetime for the time period.
     :param datetime_end: The ending datetime for the time period.
-    :param stride: The sub time period to split the
-        averages (hour, week, month).
+    :param stride: The sub time period to split the averages
+        ('hour', 'day', 'week', 'month', 'year').
     :return: Average CSS score for the time period.
     """
     with db_conn.cursor() as curs:

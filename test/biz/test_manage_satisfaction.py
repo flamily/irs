@@ -104,7 +104,7 @@ def test_create_multiple_satisfaction(database_snapshot):
 
 def test_avg_css_per_period(database_snapshot):
     """Retrieve average css on and between
-    2018-01-01 11:00:00 and 2018-12-31 13:30:00
+    2018-01-01 11:00:00 and 2018-12-31 12:00:00
     """
     with database_snapshot.getconn() as conn:
         t, staff = h.spoof_tables(conn, 2)
@@ -140,7 +140,7 @@ def test_avg_css_per_period(database_snapshot):
 
 
 def test_missing_avg_css_per_period(database_snapshot):
-    """Retrieve missing average css on 2018-12-31"""
+    """Retrieve missing average css on 2018-01-01 11:00:00"""
     with database_snapshot.getconn() as conn:
         t, staff = h.spoof_tables(conn, 1)
         conn.commit()
