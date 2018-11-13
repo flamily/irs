@@ -1,0 +1,55 @@
+
+{% include 'header.html' %}
+  <body id="page-top">
+
+    {% include 'nav.html' %}
+
+    <div id="wrapper">
+
+      {% include 'sidebar.html' %}
+
+      <div id="content-wrapper">
+
+        <div class="container-fluid">
+
+          {% include 'breadcrumb.html' %}
+          <div class="row justify-content-center">
+            <p class="text-primary">Your order has been placed</p>
+          </div>
+          <div class="row justify-content-center">
+            <p class="text-secondary" data-order_id="{{ oid }}">Order ID: {{ oid }}</p>
+          </div>
+          <div class="row justify-content-center">
+            <p class="text-secondary" data-reservation_id="{{ rid }}">Reservation ID: {{ rid }}</p>
+          </div>
+        </div>
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <form action="/order/new" method="get">
+              <input type=submit value="New Order" class="btn btn-default">
+            </form>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+
+        <!-- Sticky Footer -->
+        <footer class="sticky-footer">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright © Your Website 2018</span>
+            </div>
+          </div>
+        </footer>
+
+      </div>
+      <!-- /.content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+  </body>
+  {% include 'footer.html' %}
+</html>

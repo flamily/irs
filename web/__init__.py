@@ -8,6 +8,7 @@ from web.index import INDEX_BLUEPRINT
 from web.robot import ROBOT_BLUEPRINT
 from web.tables import TABLES_BLUEPRINT
 from web.reporting_api import API_BLUEPRINT, InvalidUsage
+from web.orders import ORDERS_BLUEPRINT
 
 
 APP = Flask(__name__)
@@ -18,6 +19,7 @@ APP.register_blueprint(INDEX_BLUEPRINT)
 APP.register_blueprint(TABLES_BLUEPRINT)
 APP.register_blueprint(ROBOT_BLUEPRINT)
 APP.register_blueprint(API_BLUEPRINT, url_prefix="/api")
+APP.register_blueprint(ORDERS_BLUEPRINT)
 
 
 @APP.errorhandler(404)
