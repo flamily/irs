@@ -110,14 +110,13 @@ def get_date_bounds(bounds, date_str):
 
     elif bounds == "month":
         year, month = date_str.split("-")
-        start_date = "%s-%s-%s" % (year, month, calendar.monthrange(
-            int(year), int(month))[0] + 1)
+        start_date = "%s-%s-%s" % (year, month, "01")
         end_date = "%s-%s-%s 23:59:59.998" % (year, month, calendar.monthrange(
             int(year), int(month))[1])
 
     elif bounds == "year":
-        start_date = "%s-1-1" % (date_str)
-        end_date = "%s-1-1 0:0:0.002" % (str(int(date_str) + 1))
+        start_date = "%s-01-01" % (date_str)
+        end_date = "%s-01-01 00:00:00.002" % (str(int(date_str) + 1))
 
     return start_date, end_date
 

@@ -1,7 +1,7 @@
 """
 These tests check the satisfaction manager.
 
-Author: Andrew Pope, Andy Go
+Author: Andrew Pope, Andy Go, Jacob Vorreiter
 Date: 11/11/2018
 """
 import datetime
@@ -386,3 +386,48 @@ def test_get_all_years(database_snapshot):
         db_connection)[0][0]))
     assert len(ms.get_all_years(
         db_connection)) == 2
+
+def test_get_avg_staff_css_between_dates_missing(database_snapshot):
+    """Try to get css while database is empty"""
+    db_conn = database_snapshot.getconn()
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+
+    assert ms.avg_staff_css_between_dates(db_conn,
+        1, dt1.date(), dt2.date()) == None
+
+
+def test_avg_css_per_period_missing(database_snapshot):
+    """Try to get css while database is empty"""
+    db_conn = database_snapshot.getconn()
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+
+    assert ms.avg_css_per_period(db_conn,
+        dt1.date(), dt2.date()) == None
+
+
+def test_avg_css_per_staff_missing(database_snapshot):
+    """Try to get css while database is empty"""
+    db_conn = database_snapshot.getconn()
+
+    assert ms.avg_css_per_staff(db_conn, 1) == None
+
+
+def test_avg_css_per_menu_item_missing(database_snapshot):
+    """Try to get css while database is empty"""
+    db_conn = database_snapshot.getconn()
+
+    assert ms.avg_css_per_menu_item(db_conn, 1) == None
+
+
+def test_avg_menu_item_score_missing(database_snapshot):
+    """Try to get css while database is empty"""
+    db_conn = database_snapshot.getconn()
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+
+    assert ms.avg_menu_item_score(db_conn, 1 , dt1, dt2) == None
