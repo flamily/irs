@@ -191,7 +191,7 @@
   //Robot Photo
   var robotInputElement;
 
-  $('.robotTableReserve').children('input:submit').click(function(event){
+  $('.robotTableReserve').children('button:submit').click(function(event){
     event.preventDefault();
     robotInputElement = $(this);
     irs.photo(robotPhotoCallback);
