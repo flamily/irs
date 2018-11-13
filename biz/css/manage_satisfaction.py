@@ -199,14 +199,13 @@ def get_menu_item_satisfaction(db_conn, menu_item, start_date, end_date):
             "SELECT e.event_id, quantity, order_dt, restaurant_table_id, "
             "staff_id, s.reservation_id, score "
             "FROM satisfaction s "
-            "JOIN reservation r ON s.reservation_id = r.reservation_id "
-            "JOIN customer_order c ON r.reservation_id = c.reservation_id "
+            "JOIN customer_order c ON s.reservation_id = c.reservation_id "
             "JOIN order_item oi "
             "ON c.customer_order_id = oi.customer_order_id "
             "JOIN menu_item mi ON oi.menu_item_id = mi.menu_item_id "
             "JOIN event e ON e.event_id = s.event_id "
             "WHERE s.score IS NOT NULL AND oi.menu_item_id = %s "
-            "AND order_dt BETWEEN %s AND %s"
+            "AND order_dt BETWEEN %s AND %s "
             "ORDER BY order_dt ASC",
             (menu_item, start_date, end_date)
         )
