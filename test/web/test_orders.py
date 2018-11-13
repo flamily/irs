@@ -1,6 +1,6 @@
 import biz.manage_menu as mm
 import biz.manage_restaurant as mr
-from test.helper import spoof_user, spoof_tables
+from test.helper import spoof_user
 from biz.restaurant_table import (Coordinate, Shape)
 
 
@@ -17,6 +17,7 @@ def __spoof_menu_items(client):
     conn.commit()
     pool.putconn(conn)
     return menu_item
+
 
 def __spoof_tables(client, n, staff_id, reserve=False):
     """Load a series of restaurant tables.
@@ -46,6 +47,7 @@ def __spoof_tables(client, n, staff_id, reserve=False):
 
     pool.putconn(conn)
     return tables
+
 
 def test_order_index(client):
     """Test that welcome endpoint can be hit."""
