@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 
-from web import reporting as report
+from biz import reporting as report
+from biz.css import manage_satisfaction as mcss
+from web.db import db
 
 
 class InvalidUsage(Exception):
@@ -32,9 +34,9 @@ def get_customer_report(date_type):
     if date_type not in ["date", "week", "month", "year"]:
         raise InvalidUsage("Invalid date format provided")
 
-    res = report.get_customer_satisfaciton(date_type, date_string)
+    res = report.get_customer_satisfaciton(db, date_type, date_string)
     labels, data = report.get_chart_data(res)
-    avg = report.get_average_score(date_type, date_string)
+    avg = report.get_average_score(db, date_type, date_string)
 
     return jsonify(data=res, labels=labels, scores=data, average=avg)
 
@@ -53,11 +55,12 @@ def get_staff_report(staff_id, date_type):
         raise InvalidUsage("Invalid staff_id provided")
 
     res = report.get_staff_satisfaction_report(
+        db,
         staff_id,
         date_type,
         date_string)
     labels, data = report.get_chart_data(res)
-    avg = report.get_staff_average_score(staff_id, date_type, date_string)
+    avg = report.get_staff_average_score(db, staff_id, date_type, date_string)
 
     return jsonify(data=res, labels=labels, scores=data, average=avg)
 
@@ -75,9 +78,9 @@ def get_menu_score(menu_id, date_type):
     if not menu_id.isdigit():
         raise InvalidUsage("Invalid menu_id provided")
 
-    res = report.get_menu_satisfaction(menu_id, date_type, date_string)
+    res = report.get_menu_satisfaction(db, menu_id, date_type, date_string)
     labels, scores = report.get_chart_data(res)
-    avg = report.get_avg_menu_score(menu_id, date_type, date_string)
+    avg = report.get_avg_menu_score(db, menu_id, date_type, date_string)
 
     return jsonify(data=res, labels=labels, scores=scores, average=avg)
 
@@ -96,21 +99,21 @@ def menu_missing_error(date_type):
 
 @API_BLUEPRINT.route('/reporting/list_items')
 def get_staff_and_menu_items():
-    staff_list = report.get_staff_members()
-    menu_list = report.get_menu_items()
+    staff_list = report.get_staff_members(db)
+    menu_list = report.get_menu_items(db)
 
     return jsonify(menu=menu_list, staff=staff_list)
 
 
 @API_BLUEPRINT.route('/time/get_latest')
 def get_latest_entry_time():
-    time = report.get_latest_time()
+    time = report.get_latest_time(db)
 
     return jsonify(data=time)
 
 
 @API_BLUEPRINT.route('/time/get_years')
 def get_list_of_years():
-    time = report.get_year_list()
+    time = mcss.get_all_years(db)
 
     return jsonify(years=time)
