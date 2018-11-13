@@ -81,8 +81,6 @@ def get_chart_data(response):
     if response:
         labels = [x["date"] for x in response]
         data = [x["score"] for x in response]
-        assert (data[10] == response[10]["score"] and
-                labels[10] == response[10]["date"])
     return labels, data
 
 
