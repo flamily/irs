@@ -138,6 +138,7 @@ function populateListItems(){
 function changeGraphMode(elem){
   mode = elem.name;
   document.getElementById("graph_title").innerHTML = elem.name + " Satisfaction Graph";
+  document.getElementById("table-heading").innerHTML = elem.name + " Events";
   if (elem.name == "Menu"){
     document.getElementById('table-changable-head').innerHTML = "Quantity";
     document.getElementById('table-changable-foot').innerHTML = "Quantity";
