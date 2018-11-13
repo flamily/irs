@@ -6,7 +6,6 @@ Author: Jacob Vorreiter
 Date: 12/11/2018
 """
 
-from web.db import db
 from biz.css import manage_satisfaction as mcss
 from biz import manage_staff as ms
 from biz import manage_menu as mm
@@ -268,11 +267,3 @@ def get_latest_time():
     if latest_date:
         return latest_date.strftime("%Y-%m-%d")
     return ""
-
-
-def get_year_list():
-    """Gets a list of years from the database to populate front end selector
-
-    :return: list of years
-    """
-    return mcss.get_all_years(db)

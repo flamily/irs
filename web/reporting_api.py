@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
-
-from web import reporting as report
+from web.db import db
+from biz import reporting as report
+from biz.css import manage_satisfaction as mcss
 
 
 class InvalidUsage(Exception):
@@ -111,6 +112,6 @@ def get_latest_entry_time():
 
 @API_BLUEPRINT.route('/time/get_years')
 def get_list_of_years():
-    time = report.get_year_list()
+    time = mcss.get_all_years(db)
 
     return jsonify(years=time)
