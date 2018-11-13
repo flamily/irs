@@ -4,6 +4,29 @@ import biz.manage_menu as mm
 from biz.staff import Permission
 from biz.restaurant_table import (Coordinate, Shape)
 import biz.css.manage_satisfaction as mcss
+import datetime
+
+
+def spoof_system_for_css(conn):
+    t, staff = spoof_tables(conn, 3)
+    conn.commit()
+
+    spoof_menu_items(conn, 3)
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+    dt3 = datetime.datetime(2018, 1, 6)
+
+    scores = [[40, 60, 80], [50, 55, 60], [40, 60, 80, 100]]
+
+    spoof_satisfaction(
+        conn,
+        t,
+        staff,
+        [dt1, dt2, dt3],
+        scores,
+        [(1, 1)])
+    conn.commit()
 
 
 def update_order_dt(db_conn, rid, dt):

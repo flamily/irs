@@ -1,7 +1,6 @@
 import pytest
 import json
 import test.helper as h
-import datetime
 
 
 @pytest.mark.parametrize('url, err_msg', [
@@ -95,25 +94,7 @@ def test_invalid_usage(client, url, err_msg):
 ])
 def test_endpoints(client, url, json_cardinality):
     db_connection = client.testing_db_pool.getconn()
-    t, staff = h.spoof_tables(db_connection, 3)
-    db_connection.commit()
-
-    h.spoof_menu_items(db_connection, 3)
-
-    dt1 = datetime.datetime(2018, 1, 1)
-    dt2 = datetime.datetime(2018, 1, 4)
-    dt3 = datetime.datetime(2018, 1, 6)
-
-    scores = [[40, 60, 80], [50, 55, 60], [40, 60, 80, 100]]
-
-    h.spoof_satisfaction(
-        db_connection,
-        t,
-        staff,
-        [dt1, dt2, dt3],
-        scores,
-        [(1, 1)])
-    db_connection.commit()
+    h.spoof_system_for_css(db_connection)
     client.testing_db_pool.putconn(db_connection)
 
     result = client.get(url)
