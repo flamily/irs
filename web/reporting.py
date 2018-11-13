@@ -139,8 +139,7 @@ def get_customer_satisfaciton(date_type, date_string):
 
     if item:
         return sort_data(format_dict(item))
-    else:
-        return []
+    return []
 
 
 def get_staff_satisfaction_report(s_id, date_type, date_string):
@@ -159,8 +158,7 @@ def get_staff_satisfaction_report(s_id, date_type, date_string):
 
     if item:
         return sort_data(format_dict(item))
-    else:
-        return []
+    return []
 
 
 def get_menu_satisfaction(m_id, date_type, date_string):
@@ -179,8 +177,7 @@ def get_menu_satisfaction(m_id, date_type, date_string):
 
     if item:
         return sort_data(format_menu_dict(item))
-    else:
-        return []
+    return []
 
 
 def get_average_score(date_type, date_string):
@@ -196,8 +193,7 @@ def get_average_score(date_type, date_string):
     avg = mcss.avg_css_per_period(db, s_dt, e_dt)
     if avg:
         return float(avg)
-    else:
-        return 0
+    return 0
 
 
 def get_staff_average_score(s_id, date_type, date_string):
@@ -214,8 +210,7 @@ def get_staff_average_score(s_id, date_type, date_string):
     avg = mcss.avg_staff_css_between_dates(db, s_id, s_dt, e_dt)
     if avg:
         return float(avg)
-    else:
-        return 0
+    return 0
 
 
 def get_avg_menu_score(menu_id, date_type, date_string):
@@ -233,8 +228,7 @@ def get_avg_menu_score(menu_id, date_type, date_string):
 
     if avg:
         return float(avg)
-    else:
-        return 0
+    return 0
 
 
 def get_staff_members():
@@ -246,9 +240,9 @@ def get_staff_members():
 
     if staff_list:
         return [{"value": x.s_id, "name": "%s %s" %
-                (x.first_name, x.last_name)} for x in staff_list]
-    else:
-        return []
+                                          (x.first_name, x.last_name)}
+                for x in staff_list]
+    return []
 
 
 def get_menu_items():
@@ -259,8 +253,7 @@ def get_menu_items():
     menu_list = mm.list_menu(db)
     if menu_list:
         return [{"value": x.mi_id, "name": x.name} for x in menu_list]
-    else:
-        return []
+    return []
 
 
 def get_latest_time():
@@ -274,8 +267,7 @@ def get_latest_time():
 
     if latest_date:
         return latest_date.strftime("%Y-%m-%d")
-    else:
-        return ""
+    return ""
 
 
 def get_year_list():

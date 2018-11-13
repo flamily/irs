@@ -1,13 +1,13 @@
 import os
 import traceback
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from web.db import register as register_db
 from web.db import db
 from web.login import LOGIN_BLUEPRINT
 from web.index import INDEX_BLUEPRINT
 from web.robot import ROBOT_BLUEPRINT
 from web.tables import TABLES_BLUEPRINT
-from web.endpoints import API_BLUEPRINT
+from web.endpoints import API_BLUEPRINT, InvalidUsage
 
 
 APP = Flask(__name__)
@@ -31,6 +31,13 @@ def key_error(_):
     traceback.print_exc()
     db.rollback()
     return render_template('500.html'), 400
+
+
+@APP.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
 
 
 @APP.errorhandler(Exception)
