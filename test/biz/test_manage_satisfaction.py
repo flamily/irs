@@ -276,8 +276,9 @@ def test_missing_avg_css_per_menu_item(database_snapshot):
         assert ms.avg_css_per_menu_item(conn, 1) is None
 
 
-def test_get_satisfaction_between_dates(db_connection):
+def test_get_satisfaction_between_dates(database_snapshot):
     """Get satisfaction records between time periods"""
+    db_connection = database_snapshot.getconn()
     t, staff = h.spoof_tables(db_connection, 3)
     db_connection.commit()
 
@@ -301,8 +302,9 @@ def test_get_satisfaction_between_dates(db_connection):
         db_connection, dt1.date(), dt1.date())[0]) == 8
 
 
-def test_staff_css_between_dates(db_connection):
+def test_staff_css_between_dates(database_snapshot):
     """Get staff satisfaction records between time periods"""
+    db_connection = database_snapshot.getconn()
     t, staff = h.spoof_tables(db_connection, 3)
     db_connection.commit()
 
@@ -328,8 +330,9 @@ def test_staff_css_between_dates(db_connection):
         db_connection, staff+1, dt2.date(), dt3.date())
 
 
-def test_avg_staff_css_between_dates(db_connection):
+def test_avg_staff_css_between_dates(database_snapshot):
     """Get average staff satisfaction between time periods"""
+    db_connection = database_snapshot.getconn()
     t, staff = h.spoof_tables(db_connection, 3)
     db_connection.commit()
 
@@ -351,8 +354,9 @@ def test_avg_staff_css_between_dates(db_connection):
         db_connection, staff+1, dt2.date(), dt3.date())
 
 
-def test_get_menu_item_satisfaction(db_connection):
+def test_get_menu_item_satisfaction(database_snapshot):
     """Get average staff satisfaction between time periods"""
+    db_connection = database_snapshot.getconn()
     t, staff = h.spoof_tables(db_connection, 3)
     db_connection.commit()
 
@@ -373,6 +377,41 @@ def test_get_menu_item_satisfaction(db_connection):
         scores,
         [(1, 1)])
 
+    with db_connection.cursor() as curs:
+        curs.execute("SELECT * FROM menu_item")
+        print("MENU_ITEMS: ")
+        print(curs.fetchall())
+        curs.execute("SELECT * FROM satisfaction")
+        print("SATISFACTION: ")
+        print(curs.fetchall())
+        curs.execute("SELECT * FROM customer_order")
+        print("CUSTOMER_ORDERS: ")
+        print(curs.fetchall())
+        curs.execute("SELECT * FROM order_item")
+        print("ORDER_ITEMS: ")
+        print(curs.fetchall())
+        curs.execute("SELECT * FROM event")
+        print("EVENTS: ")
+        print(curs.fetchall())
+        curs.execute("SELECT * FROM reservation")
+        print("RESERVATION: ")
+        print(curs.fetchall())
+
+        curs.execute(
+            "SELECT e.event_id, quantity, order_dt, restaurant_table_id, "
+            "staff_id, s.reservation_id, score "
+            "FROM satisfaction s "
+            "JOIN reservation r ON s.reservation_id = r.reservation_id "
+            "JOIN customer_order c ON r.reservation_id = c.reservation_id "
+            "JOIN order_item oi "
+            "ON c.customer_order_id = oi.customer_order_id "
+            "JOIN menu_item mi ON oi.menu_item_id = mi.menu_item_id "
+            "JOIN event e ON e.event_id = s.event_id "
+        )
+        print("TEST SQL: ")
+        print(curs.fetchall())
+
+
     assert len(ms.get_menu_item_satisfaction(
         db_connection, 1, dt1.date(), dt1.date())) == 3
     assert len(ms.get_menu_item_satisfaction(
@@ -385,13 +424,13 @@ def test_get_menu_item_satisfaction(db_connection):
         db_connection, menu_items[2][0], dt2.date(), dt3.date())
 
 
-def test_avg_menu_item_score(db_connection):
+def test_avg_menu_item_score(database_snapshot):
     pass
 
 
-def test_get_latest_satisfaction_date(db_connection):
+def test_get_latest_satisfaction_date(database_snapshot):
     pass
 
 
-def test_get_all_years(db_connection):
+def test_get_all_years(database_snapshot):
     pass
