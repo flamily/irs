@@ -103,13 +103,16 @@ def test_create_multiple_satisfaction(database_snapshot):
 
 
 def test_avg_css_per_period(database_snapshot):
-    """Retrieve average css on and between 2018-01-01 and 2018-12-31"""
+    """Retrieve average css on and between
+    2018-01-01 11:00:00 and 2018-12-31 13:30:00
+    """
     with database_snapshot.getconn() as conn:
-        t, staff = h.spoof_tables(conn, 1)
+        t, staff = h.spoof_tables(conn, 2)
         conn.commit()
 
-        dt1 = datetime.datetime(2018, 1, 1)
-        dt2 = datetime.datetime(2018, 12, 31)
+        dt1 = datetime.datetime(2018, 1, 1, 11, 0, 0)
+        dt2 = datetime.datetime(2018, 1, 1, 11, 30, 0)
+        dt3 = datetime.datetime(2018, 1, 1, 12, 0, 0)
 
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
         ms.create_satisfaction(conn, 40, ce1[0], ce1[1])
@@ -117,14 +120,23 @@ def test_avg_css_per_period(database_snapshot):
         ms.create_satisfaction(conn, 80, ce2[0], ce2[1])
         ce3 = mr.paid(conn, t[0], staff)
         ms.create_satisfaction(conn, 60, ce3[0], ce3[1])
+        ce4 = mr.create_reservation(conn, t[1], staff, 5)
+        ms.create_satisfaction(conn, 100, ce4[0], ce4[1])
+        ce5 = mr.order(conn, [], t[1], staff)
+        ms.create_satisfaction(conn, 80, ce5[0], ce5[1])
+        ce6 = mr.paid(conn, t[1], staff)
+        ms.create_satisfaction(conn, 60, ce6[0], ce6[1])
         __update_reservation_dt(conn, ce1[1], ce1[0], dt1)
         __update_reservation_dt(conn, ce2[1], ce2[0], dt1)
-        __update_reservation_dt(conn, ce3[1], ce3[0], dt1)
+        __update_reservation_dt(conn, ce3[1], ce3[0], dt2)
+        __update_reservation_dt(conn, ce4[1], ce4[0], dt3)
+        __update_reservation_dt(conn, ce5[1], ce5[0], dt3)
+        __update_reservation_dt(conn, ce6[1], ce6[0], dt3)
 
-        assert ms.avg_css_per_period(
-            conn, dt1.date(), dt1.date()) == 60
-        assert ms.avg_css_per_period(
-            conn, dt1.date(), dt2.date()) == 60
+        avg_css = ms.avg_css_per_period(conn, dt1, dt3, 'hour')
+        print(avg_css)
+        assert avg_css[0] == (11, 60)
+        assert avg_css[1] == (12, 80)
 
 
 def test_missing_avg_css_per_period(database_snapshot):
@@ -133,14 +145,14 @@ def test_missing_avg_css_per_period(database_snapshot):
         t, staff = h.spoof_tables(conn, 1)
         conn.commit()
 
-        dt1 = datetime.datetime(2018, 1, 1)
-        dt2 = datetime.datetime(2018, 12, 31)
+        dt1 = datetime.datetime(2018, 1, 1, 11, 00, 00)
+        dt2 = datetime.datetime(2018, 1, 1, 11, 00, 00)
 
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
         __update_reservation_dt(conn, ce1[1], ce1[0], dt1)
 
         assert ms.avg_css_per_period(
-            conn, dt2.date(), dt2.date()) is None
+            conn, dt2.date(), dt2.date(), 'hours') is None
 
 
 def test_avg_css_per_staff(database_snapshot):
@@ -230,8 +242,7 @@ def test_avg_css_per_menu_item(database_snapshot):
         expected = [(mi[0], 2), (mi[1], 3)]
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
         ms.create_satisfaction(conn, 70, ce1[0], ce1[1])
-        (_, _, _) = mr.order(conn, expected, t[0], staff)
-        ce2 = mr.order(conn, [], t[0], staff)
+        ce2 = mr.order(conn, expected, t[0], staff)
         ms.create_satisfaction(conn, 100, ce2[0], ce2[1])
         ce3 = mr.paid(conn, t[0], staff)
         ms.create_satisfaction(conn, 100, ce3[0], ce3[1])
