@@ -1,6 +1,7 @@
 import biz.manage_menu as mm
 import biz.manage_restaurant as mr
 from test.helper import spoof_user, spoof_tables
+from biz.restaurant_table import (Coordinate, Shape)
 
 
 def __spoof_menu_items(client):
@@ -14,10 +15,37 @@ def __spoof_menu_items(client):
         conn, 'food stuffs', 'good stuff', 2.99
     )
     conn.commit()
-
     pool.putconn(conn)
     return menu_item
 
+def __spoof_tables(client, n, staff_id, reserve=False):
+    """Load a series of restaurant tables.
+
+    :param client: The client running the flask app.
+    :param n: The number of restaurant_tables to create.
+    :param staff_id: The id of the staff member creating the tables.
+    :param reserve: Mark the tables as being reserved.
+    :return: ([t1_id, t2_id ... tn_id])
+    """
+    pool = client.testing_db_pool
+    conn = pool.getconn()
+    tables = []
+    for _ in range(0, n):
+        tables.append(
+            mr.create_restaurant_table(
+                conn, 3, Coordinate(x=0, y=3), 1,
+                5, Shape.rectangle, staff_id
+            )[0]
+        )
+    conn.commit()
+
+    if reserve:
+        for table in tables:
+            mr.create_reservation(conn, table, staff_id, 2)
+        conn.commit()
+
+    pool.putconn(conn)
+    return tables
 
 def test_order_index(client):
     """Test that welcome endpoint can be hit."""
@@ -40,17 +68,17 @@ def test_order_tables(client):
     """Test that the new order page is populated tables."""
     num_tables = 1
     sid = spoof_user(client)
-    table = spoof_tables(client, num_tables, sid, True)[0]
+    table = __spoof_tables(client, num_tables, sid, True)[0]
     result = client.get('/order/new', follow_redirects=True)
     expect = 'data-menu_table_id="{}"'.format(table)
-    assert expect in str(result.data).replace(' ', '')
+    assert expect in str(result.data)
 
 
 def test_order_created(client):
     """Test that an order can be created."""
     num_tables = 1
     sid = spoof_user(client)
-    table = spoof_tables(client, num_tables, sid, True)[0]
+    table = __spoof_tables(client, num_tables, sid, True)[0]
     menu_item = __spoof_menu_items(client)
     form = dict([('table_id', table), (menu_item, 1)])
     pool = client.testing_db_pool
@@ -70,11 +98,11 @@ def test_list_menu_items(client):
     menu_items = list()
     num_tables = 1
     sid = spoof_user(client)
-    pool = client.testing_db_pool
-    conn = pool.getconn()
-    table = spoof_tables(client, num_tables, sid, True)[0]
+    table = __spoof_tables(client, num_tables, sid, True)[0]
     menu_item = __spoof_menu_items(client)
     menu_items.append(tuple([menu_item, 1]))
+    pool = client.testing_db_pool
+    conn = pool.getconn()
     _, r_id, _ = mr.order(conn, menu_items, table, sid)
     pool.putconn(conn)
     result = client.get('/order/get?rid='+str(r_id))
