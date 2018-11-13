@@ -285,8 +285,8 @@
         if(!parseInt(recognisedWord))
           recognisedWord = wordToNumber(recognisedWord);
 
-        if(!$($("[value='" + recognisedWord + "']")[0]).siblings('button:submit').prop('disabled'))
-          $($("[value=" + recognisedWord + "]")[0]).parent().submit();
+        if(!$("#table-" + recognisedWord).children('button:submit').prop('disabled'))
+          $("#table-" + recognisedWord).children('button:submit').triggerHandler('click')
         else
           irs.say("Table is taken, please select another");
       }
