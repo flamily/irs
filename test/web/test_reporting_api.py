@@ -8,42 +8,42 @@ import datetime
 # "GET /api/reporting/Customer/date?dateString=2018-11-12&_=1542092099537 HTTP/1.1" 200 -
 
 
-# @pytest.mark.parametrize('url, err_msg', [
-#     # get_customer_report
-#     ('/api/reporting/Customer/not_date',
-#         'No date string provided'),
-#     ('/api/reporting/Customer/not_date?dateString=yew',
-#         'Invalid date format provided'),
+@pytest.mark.parametrize('url, err_msg', [
+    # get_customer_report
+    ('/api/reporting/Customer/not_date',
+        'No date string provided'),
+    ('/api/reporting/Customer/not_date?dateString=yew',
+        'Invalid date format provided'),
 
-#     # get_staff_report
-#     ('/api/reporting/Staff/1/date',
-#         'No date string provided'),
-#     ('/api/reporting/Staff/1/not_date?dateString=yew',
-#         'Invalid date format provided'),
-#     ('/api/reporting/Staff/staff_id/date?dateString=yew',
-#         'Invalid staff_id provided'),
+    # get_staff_report
+    ('/api/reporting/Staff/1/date',
+        'No date string provided'),
+    ('/api/reporting/Staff/1/not_date?dateString=yew',
+        'Invalid date format provided'),
+    ('/api/reporting/Staff/staff_id/date?dateString=yew',
+        'Invalid staff_id provided'),
 
-#     # get_menu_score
-#     ('/api/reporting/Menu/1/date',
-#         'No date string provided'),
-#     ('/api/reporting/Menu/1/not_date?dateString=yew',
-#         'Invalid date format provided'),
-#     ('/api/reporting/Menu/staff_id/date?dateString=yew',
-#         'Invalid menu_id provided'),
+    # get_menu_score
+    ('/api/reporting/Menu/1/date',
+        'No date string provided'),
+    ('/api/reporting/Menu/1/not_date?dateString=yew',
+        'Invalid date format provided'),
+    ('/api/reporting/Menu/staff_id/date?dateString=yew',
+        'Invalid menu_id provided'),
 
-#     # staff_missing_error
-#     ('/api/reporting/Staff//date',
-#         'Missing staff_id from request'),
+    # staff_missing_error
+    ('/api/reporting/Staff//date',
+        'Missing staff_id from request'),
 
-#     # menu_missing_error
-#     ('/api/reporting/Menu//date',
-#         'Missing menu_id from request'),
+    # menu_missing_error
+    ('/api/reporting/Menu//date',
+        'Missing menu_id from request'),
 
-# ])
-# def test_invalid_usage(client, url, err_msg):
-#     result = client.get(url)
-#     assert 400 == result.status_code
-#     assert err_msg == json.loads(result.data)['message']
+])
+def test_invalid_usage(client, url, err_msg):
+    result = client.get(url)
+    assert 400 == result.status_code
+    assert err_msg == json.loads(result.data)['message']
 
 
 @pytest.mark.parametrize('url, json_keys', [
