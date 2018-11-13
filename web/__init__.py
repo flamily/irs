@@ -7,7 +7,7 @@ from web.login import LOGIN_BLUEPRINT
 from web.index import INDEX_BLUEPRINT
 from web.robot import ROBOT_BLUEPRINT
 from web.tables import TABLES_BLUEPRINT
-from web.endpoints import API_BLUEPRINT, InvalidUsage
+from web.reporting_api import API_BLUEPRINT, InvalidUsage
 
 
 APP = Flask(__name__)
