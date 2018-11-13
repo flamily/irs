@@ -43,8 +43,8 @@ def apply_reduction(raw_results):
     model = load_RF_File()
     to_predict = list(emotions.values())
     to_predict_str = ['{:.3f}'.format(x) for x in to_predict]
-    prediction = bagging_predict(model, to_predict_str) * 10
-    return int(prediction) if int(prediction) < 100 else 100
+    prediction = (int(bagging_predict(model, to_predict_str)) + emotion_weight) * 10
+    return prediction if prediction < 100 else 100
 
 
 def bagging_predict(trees, row):
