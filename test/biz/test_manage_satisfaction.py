@@ -9,104 +9,6 @@ import math
 import biz.css.manage_satisfaction as ms
 import biz.manage_restaurant as mr
 import test.helper as h
-import biz.manage_menu as mm
-
-
-def __spoof_menu_items(db_conn, n):
-    """Load a series of menu_items.
-
-    :param db_conn: A psycopg2 connection to the database.
-    :param n: The number of restaurant_tables to create.
-    :return: [mi1_id, mi2_id ... min_id]
-    """
-    items = []
-    for i in range(0, n):
-        items.append(
-            mm.create_menu_item(
-                db_conn, str(i), 'a description', i
-            )
-        )
-    return items
-
-
-def __spoof_satisfaction(db_conn, t, staff, dates, scores, menu_items=[]):
-    # pylint: disable=dangerous-default-value
-    # pylint: disable=too-many-arguments
-    # pylint: disable=too-many-locals
-    db_connection = db_conn
-    for table, event_date, score in zip(t, dates, scores):
-        ce1 = mr.create_reservation(db_connection, table, staff, 5)
-        ms.create_satisfaction(db_connection, score[0], ce1[0], ce1[1])
-
-        orders = []
-        for s in score[1:-1]:
-            ce2 = mr.order(db_connection, menu_items, table, staff)
-            ms.create_satisfaction(db_connection, s, ce2[0], ce2[1])
-            orders.append(ce2)
-
-        ce3 = mr.paid(db_connection, table, staff)
-        ms.create_satisfaction(db_connection, score[-1], ce3[0], ce3[1])
-
-        __update_reservation_dt(db_connection, ce1[1], ce1[0], event_date)
-        for order in orders:
-            __update_reservation_dt(
-                db_connection,
-                order[1],
-                order[0],
-                event_date)
-        __update_reservation_dt(db_connection, ce3[1], ce3[0], event_date)
-
-
-# Functions for spoofing time
-def __update_order_dt(db_conn, rid, dt):
-    """Spoof an event's datetime.
-
-    :param eid: The id of the event record to spoof.
-    :param dt: The new datetime to spoof.
-    """
-    with db_conn.cursor() as curs:
-        curs.execute(
-            "UPDATE customer_order "
-            "SET order_dt = %s "
-            "WHERE reservation_id = %s",
-            (dt, rid)
-        )
-        db_conn.commit()
-
-
-def __update_event_dt(db_conn, eid, dt):
-    """Spoof an event's datetime.
-
-    :param eid: The id of the event record to spoof.
-    :param dt: The new datetime to spoof.
-    """
-    with db_conn.cursor() as curs:
-        curs.execute(
-            "UPDATE event "
-            "SET event_dt = %s "
-            "WHERE event_id = %s",
-            (dt, eid)
-        )
-        db_conn.commit()
-
-
-def __update_reservation_dt(db_conn, rid, eid, dt):
-    """Spoof a reservation's datetime.
-
-    :param rid: The id of the reservation record to spoof.
-    :param eid: The id of the event record to spoof.
-    :param dt: The new datetime to spoof.
-    """
-    with db_conn.cursor() as curs:
-        __update_event_dt(db_conn, eid, dt)
-        __update_order_dt(db_conn, rid, dt)
-        curs.execute(
-            "UPDATE reservation "
-            "SET reservation_dt = %s "
-            "WHERE reservation_id = %s",
-            (dt, rid)
-        )
-        db_conn.commit()
 
 
 def test_create_satisfaction(database_snapshot):
@@ -162,9 +64,9 @@ def test_avg_css_per_period(database_snapshot):
         ms.create_satisfaction(conn, 80, ce2[0], ce2[1])
         ce3 = mr.paid(conn, t[0], staff)
         ms.create_satisfaction(conn, 60, ce3[0], ce3[1])
-        __update_reservation_dt(conn, ce1[1], ce1[0], dt1)
-        __update_reservation_dt(conn, ce2[1], ce2[0], dt1)
-        __update_reservation_dt(conn, ce3[1], ce3[0], dt1)
+        h.update_reservation_dt(conn, ce1[1], ce1[0], dt1)
+        h.update_reservation_dt(conn, ce2[1], ce2[0], dt1)
+        h.update_reservation_dt(conn, ce3[1], ce3[0], dt1)
 
         assert ms.avg_css_per_period(
             conn, dt1.date(), dt1.date()) == 60
@@ -182,7 +84,7 @@ def test_missing_avg_css_per_period(database_snapshot):
         dt2 = datetime.datetime(2018, 12, 31)
 
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
-        __update_reservation_dt(conn, ce1[1], ce1[0], dt1)
+        h.update_reservation_dt(conn, ce1[1], ce1[0], dt1)
 
         assert ms.avg_css_per_period(
             conn, dt2.date(), dt2.date()) is None
@@ -270,7 +172,7 @@ def test_avg_css_per_menu_item(database_snapshot):
 
         assert ms.avg_css_per_menu_item(conn, 1) is None
 
-        mi = __spoof_menu_items(conn, 2)
+        mi = h.spoof_menu_items(conn, 2)
         expected = [(mi[0], 2), (mi[1], 3)]
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
         ms.create_satisfaction(conn, 70, ce1[0], ce1[1])
@@ -306,7 +208,7 @@ def test_get_satisfaction_between_dates(database_snapshot):
 
     scores = [[40, 60, 80, 100], [40, 60, 80], [40, 60, 80]]
 
-    __spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
+    h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
 
     assert len(ms.get_satisfaction_between_dates(
         db_connection, dt1.date(), dt1.date())) == 4
@@ -332,7 +234,7 @@ def test_staff_css_between_dates(database_snapshot):
 
     scores = [[40, 60, 80], [40, 60, 80], [40, 60, 80]]
 
-    __spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
+    h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
 
     assert len(ms.staff_css_between_dates(
         db_connection, staff, dt1.date(), dt1.date())) == 3
@@ -360,7 +262,7 @@ def test_avg_staff_css_between_dates(database_snapshot):
 
     scores = [[40, 60, 80], [50, 55, 60], [40, 60, 80, 100]]
 
-    __spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
+    h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
 
     assert ms.avg_staff_css_between_dates(
         db_connection, staff, dt1.date(), dt1.date()) == 60
@@ -378,7 +280,7 @@ def test_get_menu_item_satisfaction(database_snapshot):
     t, staff = h.spoof_tables(db_connection, 3)
     db_connection.commit()
 
-    mi = __spoof_menu_items(db_connection, 3)
+    mi = h.spoof_menu_items(db_connection, 3)
     menu_items = [(mi[0], 2), (mi[1], 3), (mi[2], 1)]
 
     dt1 = datetime.datetime(2018, 1, 1)
@@ -387,7 +289,7 @@ def test_get_menu_item_satisfaction(database_snapshot):
 
     scores = [[40, 60, 80], [40, 60, 80, 100], [50, 55, 60]]
 
-    __spoof_satisfaction(
+    h.spoof_satisfaction(
         db_connection,
         t,
         staff,
@@ -413,7 +315,7 @@ def test_avg_menu_item_score(database_snapshot):
     t, staff = h.spoof_tables(db_connection, 3)
     db_connection.commit()
 
-    mi = __spoof_menu_items(db_connection, 3)
+    mi = h.spoof_menu_items(db_connection, 3)
     menu_items = [(mi[0], 2), (mi[1], 3), (mi[2], 1)]
 
     dt1 = datetime.datetime(2018, 1, 1)
@@ -422,7 +324,7 @@ def test_avg_menu_item_score(database_snapshot):
 
     scores = [[40, 60, 80], [40, 60, 80, 100], [50, 55, 60]]
 
-    __spoof_satisfaction(
+    h.spoof_satisfaction(
         db_connection,
         t,
         staff,
@@ -454,9 +356,9 @@ def test_get_latest_satisfaction_date(database_snapshot):
     ms.create_satisfaction(db_connection, 80, ce2[0], ce2[1])
     ce3 = mr.paid(db_connection, t[0], staff)
     ms.create_satisfaction(db_connection, 60, ce3[0], ce3[1])
-    __update_reservation_dt(db_connection, ce1[1], ce1[0], dt1)
-    __update_reservation_dt(db_connection, ce2[1], ce2[0], dt1)
-    __update_reservation_dt(db_connection, ce3[1], ce3[0], dt1)
+    h.update_reservation_dt(db_connection, ce1[1], ce1[0], dt1)
+    h.update_reservation_dt(db_connection, ce2[1], ce2[0], dt1)
+    h.update_reservation_dt(db_connection, ce3[1], ce3[0], dt1)
 
     assert dt_now in ms.get_latest_satisfaction_date(
         db_connection).strftime("%Y-%m-%d")
@@ -476,9 +378,9 @@ def test_get_all_years(database_snapshot):
     ms.create_satisfaction(db_connection, 80, ce2[0], ce2[1])
     ce3 = mr.paid(db_connection, t[0], staff)
     ms.create_satisfaction(db_connection, 60, ce3[0], ce3[1])
-    __update_reservation_dt(db_connection, ce1[1], ce1[0], dt1)
-    __update_reservation_dt(db_connection, ce2[1], ce2[0], dt1)
-    __update_reservation_dt(db_connection, ce3[1], ce3[0], dt1)
+    h.update_reservation_dt(db_connection, ce1[1], ce1[0], dt1)
+    h.update_reservation_dt(db_connection, ce2[1], ce2[0], dt1)
+    h.update_reservation_dt(db_connection, ce3[1], ce3[0], dt1)
 
     assert dt_now == str(int(ms.get_all_years(
         db_connection)[0][0]))
