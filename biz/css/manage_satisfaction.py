@@ -11,11 +11,12 @@ CUSTOMER_SQL = """
         array_to_string(array_agg(distinct m.name), ', '),
         r_date,
         restaurant_table_id,
-        array_agg(distinct staff_id),
+        array_to_string(array_agg(distinct s.first_name), ', '),
         reservation_id,
         delta
     from css_reporting cr
     join menu_item as m on m.menu_item_id = cr.menu_item_id
+    join staff as s on s.staff_id = cr.staff_id
     where r_date BETWEEN %s AND %s
     group by r_date, restaurant_table_id, reservation_id, delta
     order by r_date ASC;
