@@ -172,7 +172,6 @@ join connect_css as sat_end
 join staff_per_res on staff_per_res.res_id = r.reservation_id
 join menu_item_per_res on menu_item_per_res.res_id = r.reservation_id
 order by reservation_id
-limit 10;
 
 /*** Definition of trigger functions. ***/
 

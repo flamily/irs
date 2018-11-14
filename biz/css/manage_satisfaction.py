@@ -22,31 +22,39 @@ CUSTOMER_SQL = """
     """
 
 STAFF_SQL = """
-    select distinct
+    select
         1,
-        'a',
+        array_to_string(array_agg(distinct m.name), ', '),
         r_date,
         restaurant_table_id,
-        staff_id,
+        array_to_string(array_agg(distinct s.first_name), ', '),
         reservation_id,
         delta
     from css_reporting as cr
-    where staff_id= %s AND r_date BETWEEN %s AND %s
+    join menu_item as m on m.menu_item_id = cr.menu_item_id
+    join staff as s on s.staff_id = cr.staff_id
+    where cr.staff_id= %s AND r_date BETWEEN %s AND %s
+    group by r_date, restaurant_table_id, reservation_id, delta
     order by r_date ASC
     """
 
 MENU_SQL = """
-    select distinct
+    select
         1,
-        'a',
+        (sum(o.quantity) :: bigint),
         r_date,
         restaurant_table_id,
-        array_agg(distinct staff_id),
-        reservation_id,
+        array_to_string(array_agg(distinct s.first_name), ', '),
+        cr.reservation_id,
         delta
     from css_reporting as cr
-    where menu_item_id= %s AND r_date BETWEEN %s AND %s
-    group by r_date, restaurant_table_id, reservation_id, delta
+    join customer_order as co on co.reservation_id = cr.reservation_id
+    join order_item as o
+        on o.customer_order_id = co.customer_order_id
+        and o.menu_item_id = cr.menu_item_id
+    join staff as s on s.staff_id = cr.staff_id
+    where cr.menu_item_id= %s AND r_date BETWEEN %s AND %s
+    group by r_date, restaurant_table_id, cr.reservation_id, delta
     order by r_date ASC
     """
 
