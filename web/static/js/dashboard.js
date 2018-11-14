@@ -147,8 +147,8 @@ function changeGraphMode(elem){
     document.getElementById('table-changable-head').innerHTML = "Quantity";
     document.getElementById('table-changable-foot').innerHTML = "Quantity";
   } else {
-    document.getElementById('table-changable-head').innerHTML = "Event Description";
-    document.getElementById('table-changable-foot').innerHTML = "Event Description";
+    document.getElementById('table-changable-head').innerHTML = "Menu Items Ordered";
+    document.getElementById('table-changable-foot').innerHTML = "Menu Items Ordered";
   }
   if (elem.name == "Customer"){
     document.getElementById('item-selector-area').style.display = "none";

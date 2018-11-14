@@ -13,6 +13,13 @@ from datetime import date, timedelta
 import calendar
 
 
+def do_avg(item):
+    avg = 0
+    for i in item:
+        avg += (i[-1]/len(item))
+    return float(avg)
+
+
 def format_dict(satisf_event):
     """Formats the inbound satisfaction event SQL tuple into a JSON ready list
 
@@ -24,37 +31,13 @@ def format_dict(satisf_event):
     lst = []
     for item in satisf_event:
         lst.append({
-            "event_id": item[0],
-            "description": item[1],
-            "date": item[2],
-            "table_id": item[3],
-            "staff_id": item[4],
-            "reservation_id": item[6],   # We skip item[5] here, duplicate
-            "score": float(item[7])      # Remove Decimal() prevent JSON errors
-        })
-    return lst
-
-
-def format_menu_dict(menu_satisf):
-    """Formats the inbound menu satisfaction SQL tuple into a JSON ready list
-
-    :param menu_satisf: The raw output from the SQL query
-    :return: A list of dict objects, removing unwanted Decimal() types and
-    converting to float
-    :note: This function is used to sort menu sql tuples only
-    """
-
-    lst = []
-    for item in menu_satisf:
-        lst.append({
-            "event_id": item[0],
-            "description": float(item[1]),
-            "date": item[2],
-            "table_id": item[3],
-            "staff_id": item[4],
-            "reservation_id": item[5],
-            "score": float(item[6])      # Remove Decimal() prevent JSON errors
-        })
+            "date": item[0],
+            "reservation_id": item[1],
+            "table_id": item[2],
+            "staff": item[3],
+            "menu": item[4],
+            "score": float(item[5])  # Remove Decimal() prevent JSON errors
+            })
     return lst
 
 
@@ -135,8 +118,8 @@ def get_customer_satisfaciton(db, date_type, date_string):
     item = mcss.get_satisfaction_between_dates(db, s_dt, e_dt)
 
     if item:
-        return sort_data(format_dict(item))
-    return []
+        return (sort_data(format_dict(item)), do_avg(item))
+    return ([], 0)
 
 
 def get_staff_satisfaction_report(db, s_id, date_type, date_string):
@@ -155,8 +138,8 @@ def get_staff_satisfaction_report(db, s_id, date_type, date_string):
     item = mcss.staff_css_between_dates(db, s_id, s_dt, e_dt)
 
     if item:
-        return sort_data(format_dict(item))
-    return []
+        return (sort_data(format_dict(item)), do_avg(item))
+    return ([], 0)
 
 
 def get_menu_satisfaction(db, m_id, date_type, date_string):
@@ -175,62 +158,8 @@ def get_menu_satisfaction(db, m_id, date_type, date_string):
     item = mcss.get_menu_item_satisfaction(db, m_id, s_dt, e_dt)
 
     if item:
-        return sort_data(format_menu_dict(item))
-    return []
-
-
-def get_average_score(db, date_type, date_string):
-    """Gets average customer satisfaction score between dates
-
-    :param db: the database connection
-    :param date_type: String representation of date function
-    (date, week, month, year)
-    :param date_string: The string supplied from the request
-    (YYYY-MM-DD, YYYY-WeekNumber [eg W45], YYYY-MM, YYYY)
-    :return: float representation of average score
-    """
-    s_dt, e_dt = get_date_bounds(date_type, date_string)
-    avg = mcss.avg_css_per_period(db, s_dt, e_dt)
-    if avg:
-        return float(avg)
-    return 0
-
-
-def get_staff_average_score(db, s_id, date_type, date_string):
-    """Gets average staff satisfaction score between dates
-
-    :param db: the database connection
-    :param s_id: Staff ID
-    :param date_type: String representation of date function
-    (date, week, month, year)
-    :param date_string: The string supplied from the request
-    (YYYY-MM-DD, YYYY-WeekNumber [eg W45], YYYY-MM, YYYY)
-    :return: float representation of average staff score
-    """
-    s_dt, e_dt = get_date_bounds(date_type, date_string)
-    avg = mcss.avg_staff_css_between_dates(db, s_id, s_dt, e_dt)
-    if avg:
-        return float(avg)
-    return 0
-
-
-def get_avg_menu_score(db, menu_id, date_type, date_string):
-    """Gets average menu satisfaction score between dates
-
-    :param db: the database connection
-    :param menu_id: Menu ID
-    :param date_type: String representation of date function
-    (date, week, month, year)
-    :param date_string: The string supplied from the request
-    (YYYY-MM-DD, YYYY-WeekNumber [eg W45], YYYY-MM, YYYY)
-    :return: float representation of average menu score
-    """
-    s_dt, e_dt = get_date_bounds(date_type, date_string)
-    avg = mcss.avg_menu_item_score(db, menu_id, s_dt, e_dt)
-
-    if avg:
-        return float(avg)
-    return 0
+        return (sort_data(format_dict(item)), do_avg(item))
+    return ([], 0)
 
 
 def get_staff_members(db):

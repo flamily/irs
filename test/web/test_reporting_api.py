@@ -62,27 +62,27 @@ def test_invalid_usage(client, url, err_msg):
     ('/api/reporting/Customer/date?dateString=2018-01-01',
      {
          'average': None,
-         'data': 3,
-         'labels': 3,
-         'scores': 3,
+         'data': 1,
+         'labels': 1,
+         'scores': 1,
      }),
 
     # get_staff_report
     ('/api/reporting/Staff/1/date?dateString=2018-01-01',
      {
          'average': None,
-         'data': 3,
-         'labels': 3,
-         'scores': 3,
+         'data': 1,
+         'labels': 1,
+         'scores': 1,
      }),
 
     # get_menu_score
     ('/api/reporting/Menu/1/date?dateString=2018-01-01',
      {
          'average': None,
-         'data': 3,
-         'labels': 3,
-         'scores': 3,
+         'data': 1,
+         'labels': 1,
+         'scores': 1,
      }),
 
     # get_staff_and_menu_items
@@ -114,11 +114,13 @@ def test_endpoints(client, url, json_cardinality):
     client.testing_db_pool.putconn(db_connection)
 
     result = client.get(url)
+    print(url)
     assert result.status_code == 200
     payload = json.loads(result.data)
     assert len(json_cardinality) == len(payload)
     for key, cardinality in json_cardinality.items():
         thing = payload.get(key, False)
+        print(key)
         if cardinality is None:
             # we just check there is something
             assert thing

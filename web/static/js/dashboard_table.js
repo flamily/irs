@@ -33,14 +33,14 @@ $(document).ready(function() {
             return new Date(data);
           }
         },
-        { data: 'description' },
-        { data: 'table_id' },
-        { data: 'staff_id' },
         { data: 'reservation_id' },
-        { data: 'score' }
+        { data: 'table_id' },
+        { data: 'staff' },
+        { data: 'menu' },
+        { data: 'score'}
       ]
     });
     populateYearOptions();
-    updateChart();
+    updateAll();
   }
 } );

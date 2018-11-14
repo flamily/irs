@@ -51,9 +51,8 @@ def get_customer_report(date_type):
     if date_type not in ["date", "week", "month", "year"]:
         raise InvalidUsage("Invalid date format provided")
 
-    res = report.get_customer_satisfaciton(db, date_type, date_string)
+    res, avg = report.get_customer_satisfaciton(db, date_type, date_string)
     labels, data = report.get_chart_data(res)
-    avg = report.get_average_score(db, date_type, date_string)
 
     return jsonify(data=res, labels=labels, scores=data, average=avg)
 
@@ -78,13 +77,12 @@ def get_staff_report(staff_id, date_type):
     if not staff_id.isdigit():
         raise InvalidUsage("Invalid staff_id provided")
 
-    res = report.get_staff_satisfaction_report(
+    res, avg = report.get_staff_satisfaction_report(
         db,
         staff_id,
         date_type,
         date_string)
     labels, data = report.get_chart_data(res)
-    avg = report.get_staff_average_score(db, staff_id, date_type, date_string)
 
     return jsonify(data=res, labels=labels, scores=data, average=avg)
 
@@ -109,11 +107,10 @@ def get_menu_score(menu_id, date_type):
     if not menu_id.isdigit():
         raise InvalidUsage("Invalid menu_id provided")
 
-    res = report.get_menu_satisfaction(db, menu_id, date_type, date_string)
+    res, a = report.get_menu_satisfaction(db, menu_id, date_type, date_string)
     labels, scores = report.get_chart_data(res)
-    avg = report.get_avg_menu_score(db, menu_id, date_type, date_string)
 
-    return jsonify(data=res, labels=labels, scores=scores, average=avg)
+    return jsonify(data=res, labels=labels, scores=scores, average=a)
 
 
 @API_BLUEPRINT.route('/reporting/Staff//<date_type>')
