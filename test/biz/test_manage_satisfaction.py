@@ -63,14 +63,14 @@ def test_get_satisfaction_between_dates(database_snapshot):
 
     h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
 
-    assert len(ms.get_satisfaction_between_dates(
-        db_connection, dt1.date(), dt1.date())) == 0
-    assert len(ms.get_satisfaction_between_dates(
-        db_connection, dt1.date(), dt2.date())) == 0
-    assert len(ms.get_satisfaction_between_dates(
-        db_connection, dt1.date(), dt3.date())) == 0
-    assert len(ms.get_satisfaction_between_dates(
-        db_connection, dt2.date(), dt3.date())) == 0
+    assert not ms.get_satisfaction_between_dates(
+        db_connection, dt1.date(), dt1.date())
+    assert not ms.get_satisfaction_between_dates(
+        db_connection, dt1.date(), dt2.date())
+    assert not ms.get_satisfaction_between_dates(
+        db_connection, dt1.date(), dt3.date())
+    assert not ms.get_satisfaction_between_dates(
+        db_connection, dt2.date(), dt3.date())
 
 
 def test_staff_css_between_dates(database_snapshot):
@@ -87,14 +87,14 @@ def test_staff_css_between_dates(database_snapshot):
 
     h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
 
-    assert len(ms.staff_css_between_dates(
-        db_connection, staff, dt1.date(), dt1.date())) == 0
-    assert len(ms.staff_css_between_dates(
-        db_connection, staff, dt1.date(), dt2.date())) == 0
-    assert len(ms.staff_css_between_dates(
-        db_connection, staff, dt1.date(), dt3.date())) == 0
-    assert len(ms.staff_css_between_dates(
-        db_connection, staff, dt2.date(), dt3.date())) == 0
+    assert not ms.staff_css_between_dates(
+        db_connection, staff, dt1.date(), dt1.date())
+    assert not ms.staff_css_between_dates(
+        db_connection, staff, dt1.date(), dt2.date())
+    assert not ms.staff_css_between_dates(
+        db_connection, staff, dt1.date(), dt3.date())
+    assert not ms.staff_css_between_dates(
+        db_connection, staff, dt2.date(), dt3.date())
     assert not ms.staff_css_between_dates(
         db_connection, staff+1, dt2.date(), dt3.date())
 
