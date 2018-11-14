@@ -12,7 +12,13 @@
 
         <div class="container-fluid">
 
-          {% include 'breadcrumb.html' %}
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/order/new">Create Order</a>
+            </li>
+            <li class="breadcrumb-item active">{{ breadcrumb_title }}</li>
+          </ol>
+
           <div class="row justify-content-center">
             <p class="text-primary">Your order has been placed</p>
           </div>
