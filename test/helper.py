@@ -1,3 +1,10 @@
+"""
+Helper functions for testing
+
+Author: Robin Wohlers-Reichel
+Date: 23/11/2018
+"""
+
 import biz.manage_staff as ms
 import biz.manage_restaurant as mr
 import biz.manage_menu as mm
@@ -8,6 +15,10 @@ import datetime
 
 
 def spoof_system_for_css(conn):
+    """Helper function to create tables, menu items, events and satisfaction
+    scores to reduce testing code repetition
+    :param conn: Connection to the database
+    """
     t, staff = spoof_tables(conn, 3)
     conn.commit()
 

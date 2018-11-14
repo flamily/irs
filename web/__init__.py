@@ -1,3 +1,10 @@
+"""
+Exposes endpoints for satisfaction data collection from the database
+
+Author: Robin Wohlers-Reichel, Jacob Vorreiter
+Date: 13/11/2018
+"""
+
 import os
 import traceback
 from flask import Flask, render_template, jsonify
@@ -24,12 +31,14 @@ APP.register_blueprint(ORDERS_BLUEPRINT)
 
 @APP.errorhandler(404)
 def not_found(e):
+    """Handle file not found error nicely"""
     print('attempt to access missing: {}'.format(e))
     return render_template('404.html'), 404
 
 
 @APP.errorhandler(KeyError)
 def key_error(_):
+    """Handle bad key error nicely"""
     traceback.print_exc()
     db.rollback()
     return render_template('500.html'), 400
@@ -37,6 +46,7 @@ def key_error(_):
 
 @APP.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
+    """Handle API endpoint bad request nicely"""
     traceback.print_exc()
     response = jsonify(error.to_dict())
     response.status_code = error.status_code

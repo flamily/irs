@@ -1,3 +1,11 @@
+"""
+Exposes endpoints for satisfaction data collection from the database
+
+Author: Jacob Vorreiter
+Date: 13/11/2018
+"""
+
+
 from flask import Blueprint, request, jsonify
 
 from biz import reporting as report
@@ -6,7 +14,7 @@ from web.db import db
 
 
 class InvalidUsage(Exception):
-
+    """Class to throw a JSON message with status_code default 400"""
     def __init__(self, message, status_code=400, payload=None):
         Exception.__init__(self)
         self.message = message
@@ -24,6 +32,12 @@ API_BLUEPRINT = Blueprint('api', __name__, template_folder='templates')
 
 @API_BLUEPRINT.route('/reporting/Customer/<date_type>')
 def get_customer_report(date_type):
+    """Reads in time parameters and returns customer scores
+        between those times
+    :param date_type: The type of time format (date, week, month, year)
+    :return: JSON formatted data, with entries at:
+        data, labels, scores, average
+    """
     date_string = request.args.get('dateString')
 
     if not date_string:
@@ -41,6 +55,12 @@ def get_customer_report(date_type):
 
 @API_BLUEPRINT.route('/reporting/Staff/<staff_id>/<date_type>')
 def get_staff_report(staff_id, date_type):
+    """Reads in time parameters and returns staff scores
+        between those times
+    :param date_type: The type of time format (date, week, month, year)
+    :return: JSON formatted data, with entries at:
+        data, labels, scores, average
+    """
     date_string = request.args.get('dateString')
 
     if not date_string:
@@ -65,6 +85,12 @@ def get_staff_report(staff_id, date_type):
 
 @API_BLUEPRINT.route('/reporting/Menu/<menu_id>/<date_type>')
 def get_menu_score(menu_id, date_type):
+    """Reads in time parameters and returns menu scores
+        between those times
+    :param date_type: The type of time format (date, week, month, year)
+    :return: JSON formatted data, with entries at:
+        data, labels, scores, average
+    """
     date_string = request.args.get('dateString')
 
     if not date_string:
@@ -85,18 +111,22 @@ def get_menu_score(menu_id, date_type):
 
 @API_BLUEPRINT.route('/reporting/Staff//<date_type>')
 def staff_missing_error(date_type):
+    """Handles a missing staff id route"""
     # pylint: disable=unused-argument
     raise InvalidUsage("Missing staff_id from request")
 
 
 @API_BLUEPRINT.route('/reporting/Menu//<date_type>')
 def menu_missing_error(date_type):
+    """Handles missing menu id route"""
     # pylint: disable=unused-argument
     raise InvalidUsage("Missing menu_id from request")
 
 
 @API_BLUEPRINT.route('/reporting/list_items')
 def get_staff_and_menu_items():
+    """Reads staff ids, staff names, menu ids, menu names from the db
+        to populate the Staff ID and Menu ID selectors"""
     staff_list = report.get_staff_members(db)
     menu_list = report.get_menu_items(db)
 
@@ -105,6 +135,8 @@ def get_staff_and_menu_items():
 
 @API_BLUEPRINT.route('/time/get_latest')
 def get_latest_entry_time():
+    """Gets the most recent record from the db to be used for
+        initialisation loading"""
     time = report.get_latest_time(db)
 
     return jsonify(data=time)
@@ -112,6 +144,7 @@ def get_latest_entry_time():
 
 @API_BLUEPRINT.route('/time/get_years')
 def get_list_of_years():
+    """Gets list of all years in the db to populate the year selector"""
     time = mcss.get_all_years(db)
 
     return jsonify(years=time)

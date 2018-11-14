@@ -1,3 +1,11 @@
+"""
+Tests reporting endpoints used for JSON data collation
+
+Author: Robin Wohlers-Reichel
+Date: 13/11/2018
+"""
+
+
 import pytest
 import json
 import test.helper as h
@@ -36,6 +44,7 @@ import test.helper as h
 
 ])
 def test_invalid_usage(client, url, err_msg):
+    """Tests the InvalidUsage error handling"""
     result = client.get(url)
     assert result.status_code == 400
     assert err_msg == json.loads(result.data)['message']
@@ -93,6 +102,7 @@ def test_invalid_usage(client, url, err_msg):
      }),
 ])
 def test_endpoints(client, url, json_cardinality):
+    """Tests all endpoints using a predefined dataset for the database"""
     db_connection = client.testing_db_pool.getconn()
     h.spoof_system_for_css(db_connection)
     client.testing_db_pool.putconn(db_connection)
