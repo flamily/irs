@@ -66,12 +66,4 @@ VALUES (
   (SELECT id from ev),
   (SELECT id from res)
 );
-
--- Create a satisfaction and link to customer event
-INSERT INTO satisfaction (event_id, reservation_id, score)
-VALUES (
-  (SELECT event_id from customer_event LIMIT 1),
-  (SELECT reservation_id from customer_event LIMIT 1),
-  50
-);
 END;
