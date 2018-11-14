@@ -129,7 +129,7 @@ def test_get_menu_item_satisfaction(database_snapshot):
     assert len(ms.get_menu_item_satisfaction(
         db_connection, 1, dt3.date(), dt3.date())) == 1
     assert len(ms.get_menu_item_satisfaction(
-        db_connection, 1, dt3.date(), dt3.date())[0]) == 7
+        db_connection, 1, dt3.date(), dt3.date())[0]) == 6
     assert not ms.get_menu_item_satisfaction(
         db_connection, menu_items[2][0], dt2.date(), dt3.date())
 
