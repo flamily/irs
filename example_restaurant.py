@@ -218,18 +218,22 @@ def __customer_experience(tid, sid, table_capacity, dt,
     ready_dt = pay_dt + timedelta(minutes=(random.randint(5, 10)))
 
     # Create reservation and set the date
+    sid = STAFF[random.randint(0, len(STAFF)-1)]
     event, rid, gsize = __generate_reservation(tid, sid, table_capacity)
     SPOOF_DATES['reservation'].append((rid, event, dt))
 
     # Order
+    sid = STAFF[random.randint(0, len(STAFF)-1)]
     event, _, order = __generate_order(tid, sid, gsize)
     SPOOF_DATES['order'].append((order, event, order_dt))
 
     if pay:  # Optionally pay
+        sid = STAFF[random.randint(0, len(STAFF)-1)]
         event, _ = __pay_reservation(tid, sid)
         SPOOF_DATES['table_paid'].append((event, pay_dt))
 
         if make_ready:  # Optionally make ready after paying
+            sid = STAFF[random.randint(0, len(STAFF)-1)]
             event = mgrest.ready(conn, tid, sid)
             SPOOF_DATES['table_paid'].append((event, ready_dt))
     conn.commit()
@@ -242,8 +246,6 @@ def __recent_restaurant_state(tids):
                  in the restaurant. Of the form [(table id, capacity), ...]
     """
     for tid, capacity in tids:
-        # Choose random staff member to do transaction
-        sid = STAFF[random.randint(0, len(STAFF)-1)]
 
         # Choose a random action to apply to the table
         choice = random.randint(0, 3)
@@ -251,14 +253,20 @@ def __recent_restaurant_state(tids):
         if choice == 1:
             start_dt = now + timedelta(hours=-1)
             print("table ({}) setup : reserved and ordered".format(tid))
+            # Choose random staff member to do transaction
+            sid = STAFF[random.randint(0, len(STAFF)-1)]
             __customer_experience(tid, sid, capacity, start_dt)
         elif choice == 2:
             start_dt = now + timedelta(hours=-3)
             print("table ({}) setup : reserved, ordered and paid".format(tid))
+            # Choose random staff member to do transaction
+            sid = STAFF[random.randint(0, len(STAFF)-1)]
             __customer_experience(tid, sid, capacity, start_dt, True)
         elif choice == 3:
             start_dt = now + timedelta(minutes=-30)
             print("table ({}) setup : maintainence".format(tid))
+            # Choose random staff member to do transaction
+            sid = STAFF[random.randint(0, len(STAFF)-1)]
             event = mgrest.maintain(conn, tid, sid)
             SPOOF_DATES['table_maintainence'].append((event, start_dt))
         else:
