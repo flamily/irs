@@ -1,0 +1,32 @@
+.btn-group > * {
+  display: inline-block;
+  margin-left: 8px;
+  width: 25%;
+}
+
+.inline-elemnts > * {
+  display: inline-block;
+}
+
+.graph-mode-buttons > * {
+  display: inline-block;
+  margin-left: 8px;
+  width: 32%;
+  margin-bottom: 20px;
+}
+
+.graph_footer > * {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+#datepicker-container > * {
+  margin-bottom: 1rem;
+  margin-right: 2rem;
+  float: right;
+}
+
+#date-picker {
+  float: right;
+  width:70%;
+}
