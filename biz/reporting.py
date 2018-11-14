@@ -31,14 +31,13 @@ def format_dict(satisf_event):
     lst = []
     for item in satisf_event:
         lst.append({
-            "event_id": item[0],
-            "description": item[1],
-            "date": item[2],
-            "table_id": item[3],
-            "staff_id": item[4],
-            "reservation_id": item[5],   # We skip item[5] here, duplicate
-            "score": float(item[6])      # Remove Decimal() prevent JSON errors
-        })
+            "date": item[0],
+            "reservation_id": item[1],
+            "table_id": item[2],
+            "staff": item[3],
+            "menu": item[4],
+            "score": float(item[5])  # Remove Decimal() prevent JSON errors
+            })
     return lst
 
 

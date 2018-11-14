@@ -7,12 +7,11 @@ Date: 12/11/2018
 
 CUSTOMER_SQL = """
     select
-        1,
-        array_to_string(array_agg(distinct m.name), ', '),
         r_date,
+        reservation_id,
         restaurant_table_id,
         array_to_string(array_agg(distinct s.first_name), ', '),
-        reservation_id,
+        array_to_string(array_agg(distinct m.name), ', '),
         delta
     from css_reporting cr
     join menu_item as m on m.menu_item_id = cr.menu_item_id
