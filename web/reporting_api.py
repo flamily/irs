@@ -107,9 +107,8 @@ def get_menu_score(menu_id, date_type):
     if not menu_id.isdigit():
         raise InvalidUsage("Invalid menu_id provided")
 
-    res = report.get_menu_satisfaction(db, menu_id, date_type, date_string)
+    res, avg = report.get_menu_satisfaction(db, menu_id, date_type, date_string)
     labels, scores = report.get_chart_data(res)
-    avg = report.get_avg_menu_score(db, menu_id, date_type, date_string)
 
     return jsonify(data=res, labels=labels, scores=scores, average=avg)
 

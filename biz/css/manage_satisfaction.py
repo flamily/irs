@@ -45,25 +45,6 @@ def staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
         return curs.fetchall()
 
 
-def avg_staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
-    """Get staff member's average satisfaction score between dates
-
-    :param db_conn: A psycopg2 connection to the database.
-    :param staff_id: The ID of the staff member.
-    :param s_dt: The start date in string form (ie 25-10-25)
-    :param e_dt: The end date in string form
-    :return: Average value of staff's satisfaction score
-    """
-    with db_conn.cursor() as curs:
-        curs.execute(
-            "SELECT AVG(s.score) FROM event AS e JOIN satisfaction AS s "
-            "ON e.event_id = s.event_id "
-            "WHERE staff_id= %s AND event_dt BETWEEN %s AND %s",
-            (staff_id, s_dt, e_dt)
-        )
-        return curs.fetchone()[0]
-
-
 def create_satisfaction(db_conn, score, event_id, reservation_id):
     """Store a calculated satisfaction score in the database.
 

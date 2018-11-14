@@ -13,6 +13,13 @@ from datetime import date, timedelta
 import calendar
 
 
+def do_avg(item):
+    avg = 0
+    for i in item:
+        avg += (i[-1]/len(item))
+    return float(avg)
+
+
 def format_dict(satisf_event):
     """Formats the inbound satisfaction event SQL tuple into a JSON ready list
 
@@ -134,12 +141,9 @@ def get_customer_satisfaciton(db, date_type, date_string):
     s_dt, e_dt = get_date_bounds(date_type, date_string)
     item = mcss.get_satisfaction_between_dates(db, s_dt, e_dt)
 
-    avg = 0
     if item:
-        for i in item:
-            avg += (i[7]/len(item))
-        return (sort_data(format_dict(item)), float(avg))
-    return ([], avg)
+        return (sort_data(format_dict(item)), do_avg(item))
+    return ([], 0)
 
 
 def get_staff_satisfaction_report(db, s_id, date_type, date_string):
@@ -157,12 +161,9 @@ def get_staff_satisfaction_report(db, s_id, date_type, date_string):
     s_dt, e_dt = get_date_bounds(date_type, date_string)
     item = mcss.staff_css_between_dates(db, s_id, s_dt, e_dt)
 
-    avg = 0
     if item:
-        for i in item:
-            avg += (i[7]/len(item))
-        return (sort_data(format_dict(item)), float(avg))
-    return ([], avg)
+        return (sort_data(format_dict(item)), do_avg(item))
+    return ([], 0)
 
 
 def get_menu_satisfaction(db, m_id, date_type, date_string):
@@ -181,8 +182,8 @@ def get_menu_satisfaction(db, m_id, date_type, date_string):
     item = mcss.get_menu_item_satisfaction(db, m_id, s_dt, e_dt)
 
     if item:
-        return sort_data(format_menu_dict(item))
-    return []
+        return (sort_data(format_menu_dict(item)), do_avg(item))
+    return ([], 0)
 
 
 def get_avg_menu_score(db, menu_id, date_type, date_string):
