@@ -11,7 +11,12 @@
 
         <div class="container-fluid">
 
-          {% include 'breadcrumb.html' %}
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="/tables">Restaurant Tables</a>
+            </li>
+            <li class="breadcrumb-item active">{{ breadcrumb_title }}</li>
+          </ol>
 
           <h1 class="restuarant-table-heading">Restaurant Tables</h1>
 
