@@ -2,7 +2,7 @@
   "use strict"; // Start of use strict
 
   // Toggle the side navigation
-  $("#sidebarToggle").on('click',function(e) {
+  $("#sidebarToggle").on('click',function(event) {
     e.preventDefault();
     $("body").toggleClass("sidebar-toggled");
     $(".sidebar").toggleClass("toggled");
@@ -290,7 +290,7 @@
         else
           irs.say("Table is taken, please select another");
       }
-      else 
+      else
         irs.say("Please tap a table or say the table number");
       // Rerun voice
       setTimeout(function(){irs.listen(triggerWords, 10000, tableCallback)}, 3000);
