@@ -136,6 +136,8 @@ function populateListItems(){
 
 /**
 * Changes the Graph mode to view different satisfaction visualisations (ie Customer, Staff, Menu)
+*
+* @param {HTML Element} The calling element, used to obtain name data from the element
 */
 function changeGraphMode(elem){
   mode = elem.name;

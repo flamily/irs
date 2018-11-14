@@ -16,12 +16,17 @@ from web.db import db
 class InvalidUsage(Exception):
     """Class to throw a JSON message with status_code default 400"""
     def __init__(self, message, status_code=400, payload=None):
+        """Initialisation / Calling function for raising the Exception
+        :param message: The string message to return
+        :param status_code: The HTML error code
+        :param payload: Additional payload items to return"""
         Exception.__init__(self)
         self.message = message
         self.status_code = status_code
         self.payload = payload
 
     def to_dict(self):
+        """Convert the Exception items into a JSON ready dict"""
         rv = dict(self.payload or ())
         rv['message'] = self.message
         return rv
@@ -111,14 +116,16 @@ def get_menu_score(menu_id, date_type):
 
 @API_BLUEPRINT.route('/reporting/Staff//<date_type>')
 def staff_missing_error(date_type):
-    """Handles a missing staff id route"""
+    """Handles a missing staff id route
+    :param date_type: UNUSED, The date type (date, week, month, year)"""
     # pylint: disable=unused-argument
     raise InvalidUsage("Missing staff_id from request")
 
 
 @API_BLUEPRINT.route('/reporting/Menu//<date_type>')
 def menu_missing_error(date_type):
-    """Handles missing menu id route"""
+    """Handles missing menu id route
+    :param date_type: UNUSED, The date type (date, week, month, year)"""
     # pylint: disable=unused-argument
     raise InvalidUsage("Missing menu_id from request")
 

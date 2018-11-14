@@ -44,7 +44,10 @@ import test.helper as h
 
 ])
 def test_invalid_usage(client, url, err_msg):
-    """Tests the InvalidUsage error handling"""
+    """Tests the InvalidUsage error handling
+    :param client: pytest fixture encompassing a flask client
+    :param url: The routing URL to test
+    :param err_msg: The expected error message response"""
     result = client.get(url)
     assert result.status_code == 400
     assert err_msg == json.loads(result.data)['message']
@@ -102,7 +105,10 @@ def test_invalid_usage(client, url, err_msg):
      }),
 ])
 def test_endpoints(client, url, json_cardinality):
-    """Tests all endpoints using a predefined dataset for the database"""
+    """Tests all endpoints using a predefined dataset for the database
+    :param client: pytest fixture encompassing a flask client
+    :param url: The routing url to test
+    :param json_cardinality: The data structure expected from the response"""
     db_connection = client.testing_db_pool.getconn()
     h.spoof_system_for_css(db_connection)
     client.testing_db_pool.putconn(db_connection)
