@@ -1,66 +1,14 @@
 """
 These tests check the satisfaction manager.
 
-Author: Andrew Pope, Andy Go
+Author: Andrew Pope, Andy Go, Jacob Vorreiter
 Date: 11/11/2018
 """
 import datetime
+import math
 import biz.css.manage_satisfaction as ms
 import biz.manage_restaurant as mr
 import test.helper as h
-import biz.manage_menu as mm
-
-
-def __spoof_menu_items(db_conn, n):
-    """Load a series of menu_items.
-
-    :param db_conn: A psycopg2 connection to the database.
-    :param n: The number of restaurant_tables to create.
-    :return: [mi1_id, mi2_id ... min_id]
-    """
-    items = []
-    for i in range(0, n):
-        items.append(
-            mm.create_menu_item(
-                db_conn, str(i), 'a description', i
-            )
-        )
-    return items
-
-
-# Functions for spoofing time
-def __update_event_dt(db_conn, eid, dt):
-    """Spoof an event's datetime.
-
-    :param eid: The id of the event record to spoof.
-    :param dt: The new datetime to spoof.
-    """
-    with db_conn.cursor() as curs:
-        curs.execute(
-            "UPDATE event "
-            "SET event_dt = %s "
-            "WHERE event_id = %s",
-            (dt, eid)
-        )
-        db_conn.commit()
-
-
-def __update_reservation_dt(db_conn, rid, eid, dt):
-    """Spoof a reservation's datetime.
-
-    :param rid: The id of the reservation record to spoof.
-    :param eid: The id of the event record to spoof.
-    :param dt: The new datetime to spoof.
-    """
-    with db_conn.cursor() as curs:
-        __update_event_dt(db_conn, eid, dt)
-        curs.execute(
-            "UPDATE reservation "
-            "SET reservation_dt = %s "
-            "WHERE reservation_id = %s",
-            (dt, rid)
-        )
-        db_conn.commit()
 
 
 def test_create_satisfaction(database_snapshot):
@@ -110,16 +58,15 @@ def test_avg_css_per_period(database_snapshot):
 
         dt1 = datetime.datetime(2018, 1, 1)
         dt2 = datetime.datetime(2018, 12, 31)
-
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
         ms.create_satisfaction(conn, 40, ce1[0], ce1[1])
         ce2 = mr.order(conn, [], t[0], staff)
         ms.create_satisfaction(conn, 80, ce2[0], ce2[1])
         ce3 = mr.paid(conn, t[0], staff)
         ms.create_satisfaction(conn, 60, ce3[0], ce3[1])
-        __update_reservation_dt(conn, ce1[1], ce1[0], dt1)
-        __update_reservation_dt(conn, ce2[1], ce2[0], dt1)
-        __update_reservation_dt(conn, ce3[1], ce3[0], dt1)
+        h.update_reservation_dt(conn, ce1[1], ce1[0], dt1)
+        h.update_reservation_dt(conn, ce2[1], ce2[0], dt1)
+        h.update_reservation_dt(conn, ce3[1], ce3[0], dt1)
 
         assert ms.avg_css_per_period(
             conn, dt1.date(), dt1.date()) == 60
@@ -137,7 +84,7 @@ def test_missing_avg_css_per_period(database_snapshot):
         dt2 = datetime.datetime(2018, 12, 31)
 
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
-        __update_reservation_dt(conn, ce1[1], ce1[0], dt1)
+        h.update_reservation_dt(conn, ce1[1], ce1[0], dt1)
 
         assert ms.avg_css_per_period(
             conn, dt2.date(), dt2.date()) is None
@@ -176,7 +123,6 @@ def test_missing_avg_css_per_staff(database_snapshot):
         conn.commit()
 
         mr.create_reservation(conn, t[0], staff, 5)
-
         assert ms.avg_css_per_staff(conn, 12345) is None
 
 
@@ -226,7 +172,7 @@ def test_avg_css_per_menu_item(database_snapshot):
 
         assert ms.avg_css_per_menu_item(conn, 1) is None
 
-        mi = __spoof_menu_items(conn, 2)
+        mi = h.spoof_menu_items(conn, 2)
         expected = [(mi[0], 2), (mi[1], 3)]
         ce1 = mr.create_reservation(conn, t[0], staff, 5)
         ms.create_satisfaction(conn, 70, ce1[0], ce1[1])
@@ -248,3 +194,241 @@ def test_missing_avg_css_per_menu_item(database_snapshot):
         mr.create_reservation(conn, t[0], staff, 5)
 
         assert ms.avg_css_per_menu_item(conn, 1) is None
+
+
+def test_get_satisfaction_between_dates(database_snapshot):
+    """Get satisfaction records between time periods"""
+    db_connection = database_snapshot.getconn()
+    t, staff = h.spoof_tables(db_connection, 3)
+    db_connection.commit()
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+    dt3 = datetime.datetime(2018, 1, 6)
+
+    scores = [[40, 60, 80, 100], [40, 60, 80], [40, 60, 80]]
+
+    h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
+
+    assert len(ms.get_satisfaction_between_dates(
+        db_connection, dt1.date(), dt1.date())) == 4
+    assert len(ms.get_satisfaction_between_dates(
+        db_connection, dt1.date(), dt2.date())) == 7
+    assert len(ms.get_satisfaction_between_dates(
+        db_connection, dt1.date(), dt3.date())) == 10
+    assert len(ms.get_satisfaction_between_dates(
+        db_connection, dt2.date(), dt3.date())) == 6
+    assert len(ms.get_satisfaction_between_dates(
+        db_connection, dt1.date(), dt1.date())[0]) == 8
+
+
+def test_staff_css_between_dates(database_snapshot):
+    """Get staff satisfaction records between time periods"""
+    db_connection = database_snapshot.getconn()
+    t, staff = h.spoof_tables(db_connection, 3)
+    db_connection.commit()
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+    dt3 = datetime.datetime(2018, 1, 6)
+
+    scores = [[40, 60, 80], [40, 60, 80], [40, 60, 80]]
+
+    h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
+
+    assert len(ms.staff_css_between_dates(
+        db_connection, staff, dt1.date(), dt1.date())) == 3
+    assert len(ms.staff_css_between_dates(
+        db_connection, staff, dt1.date(), dt2.date())) == 6
+    assert len(ms.staff_css_between_dates(
+        db_connection, staff, dt1.date(), dt3.date())) == 9
+    assert len(ms.staff_css_between_dates(
+        db_connection, staff, dt2.date(), dt3.date())) == 6
+    assert len(ms.staff_css_between_dates(
+        db_connection, staff, dt1.date(), dt1.date())[0]) == 8
+    assert not ms.staff_css_between_dates(
+        db_connection, staff+1, dt2.date(), dt3.date())
+
+
+def test_avg_staff_css_between_dates(database_snapshot):
+    """Get average staff satisfaction between time periods"""
+    db_connection = database_snapshot.getconn()
+    t, staff = h.spoof_tables(db_connection, 3)
+    db_connection.commit()
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+    dt3 = datetime.datetime(2018, 1, 6)
+
+    scores = [[40, 60, 80], [50, 55, 60], [40, 60, 80, 100]]
+
+    h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
+
+    assert ms.avg_staff_css_between_dates(
+        db_connection, staff, dt1.date(), dt1.date()) == 60
+    assert ms.avg_staff_css_between_dates(
+        db_connection, staff, dt2.date(), dt2.date()) == 55
+    assert ms.avg_staff_css_between_dates(
+        db_connection, staff, dt3.date(), dt3.date()) == 70
+    assert not ms.avg_staff_css_between_dates(
+        db_connection, staff+1, dt2.date(), dt3.date())
+
+
+def test_get_menu_item_satisfaction(database_snapshot):
+    """Get menu satisfaction records between time periods"""
+    db_connection = database_snapshot.getconn()
+    t, staff = h.spoof_tables(db_connection, 3)
+    db_connection.commit()
+
+    mi = h.spoof_menu_items(db_connection, 3)
+    menu_items = [(mi[0], 2), (mi[1], 3), (mi[2], 1)]
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+    dt3 = datetime.datetime(2018, 1, 6)
+
+    scores = [[40, 60, 80], [40, 60, 80, 100], [50, 55, 60]]
+
+    h.spoof_satisfaction(
+        db_connection,
+        t,
+        staff,
+        [dt1, dt2, dt3],
+        scores,
+        [(1, 1)])
+
+    assert len(ms.get_menu_item_satisfaction(
+        db_connection, 1, dt1.date(), dt1.date())) == 3
+    assert len(ms.get_menu_item_satisfaction(
+        db_connection, 1, dt1.date(), dt2.date())) == 11
+    assert len(ms.get_menu_item_satisfaction(
+        db_connection, 1, dt3.date(), dt3.date())) == 3
+    assert len(ms.get_menu_item_satisfaction(
+        db_connection, 1, dt3.date(), dt3.date())[0]) == 7
+    assert not ms.get_menu_item_satisfaction(
+        db_connection, menu_items[2][0], dt2.date(), dt3.date())
+
+
+def test_avg_menu_item_score(database_snapshot):
+    """Get average menu satisfaction between time periods"""
+    db_connection = database_snapshot.getconn()
+    t, staff = h.spoof_tables(db_connection, 3)
+    db_connection.commit()
+
+    mi = h.spoof_menu_items(db_connection, 3)
+    menu_items = [(mi[0], 2), (mi[1], 3), (mi[2], 1)]
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+    dt3 = datetime.datetime(2018, 1, 6)
+
+    scores = [[40, 60, 80], [40, 60, 80, 100], [50, 55, 60]]
+
+    h.spoof_satisfaction(
+        db_connection,
+        t,
+        staff,
+        [dt1, dt2, dt3],
+        scores,
+        [(1, 1)])
+
+    assert ms.avg_menu_item_score(
+        db_connection, 1, dt1.date(), dt1.date()) == 60
+    assert math.floor(float(ms.avg_menu_item_score(
+        db_connection, 1, dt1.date(), dt2.date()))) == 67.0
+    assert ms.avg_menu_item_score(
+        db_connection, 1, dt3.date(), dt3.date()) == 55
+    assert not ms.avg_menu_item_score(
+        db_connection, menu_items[2][0], dt2.date(), dt3.date())
+
+
+def test_get_latest_satisfaction_date(database_snapshot):
+    """Get latest satisfaction date"""
+    db_connection = database_snapshot.getconn()
+    t, staff = h.spoof_tables(db_connection, 1)
+    db_connection.commit()
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt_now = datetime.datetime.now().strftime("%Y-%m-%d")
+    ce1 = mr.create_reservation(db_connection, t[0], staff, 5)
+    ms.create_satisfaction(db_connection, 40, ce1[0], ce1[1])
+    ce2 = mr.order(db_connection, [], t[0], staff)
+    ms.create_satisfaction(db_connection, 80, ce2[0], ce2[1])
+    ce3 = mr.paid(db_connection, t[0], staff)
+    ms.create_satisfaction(db_connection, 60, ce3[0], ce3[1])
+    h.update_reservation_dt(db_connection, ce1[1], ce1[0], dt1)
+    h.update_reservation_dt(db_connection, ce2[1], ce2[0], dt1)
+    h.update_reservation_dt(db_connection, ce3[1], ce3[0], dt1)
+
+    assert dt_now in ms.get_latest_satisfaction_date(
+        db_connection).strftime("%Y-%m-%d")
+
+
+def test_get_all_years(database_snapshot):
+    """Get all years"""
+    db_connection = database_snapshot.getconn()
+    t, staff = h.spoof_tables(db_connection, 1)
+    db_connection.commit()
+
+    dt1 = datetime.datetime(2017, 1, 1)
+    dt_now = datetime.datetime.now().strftime("%Y")
+    ce1 = mr.create_reservation(db_connection, t[0], staff, 5)
+    ms.create_satisfaction(db_connection, 40, ce1[0], ce1[1])
+    ce2 = mr.order(db_connection, [], t[0], staff)
+    ms.create_satisfaction(db_connection, 80, ce2[0], ce2[1])
+    ce3 = mr.paid(db_connection, t[0], staff)
+    ms.create_satisfaction(db_connection, 60, ce3[0], ce3[1])
+    h.update_reservation_dt(db_connection, ce1[1], ce1[0], dt1)
+    h.update_reservation_dt(db_connection, ce2[1], ce2[0], dt1)
+    h.update_reservation_dt(db_connection, ce3[1], ce3[0], dt1)
+
+    assert dt_now == str(int(ms.get_all_years(
+        db_connection)[0][0]))
+    assert len(ms.get_all_years(
+        db_connection)) == 2
+
+
+def test_get_avg_staff_css_between_dates_missing(database_snapshot):
+    """Try to get css while database is empty"""
+    db_conn = database_snapshot.getconn()
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+
+    avg = ms.avg_staff_css_between_dates(db_conn, 1, dt1.date(), dt2.date())
+
+    assert avg is None
+
+
+def test_avg_css_per_period_missing(database_snapshot):
+    """Try to get css while database is empty"""
+    db_conn = database_snapshot.getconn()
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+
+    assert ms.avg_css_per_period(db_conn, dt1.date(), dt2.date()) is None
+
+
+def test_avg_css_per_staff_missing(database_snapshot):
+    """Try to get css while database is empty"""
+    db_conn = database_snapshot.getconn()
+
+    assert ms.avg_css_per_staff(db_conn, 1) is None
+
+
+def test_avg_css_per_menu_item_missing(database_snapshot):
+    """Try to get css while database is empty"""
+    db_conn = database_snapshot.getconn()
+
+    assert ms.avg_css_per_menu_item(db_conn, 1) is None
+
+
+def test_avg_menu_item_score_missing(database_snapshot):
+    """Try to get css while database is empty"""
+    db_conn = database_snapshot.getconn()
+
+    dt1 = datetime.datetime(2018, 1, 1)
+    dt2 = datetime.datetime(2018, 1, 4)
+
+    assert ms.avg_menu_item_score(db_conn, 1, dt1, dt2) is None
