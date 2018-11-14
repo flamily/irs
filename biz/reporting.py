@@ -154,9 +154,12 @@ def get_staff_satisfaction_report(db, s_id, date_type, date_string):
     s_dt, e_dt = get_date_bounds(date_type, date_string)
     item = mcss.staff_css_between_dates(db, s_id, s_dt, e_dt)
 
+    avg = 0
     if item:
-        return sort_data(format_dict(item))
-    return []
+        for i in item:
+            avg += (i[7]/len(item))
+        return (sort_data(format_dict(item)), float(avg))
+    return ([], avg)
 
 
 def get_menu_satisfaction(db, m_id, date_type, date_string):
@@ -191,24 +194,6 @@ def get_average_score(db, date_type, date_string):
     """
     s_dt, e_dt = get_date_bounds(date_type, date_string)
     avg = mcss.avg_css_per_period(db, s_dt, e_dt)
-    if avg:
-        return float(avg)
-    return 0
-
-
-def get_staff_average_score(db, s_id, date_type, date_string):
-    """Gets average staff satisfaction score between dates
-
-    :param db: the database connection
-    :param s_id: Staff ID
-    :param date_type: String representation of date function
-    (date, week, month, year)
-    :param date_string: The string supplied from the request
-    (YYYY-MM-DD, YYYY-WeekNumber [eg W45], YYYY-MM, YYYY)
-    :return: float representation of average staff score
-    """
-    s_dt, e_dt = get_date_bounds(date_type, date_string)
-    avg = mcss.avg_staff_css_between_dates(db, s_id, s_dt, e_dt)
     if avg:
         return float(avg)
     return 0

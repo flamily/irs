@@ -78,13 +78,12 @@ def get_staff_report(staff_id, date_type):
     if not staff_id.isdigit():
         raise InvalidUsage("Invalid staff_id provided")
 
-    res = report.get_staff_satisfaction_report(
+    res, avg = report.get_staff_satisfaction_report(
         db,
         staff_id,
         date_type,
         date_string)
     labels, data = report.get_chart_data(res)
-    avg = report.get_staff_average_score(db, staff_id, date_type, date_string)
 
     return jsonify(data=res, labels=labels, scores=data, average=avg)
 
