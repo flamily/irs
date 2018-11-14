@@ -39,11 +39,7 @@ def test_get_customer_satisfaction_missing(database_snapshot):
     assert report.get_customer_satisfaciton(
         db_conn,
         date_format,
-        date_str) == []
-    assert report.get_average_score(
-        db_conn,
-        date_format,
-        date_str) == 0
+        date_str) == ([], 0)
 
 
 def test_get_staff_satisfaction_report_missing(database_snapshot):
