@@ -2,8 +2,8 @@
   "use strict"; // Start of use strict
 
   // Toggle the side navigation
-  $("#sidebarToggle").on('click',function(event) {
-    event.preventDefault();
+  $("#sidebarToggle").on('click',function() {
+    preventDefault();
     $("body").toggleClass("sidebar-toggled");
     $(".sidebar").toggleClass("toggled");
   });
