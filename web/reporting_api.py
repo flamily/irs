@@ -126,7 +126,9 @@ def menu_missing_error(date_type):
 @API_BLUEPRINT.route('/reporting/list_items')
 def get_staff_and_menu_items():
     """Reads staff ids, staff names, menu ids, menu names from the db
-        to populate the Staff ID and Menu ID selectors"""
+        to populate the Staff ID and Menu ID selectors
+
+    :return: JSON formatted list with items menu, staff"""
     staff_list = report.get_staff_members(db)
     menu_list = report.get_menu_items(db)
 
@@ -136,7 +138,9 @@ def get_staff_and_menu_items():
 @API_BLUEPRINT.route('/time/get_latest')
 def get_latest_entry_time():
     """Gets the most recent record from the db to be used for
-        initialisation loading"""
+        initialisation loading
+
+    :return: JSON formatted list with items data"""
     time = report.get_latest_time(db)
 
     return jsonify(data=time)
@@ -144,7 +148,9 @@ def get_latest_entry_time():
 
 @API_BLUEPRINT.route('/time/get_years')
 def get_list_of_years():
-    """Gets list of all years in the db to populate the year selector"""
+    """Gets list of all years in the db to populate the year selector
+
+    :return: JSON formatted list with items years"""
     time = mcss.get_all_years(db)
 
     return jsonify(years=time)

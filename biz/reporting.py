@@ -124,6 +124,7 @@ def get_date_bounds(bounds, date_str):
 def get_customer_satisfaciton(db, date_type, date_string):
     """Gets, formats and sorts customer satisfaction from the SQL library
 
+    :param db: the database connection
     :param date_type: String representation of date function
     (date, week, month, year)
     :param date_string: The string supplied from the request
@@ -141,6 +142,7 @@ def get_customer_satisfaciton(db, date_type, date_string):
 def get_staff_satisfaction_report(db, s_id, date_type, date_string):
     """Gets, formats and sorts staff satisfaction from the SQL library
 
+    :param db: the database connection
     :param: s_id: Staff ID to send to SQL query
     :param date_type: String representation of date function
     (date, week, month, year)
@@ -160,6 +162,7 @@ def get_staff_satisfaction_report(db, s_id, date_type, date_string):
 def get_menu_satisfaction(db, m_id, date_type, date_string):
     """Gets, formats and sorts menu satisfaction from the SQL library
 
+    :param db: the database connection
     :param m_id: The Menu ID to send to SQL query
     :param date_type: String representation of date function
     (date, week, month, year)
@@ -179,6 +182,7 @@ def get_menu_satisfaction(db, m_id, date_type, date_string):
 def get_average_score(db, date_type, date_string):
     """Gets average customer satisfaction score between dates
 
+    :param db: the database connection
     :param date_type: String representation of date function
     (date, week, month, year)
     :param date_string: The string supplied from the request
@@ -195,6 +199,7 @@ def get_average_score(db, date_type, date_string):
 def get_staff_average_score(db, s_id, date_type, date_string):
     """Gets average staff satisfaction score between dates
 
+    :param db: the database connection
     :param s_id: Staff ID
     :param date_type: String representation of date function
     (date, week, month, year)
@@ -212,6 +217,7 @@ def get_staff_average_score(db, s_id, date_type, date_string):
 def get_avg_menu_score(db, menu_id, date_type, date_string):
     """Gets average menu satisfaction score between dates
 
+    :param db: the database connection
     :param menu_id: Menu ID
     :param date_type: String representation of date function
     (date, week, month, year)
@@ -230,6 +236,7 @@ def get_avg_menu_score(db, menu_id, date_type, date_string):
 def get_staff_members(db):
     """Gets a list of staff ids and names to populate front end selector
 
+    :param db: the database connection
     :return: list of dictionary items with value, name: staff_id, full_name
     """
     staff_list = ms.list_members(db)
@@ -244,6 +251,7 @@ def get_staff_members(db):
 def get_menu_items(db):
     """Gets a list of menu ids and names to populate front end selector
 
+    :param db: the database connection
     :return: list of dictionary items with value, name: menu_id, menu_name
     """
     menu_list = mm.list_menu(db)
@@ -255,6 +263,7 @@ def get_menu_items(db):
 def get_latest_time(db):
     """Gets the datetime of the latest entry in the database
 
+    :param db: the database connection
     :return: date picker reader formatted datestring
     :note: this is required to correctly load in initialisation data on
     document load

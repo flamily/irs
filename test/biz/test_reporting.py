@@ -100,8 +100,8 @@ def test_get_menu_members_missing(database_snapshot):
     assert report.get_menu_items(db_conn) == []
 
 
-def test_get_latest_time(database_snapshot):
-    """Get data from an empty database"""
+def test_get_latest_time_missing(database_snapshot):
+    """Try to get the latest time from an empty database"""
     db_conn = database_snapshot.getconn()
 
     assert report.get_latest_time(db_conn) == ""

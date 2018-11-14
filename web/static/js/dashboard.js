@@ -61,6 +61,8 @@ function getAPIString(){
 
 /**
 * Validates date input data before sending it to the sql to avoid errors
+*
+* @return {Boolean} The success of whether the string matches the regex
 */
 function validate(){
   var date_picker = document.getElementById("date-picker");
@@ -114,7 +116,7 @@ function updateChart(){
 /**
 * Updates the DataTable table by reading data from the endpoint and reloading the DataTable ajax url
 */
-function updateTable(api_string){
+function updateTable(){
   api_string = getAPIString();
   myDataTable.ajax.url(api_string).load();
   document.getElementById('table-updated').innerHTML = "Updated " + new Date();

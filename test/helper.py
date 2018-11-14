@@ -42,7 +42,9 @@ def spoof_system_for_css(conn):
 
 def update_order_dt(db_conn, rid, dt):
     """Spoof an event's datetime.
-    :param eid: The id of the event record to spoof.
+
+    :param db_conn: the database Connection
+    :param rid: The id of the event record to spoof.
     :param dt: The new datetime to spoof.
     """
     with db_conn.cursor() as curs:
@@ -56,6 +58,16 @@ def update_order_dt(db_conn, rid, dt):
 
 
 def spoof_satisfaction(db_conn, t, staff, dates, scores, menu_items=[]):
+    """ Dynamically creates event and satisfaction records
+        based on the number of tables, dates and scores given
+
+        :param db_conn: the database Connection
+        :param t: the list of tables
+        :param staff: The staff ID to attach
+        :param dates: A list of datetime objects
+        :param scores: A two dimensional list of scores
+        :param menu_items: A List of menu tuples
+    """
     # pylint: disable=dangerous-default-value
     # pylint: disable=too-many-arguments
     # pylint: disable=too-many-locals
@@ -87,6 +99,7 @@ def spoof_satisfaction(db_conn, t, staff, dates, scores, menu_items=[]):
 def update_event_dt(db_conn, eid, dt):
     """Spoof an event's datetime.
 
+    :param db_conn: the database Connection
     :param eid: The id of the event record to spoof.
     :param dt: The new datetime to spoof.
     """

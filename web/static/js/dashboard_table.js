@@ -12,7 +12,10 @@ $(document).ready(function() {
   $.getJSON('/api/time/get_latest', callback_func);
 
   /**
-  * Initialises data table with data retrieved from the endpoint call using a callback, allowing for seamless laoding. Additionally, Populates the year options and calls the updateChart method
+  * Initialises data table with data retrieved from the endpoint call using a callback,
+  * allowing for seamless laoding. Additionally, Populates the year options and calls the updateChart method
+
+  @param {JSON} data received from the getJSON callback.
   */
   function callback_func(data){
     latest_time = data.data;
