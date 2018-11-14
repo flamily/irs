@@ -6,18 +6,32 @@ Date: 12/11/2018
 """
 
 CUSTOMER_SQL = """
-    select distinct
+    select
         1,
         'a',
         r_date,
         restaurant_table_id,
-        staff_id,
+    array_agg(distinct staff_id),
         reservation_id,
         delta
     from css_reporting as cr
     where r_date BETWEEN %s AND %s
-    order by r_date ASC
+    group by r_date, restaurant_table_id, reservation_id, delta
+    order by r_date ASC limit 10;
     """
+
+    # select distinct
+    #     1,
+    #     'a',
+    #     r_date,
+    #     restaurant_table_id,
+    #     staff_id,
+    #     reservation_id,
+    #     delta
+    # from css_reporting as cr
+    # where r_date BETWEEN %s AND %s
+    # order by r_date ASC
+    # """
 
 STAFF_SQL = """
     select distinct
