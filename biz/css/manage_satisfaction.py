@@ -23,12 +23,11 @@ CUSTOMER_SQL = """
 
 STAFF_SQL = """
     select
-        1,
-        array_to_string(array_agg(distinct m.name), ', '),
         r_date,
+        reservation_id,
         restaurant_table_id,
         array_to_string(array_agg(distinct s.first_name), ', '),
-        reservation_id,
+        array_to_string(array_agg(distinct m.name), ', '),
         delta
     from css_reporting as cr
     join menu_item as m on m.menu_item_id = cr.menu_item_id
@@ -40,12 +39,11 @@ STAFF_SQL = """
 
 MENU_SQL = """
     select
-        1,
-        (sum(o.quantity) :: bigint),
         r_date,
+        cr.reservation_id,
         restaurant_table_id,
         array_to_string(array_agg(distinct s.first_name), ', '),
-        cr.reservation_id,
+        (sum(o.quantity) :: bigint),
         delta
     from css_reporting as cr
     join customer_order as co on co.reservation_id = cr.reservation_id
