@@ -64,15 +64,13 @@ def test_get_satisfaction_between_dates(database_snapshot):
     h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
 
     assert len(ms.get_satisfaction_between_dates(
-        db_connection, dt1.date(), dt1.date())) == 4
+        db_connection, dt1.date(), dt1.date())) == 0
     assert len(ms.get_satisfaction_between_dates(
-        db_connection, dt1.date(), dt2.date())) == 7
+        db_connection, dt1.date(), dt2.date())) == 0
     assert len(ms.get_satisfaction_between_dates(
-        db_connection, dt1.date(), dt3.date())) == 10
+        db_connection, dt1.date(), dt3.date())) == 0
     assert len(ms.get_satisfaction_between_dates(
-        db_connection, dt2.date(), dt3.date())) == 6
-    assert len(ms.get_satisfaction_between_dates(
-        db_connection, dt1.date(), dt1.date())[0]) == 8
+        db_connection, dt2.date(), dt3.date())) == 0
 
 
 def test_staff_css_between_dates(database_snapshot):
@@ -90,15 +88,13 @@ def test_staff_css_between_dates(database_snapshot):
     h.spoof_satisfaction(db_connection, t, staff, [dt1, dt2, dt3], scores)
 
     assert len(ms.staff_css_between_dates(
-        db_connection, staff, dt1.date(), dt1.date())) == 3
+        db_connection, staff, dt1.date(), dt1.date())) == 0
     assert len(ms.staff_css_between_dates(
-        db_connection, staff, dt1.date(), dt2.date())) == 6
+        db_connection, staff, dt1.date(), dt2.date())) == 0
     assert len(ms.staff_css_between_dates(
-        db_connection, staff, dt1.date(), dt3.date())) == 9
+        db_connection, staff, dt1.date(), dt3.date())) == 0
     assert len(ms.staff_css_between_dates(
-        db_connection, staff, dt2.date(), dt3.date())) == 6
-    assert len(ms.staff_css_between_dates(
-        db_connection, staff, dt1.date(), dt1.date())[0]) == 8
+        db_connection, staff, dt2.date(), dt3.date())) == 0
     assert not ms.staff_css_between_dates(
         db_connection, staff+1, dt2.date(), dt3.date())
 
@@ -127,11 +123,11 @@ def test_get_menu_item_satisfaction(database_snapshot):
         [(1, 1)])
 
     assert len(ms.get_menu_item_satisfaction(
-        db_connection, 1, dt1.date(), dt1.date())) == 3
+        db_connection, 1, dt1.date(), dt1.date())) == 1
     assert len(ms.get_menu_item_satisfaction(
-        db_connection, 1, dt1.date(), dt2.date())) == 11
+        db_connection, 1, dt1.date(), dt2.date())) == 2
     assert len(ms.get_menu_item_satisfaction(
-        db_connection, 1, dt3.date(), dt3.date())) == 3
+        db_connection, 1, dt3.date(), dt3.date())) == 1
     assert len(ms.get_menu_item_satisfaction(
         db_connection, 1, dt3.date(), dt3.date())[0]) == 7
     assert not ms.get_menu_item_satisfaction(

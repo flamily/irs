@@ -36,30 +36,7 @@ def format_dict(satisf_event):
             "date": item[2],
             "table_id": item[3],
             "staff_id": item[4],
-            "reservation_id": item[6],   # We skip item[5] here, duplicate
-            "score": float(item[7])      # Remove Decimal() prevent JSON errors
-        })
-    return lst
-
-
-def format_menu_dict(menu_satisf):
-    """Formats the inbound menu satisfaction SQL tuple into a JSON ready list
-
-    :param menu_satisf: The raw output from the SQL query
-    :return: A list of dict objects, removing unwanted Decimal() types and
-    converting to float
-    :note: This function is used to sort menu sql tuples only
-    """
-
-    lst = []
-    for item in menu_satisf:
-        lst.append({
-            "event_id": item[0],
-            "description": float(item[1]),
-            "date": item[2],
-            "table_id": item[3],
-            "staff_id": item[4],
-            "reservation_id": item[5],
+            "reservation_id": item[5],   # We skip item[5] here, duplicate
             "score": float(item[6])      # Remove Decimal() prevent JSON errors
         })
     return lst
@@ -182,7 +159,7 @@ def get_menu_satisfaction(db, m_id, date_type, date_string):
     item = mcss.get_menu_item_satisfaction(db, m_id, s_dt, e_dt)
 
     if item:
-        return (sort_data(format_menu_dict(item)), do_avg(item))
+        return (sort_data(format_dict(item)), do_avg(item))
     return ([], 0)
 
 

@@ -124,7 +124,7 @@ CREATE TABLE order_item (
   FOREIGN KEY  (menu_item_id)       REFERENCES menu_item (menu_item_id)
 );
 
-CREATE VIEW CSS_REPORTING AS
+CREATE OR REPLACE VIEW CSS_REPORTING AS
 WITH staff_per_res as (
     select
         distinct all_e.staff_id as staff_id,
@@ -137,7 +137,8 @@ WITH staff_per_res as (
         e_start.event_id,
         s_start.reservation_id,
         s_start.score,
-        e_start.description
+        e_start.description,
+        e_start.restaurant_table_id
     from
         satisfaction s_start
     join event e_start
@@ -159,7 +160,8 @@ select
     menu_item_per_res.menu_item_id,
     (sat_end.score - sat_start.score) as delta,
     sat_start.score as score_start,
-    sat_end.score as score_end
+    sat_end.score as score_end,
+    sat_start.restaurant_table_id as restaurant_table_id
 from reservation r
 join connect_css as sat_start
     on sat_start.reservation_id = r.reservation_id
@@ -169,7 +171,8 @@ join connect_css as sat_end
     and sat_end.description = 'paid'
 join staff_per_res on staff_per_res.res_id = r.reservation_id
 join menu_item_per_res on menu_item_per_res.res_id = r.reservation_id
-order by reservation_id;
+order by reservation_id
+limit 10;
 
 /*** Definition of trigger functions. ***/
 

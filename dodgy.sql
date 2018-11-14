@@ -51,7 +51,7 @@ limit 10;
 
 
 ---- Per Reservation
-CREATE VIEW SPAGHET AS
+CREATE VIEW CSS_REPORTING AS
 WITH staff_per_res as (
     select
         distinct all_e.staff_id as staff_id,

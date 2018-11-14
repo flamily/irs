@@ -5,6 +5,48 @@ Author: Andrew Pope, Andy GO, Jacob Vorreiter
 Date: 12/11/2018
 """
 
+CUSTOMER_SQL = """
+    select distinct
+        1,
+        'a',
+        r_date,
+        restaurant_table_id,
+        staff_id,
+        reservation_id,
+        delta
+    from css_reporting as cr
+    where r_date BETWEEN %s AND %s
+    order by r_date ASC
+    """
+
+STAFF_SQL = """
+    select distinct
+        1,
+        'a',
+        r_date,
+        restaurant_table_id,
+        staff_id,
+        reservation_id,
+        delta
+    from css_reporting as cr
+    where staff_id= %s AND r_date BETWEEN %s AND %s
+    order by r_date ASC
+    """
+
+MENU_SQL = """
+    select distinct
+        1,
+        'a',
+        r_date,
+        restaurant_table_id,
+        staff_id,
+        reservation_id,
+        delta
+    from css_reporting as cr
+    where menu_item_id= %s AND r_date BETWEEN %s AND %s
+    order by r_date ASC
+    """
+
 
 def get_satisfaction_between_dates(db_conn, start, end):
     """Gets the customers satisfaction between dates across all
@@ -15,12 +57,9 @@ def get_satisfaction_between_dates(db_conn, start, end):
     :param end: The end date in string form
     :return: An SQL List of Tuples of all items"""
 
-    sql = "SELECT * FROM event AS e \
-           JOIN satisfaction AS s ON e.event_id = s.event_id \
-           WHERE event_dt BETWEEN %s AND %s ORDER BY e.event_dt ASC"
     with db_conn.cursor() as curs:
         params = (start, end)
-        curs.execute(sql, params)
+        curs.execute(CUSTOMER_SQL, params)
         events = curs.fetchall()
         return events
 
@@ -36,10 +75,7 @@ def staff_css_between_dates(db_conn, staff_id, s_dt, e_dt):
     """
     with db_conn.cursor() as curs:
         curs.execute(
-            "SELECT * FROM event AS e "
-            "JOIN satisfaction AS s ON e.event_id = s.event_id "
-            "WHERE staff_id= %s AND event_dt BETWEEN %s AND %s "
-            "ORDER BY e.event_dt ASC",
+            STAFF_SQL,
             (staff_id, s_dt, e_dt)
         )
         return curs.fetchall()
@@ -95,17 +131,7 @@ def get_menu_item_satisfaction(db_conn, menu_item, start_date, end_date):
     """
     with db_conn.cursor() as curs:
         curs.execute(
-            "SELECT e.event_id, quantity, order_dt, restaurant_table_id, "
-            "staff_id, s.reservation_id, score "
-            "FROM satisfaction s "
-            "JOIN reservation r ON s.reservation_id = r.reservation_id "
-            "JOIN customer_order c ON r.reservation_id = c.reservation_id "
-            "JOIN order_item oi ON c.customer_order_id = oi.customer_order_id "
-            "JOIN menu_item mi ON oi.menu_item_id = mi.menu_item_id "
-            "JOIN event e ON e.event_id = s.event_id "
-            "WHERE s.score IS NOT NULL AND oi.menu_item_id = %s "
-            "AND order_dt BETWEEN %s AND %s "
-            "ORDER BY order_dt ASC",
+            MENU_SQL,
             (menu_item, start_date, end_date)
         )
         return curs.fetchall()
