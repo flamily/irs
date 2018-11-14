@@ -14,7 +14,7 @@
         <div class="col-sm-12">
           <div id="table-layout" class="container table-layout">
             {% for table in tables %}
-              <form action="/robot/table/reserve" class="robotTableReserve" method="post">
+            <form action="/robot/table/reserve" class="robotTableReserve" method="post" id="table-{{ table.rt_id }}">
                 <button type="submit"
                   class="{%if table.state|string() == 'available' %}
                     available{% else %}unavailable{% endif %}-table
