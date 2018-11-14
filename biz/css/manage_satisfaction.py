@@ -8,30 +8,18 @@ Date: 12/11/2018
 CUSTOMER_SQL = """
     select
         1,
-        'a',
+        array_to_string(array_agg(distinct m.name), ', '),
         r_date,
         restaurant_table_id,
-    array_agg(distinct staff_id),
+        array_agg(distinct staff_id),
         reservation_id,
         delta
-    from css_reporting as cr
+    from css_reporting cr
+    join menu_item as m on m.menu_item_id = cr.menu_item_id
     where r_date BETWEEN %s AND %s
     group by r_date, restaurant_table_id, reservation_id, delta
-    order by r_date ASC limit 10;
+    order by r_date ASC;
     """
-
-    # select distinct
-    #     1,
-    #     'a',
-    #     r_date,
-    #     restaurant_table_id,
-    #     staff_id,
-    #     reservation_id,
-    #     delta
-    # from css_reporting as cr
-    # where r_date BETWEEN %s AND %s
-    # order by r_date ASC
-    # """
 
 STAFF_SQL = """
     select distinct
@@ -53,11 +41,12 @@ MENU_SQL = """
         'a',
         r_date,
         restaurant_table_id,
-        staff_id,
+        array_agg(distinct staff_id),
         reservation_id,
         delta
     from css_reporting as cr
     where menu_item_id= %s AND r_date BETWEEN %s AND %s
+    group by r_date, restaurant_table_id, reservation_id, delta
     order by r_date ASC
     """
 
