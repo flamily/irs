@@ -5,7 +5,6 @@ Author: Andrew Pope, Andy Go, Jacob Vorreiter
 Date: 11/11/2018
 """
 import datetime
-import math
 import biz.css.manage_satisfaction as ms
 import biz.manage_restaurant as mr
 import test.helper as h

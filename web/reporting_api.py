@@ -107,10 +107,10 @@ def get_menu_score(menu_id, date_type):
     if not menu_id.isdigit():
         raise InvalidUsage("Invalid menu_id provided")
 
-    res, avg = report.get_menu_satisfaction(db, menu_id, date_type, date_string)
+    res, a = report.get_menu_satisfaction(db, menu_id, date_type, date_string)
     labels, scores = report.get_chart_data(res)
 
-    return jsonify(data=res, labels=labels, scores=scores, average=avg)
+    return jsonify(data=res, labels=labels, scores=scores, average=a)
 
 
 @API_BLUEPRINT.route('/reporting/Staff//<date_type>')
