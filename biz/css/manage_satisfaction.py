@@ -24,16 +24,18 @@ CUSTOMER_SQL = """
 STAFF_SQL = """
     select
         r_date,
-        reservation_id,
-        restaurant_table_id,
+        cr.reservation_id,
+        cr.restaurant_table_id,
         array_to_string(array_agg(distinct s.first_name), ', '),
         array_to_string(array_agg(distinct m.name), ', '),
         delta
     from css_reporting as cr
     join menu_item as m on m.menu_item_id = cr.menu_item_id
-    join staff as s on s.staff_id = cr.staff_id
+    join customer_event as ce on cr.reservation_id = ce.reservation_id
+    join event as e on e.event_id = ce.event_id
+    join staff as s on s.staff_id = e.staff_id
     where cr.staff_id= %s AND r_date BETWEEN %s AND %s
-    group by r_date, restaurant_table_id, reservation_id, delta
+    group by r_date, cr.restaurant_table_id, cr.reservation_id, delta
     order by r_date ASC
     """
 
