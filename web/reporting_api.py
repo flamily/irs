@@ -62,6 +62,7 @@ def get_customer_report(date_type):
 def get_staff_report(staff_id, date_type):
     """Reads in time parameters and returns staff scores
         between those times
+    :param staff_id: The ID of the staff to lookup
     :param date_type: The type of time format (date, week, month, year)
     :return: JSON formatted data, with entries at:
         data, labels, scores, average
@@ -92,6 +93,7 @@ def get_staff_report(staff_id, date_type):
 def get_menu_score(menu_id, date_type):
     """Reads in time parameters and returns menu scores
         between those times
+    :param menu_id: The ID of the menu item to lookup
     :param date_type: The type of time format (date, week, month, year)
     :return: JSON formatted data, with entries at:
         data, labels, scores, average
